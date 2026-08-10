@@ -7,8 +7,10 @@ const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const OLLAMA_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "qwen3:4b";
+// GROQ API YAPILANDIRMASI
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const MEMORY_FILE = path.join(__dirname, "memory.json");
 const CONTEXT_MESSAGES = 20;
@@ -194,41 +196,18 @@ app.get("/", (req, res) => {
 });
 
 // ======================================================
-// OLLAMA TEST
+// GROQ TEST
 // ======================================================
 
 app.get(
     "/api/test",
     async (req, res) => {
-
-        try {
-
-            const response = await fetch(
-                OLLAMA_URL + "/api/tags"
-            );
-
-            const data =
-                await response.json();
-
-            res.json({
-                ok: true,
-                ollama: true,
-                model: OLLAMA_MODEL,
-                memoryMessages:
-                    memory.length,
-                models:
-                    data.models || []
-            });
-
-        } catch (error) {
-
-            res.status(500).json({
-                ok: false,
-                ollama: false,
-                error:
-                    error.message
-            });
-        }
+        res.json({
+            ok: true,
+            groqConfigured: !!GROQ_API_KEY,
+            model: GROQ_MODEL,
+            memoryMessages: memory.length
+        });
     }
 );
 
@@ -252,6 +231,15 @@ app.post(
                     ok: false,
                     reply:
                         "Lütfen bir mesaj yaz."
+                });
+            }
+
+            if (!GROQ_API_KEY) {
+
+                return res.status(500).json({
+                    ok: false,
+                    reply:
+                        "GROQ_API_KEY anahtarı bulunamadı. Lütfen Render ortam değişkenlerini kontrol edin."
                 });
             }
 
@@ -362,39 +350,32 @@ app.post(
             }
 
             // ==================================================
-            // OLLAMA
+            // GROQ API İSTEĞİ
             // ==================================================
 
             const response =
                 await fetch(
-                    OLLAMA_URL +
-                    "/api/chat",
+                    GROQ_URL,
                     {
                         method: "POST",
 
                         headers: {
                             "Content-Type":
-                                "application/json"
+                                "application/json",
+                            "Authorization":
+                                `Bearer ${GROQ_API_KEY}`
                         },
 
                         body:
                             JSON.stringify({
                                 model:
-                                    OLLAMA_MODEL,
+                                    GROQ_MODEL,
 
                                 messages:
                                     messages,
 
-                                stream:
-                                    false,
-
-                                options: {
-                                    temperature:
-                                        0.1,
-
-                                    top_p:
-                                        0.8
-                                }
+                                temperature:
+                                    0.1
                             })
                     }
                 );
@@ -403,22 +384,22 @@ app.post(
                 await response.json();
 
             // ==================================================
-            // OLLAMA HATASI
+            // GROQ HATASI
             // ==================================================
 
             if (!response.ok) {
 
                 console.error(
-                    "OLLAMA HATASI:",
+                    "GROQ HATASI:",
                     data
                 );
 
                 return res.status(500).json({
                     ok: false,
                     reply:
-                        "Ollama hatası: " +
+                        "Groq API hatası: " +
                         (
-                            data.error ||
+                            data.error?.message ||
                             "Bilinmeyen hata"
                         )
                 });
@@ -430,7 +411,7 @@ app.post(
 
             const reply =
                 String(
-                    data.message?.content ||
+                    data.choices?.[0]?.message?.content ||
                     ""
                 ).trim();
 
@@ -543,7 +524,7 @@ app.listen(
         );
 
         console.log(
-            "        ERENCANAI 7.0"
+            "     ERENCANAI 7.0 (GROQ)"
         );
 
         console.log(
@@ -568,8 +549,8 @@ app.listen(
         );
 
         console.log(
-            "AI: Ollama " +
-            OLLAMA_MODEL
+            "AI: Groq " +
+            GROQ_MODEL
         );
 
         console.log(
