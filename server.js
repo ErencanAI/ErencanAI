@@ -1,14 +1,14 @@
-﻿"use strict";
+"use strict";
 
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-const OLLAMA_URL = "http://127.0.0.1:11434";
-const OLLAMA_MODEL = "qwen3:4b";
+const OLLAMA_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "qwen3:4b";
 
 const MEMORY_FILE = path.join(__dirname, "memory.json");
 const CONTEXT_MESSAGES = 20;
@@ -543,7 +543,7 @@ app.listen(
         );
 
         console.log(
-            "       ERENCANAI 7.0"
+            "        ERENCANAI 7.0"
         );
 
         console.log(
