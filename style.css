@@ -13,10 +13,16 @@
     --border: #252c38;
     --text: #f4f6fa;
     --muted: #929aaa;
+
     --primary: #7c5cff;
     --primary-2: #6346e8;
+
+    --pro: #f5c451;
+    --pro-2: #e89d24;
+
     --success: #55d98a;
     --danger: #ff5c6c;
+
     --shadow: 0 20px 60px rgba(0, 0, 0, .35);
 }
 
@@ -59,7 +65,6 @@ input:focus-visible {
     outline-offset: 2px;
 }
 
-
 /* =========================
    ANA UYGULAMA
 ========================= */
@@ -70,7 +75,6 @@ input:focus-visible {
     height: 100vh;
     overflow: hidden;
 }
-
 
 /* =========================
    SIDEBAR
@@ -93,7 +97,6 @@ input:focus-visible {
         transform .25s ease,
         width .25s ease;
 }
-
 
 /* LOGO */
 
@@ -143,6 +146,64 @@ input:focus-visible {
     margin-top: 2px;
 }
 
+/* PRO MARKASI */
+
+.pro-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    padding: 4px 8px;
+
+    color: #1a1305;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--pro),
+            var(--pro-2)
+        );
+
+    border-radius: 7px;
+
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .5px;
+
+    box-shadow:
+        0 5px 18px rgba(245, 196, 81, .18);
+}
+
+.brand-pro {
+    margin-top: 6px;
+}
+
+/* PRO HESAP GÖSTERGESİ */
+
+.pro-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 4px;
+
+    color: var(--pro);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.pro-status-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--pro);
+
+    box-shadow:
+        0 0 8px rgba(245, 196, 81, .7);
+}
 
 /* YENİ SOHBET */
 
@@ -184,7 +245,6 @@ input:focus-visible {
     transform: scale(.98);
 }
 
-
 /* BÖLÜM BAŞLIĞI */
 
 .sidebar-section-title {
@@ -196,7 +256,6 @@ input:focus-visible {
     margin:
         28px 8px 10px;
 }
-
 
 /* GEÇMİŞ */
 
@@ -214,7 +273,6 @@ input:focus-visible {
     background: var(--border);
     border-radius: 10px;
 }
-
 
 /* ALT */
 
@@ -248,7 +306,6 @@ input:focus-visible {
     color: var(--text);
 }
 
-
 /* HESAP */
 
 .account-card {
@@ -260,6 +317,8 @@ input:focus-visible {
     padding-top: 14px;
 
     border-top: 1px solid var(--border);
+
+    cursor: pointer;
 }
 
 .account-avatar {
@@ -285,7 +344,6 @@ input:focus-visible {
     margin-top: 2px;
 }
 
-
 /* =========================
    ANA ALAN
 ========================= */
@@ -306,7 +364,6 @@ input:focus-visible {
         ),
         var(--bg);
 }
-
 
 /* =========================
    TOPBAR
@@ -350,6 +407,10 @@ input:focus-visible {
 }
 
 .model-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
     font-size: 14px;
     font-weight: 750;
 }
@@ -373,7 +434,6 @@ input:focus-visible {
     box-shadow:
         0 0 8px rgba(85, 217, 138, .65);
 }
-
 
 /* ICON BUTTON */
 
@@ -403,7 +463,6 @@ input:focus-visible {
 .mobile-menu {
     display: none;
 }
-
 
 /* =========================
    CHAT
@@ -435,7 +494,6 @@ input:focus-visible {
     padding:
         45px 25px 170px;
 }
-
 
 /* =========================
    WELCOME
@@ -515,6 +573,35 @@ input:focus-visible {
     font-size: 14px;
 }
 
+/* PRO WELCOME */
+
+.pro-welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-bottom: 16px;
+
+    padding: 7px 12px;
+
+    color: #1a1305;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--pro),
+            var(--pro-2)
+        );
+
+    border-radius: 9px;
+
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .7px;
+
+    box-shadow:
+        0 8px 25px rgba(245, 196, 81, .16);
+}
 
 /* ÖNERİLER */
 
@@ -565,7 +652,6 @@ input:focus-visible {
 .suggestion span {
     font-size: 20px;
 }
-
 
 /* =========================
    MESAJLAR
@@ -671,7 +757,6 @@ input:focus-visible {
     font-size: 13px;
 }
 
-
 /* TYPING */
 
 .typing {
@@ -713,7 +798,6 @@ input:focus-visible {
         transform: translateY(-4px);
     }
 }
-
 
 /* =========================
    COMPOSER
@@ -797,7 +881,6 @@ input:focus-visible {
     color: #70798b;
 }
 
-
 /* COMPOSER BUTONLARI */
 
 .composer-button,
@@ -846,7 +929,6 @@ input:focus-visible {
 .send-button:active {
     transform: scale(.94);
 }
-
 
 /* ARAÇLAR */
 
@@ -904,7 +986,6 @@ input:focus-visible {
     margin-top: 6px;
 }
 
-
 /* =========================
    DOSYA
 ========================= */
@@ -942,7 +1023,6 @@ input:focus-visible {
     color: var(--danger);
     background: transparent;
 }
-
 
 /* =========================
    MODAL
@@ -1058,6 +1138,278 @@ input:focus-visible {
     color: var(--text);
 }
 
+/* =========================
+   PRO ÜYELİK
+========================= */
+
+.pro-modal {
+    width: min(480px, 100%);
+}
+
+.pro-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.pro-header .pro-badge {
+    margin-bottom: 12px;
+}
+
+.pro-header h2 {
+    font-size: 23px;
+    margin-bottom: 7px;
+}
+
+.pro-header p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.pro-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    margin-bottom: 20px;
+}
+
+.pro-feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 11px 12px;
+
+    background: var(--panel-2);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 10px;
+
+    color: var(--text);
+
+    font-size: 12px;
+}
+
+.pro-feature-icon {
+    width: 27px;
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    background:
+        rgba(245, 196, 81, .1);
+
+    color: var(--pro);
+}
+
+/* GOOGLE GİRİŞ */
+
+.google-button {
+    width: 100%;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    background: white;
+    color: #202124;
+
+    border-radius: 10px;
+
+    font-weight: 700;
+    font-size: 13px;
+
+    transition:
+        transform .15s ease,
+        filter .15s ease;
+}
+
+.google-button:hover {
+    filter: brightness(.96);
+}
+
+.google-button:active {
+    transform: scale(.98);
+}
+
+.google-icon {
+    width: 18px;
+    height: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 900;
+}
+
+/* AYIRICI */
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 18px 0;
+
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: var(--border);
+}
+
+/* AKTİVASYON KODU */
+
+.activation-title {
+    color: var(--text);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    margin-bottom: 8px;
+}
+
+.activation-description {
+    color: var(--muted);
+
+    font-size: 10px;
+    line-height: 1.5;
+
+    margin-bottom: 10px;
+}
+
+.activation-row {
+    display: flex;
+    gap: 7px;
+}
+
+.activation-input {
+    flex: 1;
+
+    min-width: 0;
+
+    height: 42px;
+
+    padding: 0 12px;
+
+    background: var(--panel-2);
+
+    color: var(--text);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 10px;
+
+    outline: 0;
+
+    font-size: 13px;
+}
+
+.activation-input:focus {
+    border-color: var(--primary);
+}
+
+.activation-button {
+    height: 42px;
+
+    padding: 0 15px;
+
+    flex-shrink: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--primary-2)
+        );
+
+    color: white;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.activation-button:hover {
+    filter: brightness(1.08);
+}
+
+.activation-message {
+    min-height: 18px;
+
+    margin-top: 8px;
+
+    font-size: 10px;
+}
+
+.activation-message.success {
+    color: var(--success);
+}
+
+.activation-message.error {
+    color: var(--danger);
+}
+
+/* PRO AKTİF */
+
+.pro-active-card {
+    padding: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(245, 196, 81, .08),
+            rgba(232, 157, 36, .03)
+        );
+
+    border:
+        1px solid rgba(245, 196, 81, .22);
+
+    border-radius: 12px;
+}
+
+.pro-active-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: var(--pro);
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.pro-active-description {
+    color: var(--muted);
+
+    font-size: 10px;
+    line-height: 1.5;
+
+    margin-top: 5px;
+}
 
 /* AYARLAR */
 
@@ -1092,7 +1444,6 @@ input:focus-visible {
 
     margin-top: 4px;
 }
-
 
 /* SWITCH */
 
@@ -1153,7 +1504,6 @@ input:focus-visible {
     background: white;
 }
 
-
 /* BUTONLAR */
 
 .primary-button {
@@ -1205,7 +1555,6 @@ input:focus-visible {
         rgba(255, 92, 108, .14);
 }
 
-
 /* DOSYA ALANI */
 
 .file-drop {
@@ -1240,7 +1589,6 @@ input:focus-visible {
         7px 0 18px;
 }
 
-
 /* ÜRETİM INPUT */
 
 .generation-input {
@@ -1271,7 +1619,6 @@ input:focus-visible {
 .generation-input:focus {
     border-color: var(--primary);
 }
-
 
 /* =========================
    TOAST
@@ -1314,13 +1661,13 @@ input:focus-visible {
         transform .2s ease;
 }
 
+.toast.show,
 .toast.active {
     opacity: 1;
 
     transform:
         translate(-50%, 0);
 }
-
 
 /* =========================
    SOHBET GEÇMİŞİ BUTONU
@@ -1360,7 +1707,6 @@ input:focus-visible {
     background: var(--panel-2);
     color: var(--text);
 }
-
 
 /* =========================
    MOBİL
@@ -1425,8 +1771,15 @@ input:focus-visible {
         padding:
             0 12px;
     }
-}
 
+    .activation-row {
+        flex-direction: column;
+    }
+
+    .activation-button {
+        width: 100%;
+    }
+}
 
 @media (max-width: 500px) {
 
@@ -1453,4 +1806,11 @@ input:focus-visible {
     .footer-warning {
         display: none;
     }
+
+    .pro-badge {
+        font-size: 8px;
+    }
 }
+
+
+
