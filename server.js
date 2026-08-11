@@ -7,45 +7,64 @@ const path = require("path");
 const fs = require("fs");
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
+
+/* ==============================
+   GROQ
+================================ */
 
 const GROQ_API_KEY =
     process.env.GROQ_API_KEY ||
     process.env.GR0Q_API_KEY;
 
+const GROQ_MODEL =
+    process.env.GROQ_MODEL ||
+    "openai/gpt-oss-20b";
+
 const GROQ_URL =
     "https://api.groq.com/openai/v1/chat/completions";
 
-const GROQ_MODEL =
-    "openai/gpt-oss-20b";
+/* ==============================
+   HAFIZA
+================================ */
 
 const MEMORY_FILE =
     path.join(__dirname, "memory.json");
 
 const MAX_MEMORY_MESSAGES = 300;
-const CONTEXT_MESSAGES = 10;
-
-const SYSTEM_PROMPT = [
-    "Sen ErencanAI adlı yapay zeka asistanısın.",
-    "Türkçe konuş.",
-    "Kullanıcının sorusuna doğrudan cevap ver.",
-    "Gereksiz uzun cevap verme.",
-    "Basit sorulara kısa ve doğal cevap ver.",
-    "Bilmediğin bilgileri uydurma.",
-    "Önceki mesajları dikkate al.",
-    "Normal konuşma şeklinde cevap ver.",
-    "JSON biçiminde cevap verme.",
-    "Cevabının başına veya sonuna teknik bilgi ekleme.",
-    "Sadece kullanıcıya verilecek doğal cevabı üret."
-].join("\n");
+const CONTEXT_MESSAGES = 20;
 
 let memory = [];
 
+/* ==============================
+   SİSTEM PROMPT
+================================ */
+
+const SYSTEM_PROMPT = [
+    "Sen ErencanAI adlı yapay zeka asistanısın.",
+    "Her zaman öncelikle Türkçe konuş.",
+    "Kullanıcının sorusuna doğrudan cevap ver.",
+    "Kısa sorulara kısa ve doğal cevaplar ver.",
+    "Gereksiz uzun cevap verme.",
+    "Bilmediğin bilgileri uydurma.",
+    "Önceki konuşmalardaki bilgileri dikkate al.",
+    "Normal konuşma şeklinde cevap ver.",
+    "JSON biçiminde cevap verme.",
+    "Cevabın başına teknik bilgi ekleme.",
+    "Cevabın sonuna teknik bilgi ekleme.",
+    "Senin adın ErencanAI."
+].join("\n");
+
+/* ==============================
+   HAFIZA OKU
+================================ */
 
 function loadMemory() {
+
     try {
+
         if (!fs.existsSync(MEMORY_FILE)) {
+
             fs.writeFileSync(
                 MEMORY_FILE,
                 "[]",
@@ -75,6 +94,7 @@ function loadMemory() {
         return [];
 
     } catch (error) {
+
         console.error(
             "HAFIZA OKUMA HATASI:",
             error.message
@@ -84,9 +104,14 @@ function loadMemory() {
     }
 }
 
+/* ==============================
+   HAFIZA KAYDET
+================================ */
 
 function saveMemory() {
+
     try {
+
         fs.writeFileSync(
             MEMORY_FILE,
             JSON.stringify(
@@ -100,6 +125,7 @@ function saveMemory() {
         return true;
 
     } catch (error) {
+
         console.error(
             "HAFIZA KAYDETME HATASI:",
             error.message
@@ -109,18 +135,28 @@ function saveMemory() {
     }
 }
 
+/* ==============================
+   HAFIZAYA EKLE
+================================ */
 
 function addMemory(role, content) {
+
     memory.push({
+
         role: role,
-        content: String(content),
-        time: new Date().toISOString()
+
+        content:
+            String(content),
+
+        time:
+            new Date().toISOString()
     });
 
     if (
         memory.length >
         MAX_MEMORY_MESSAGES
     ) {
+
         memory =
             memory.slice(
                 -MAX_MEMORY_MESSAGES
@@ -130,11 +166,15 @@ function addMemory(role, content) {
     saveMemory();
 }
 
+/* ==============================
+   İSİM BUL
+================================ */
 
 function findUserName(text) {
+
     const match =
         String(text).match(
-            /(?:benim\s+adım|benim\s+ismim|adım)\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)/i
+            /(?:benim\s+adım|benim\s+ismim|adım|ismim)\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)/i
         );
 
     if (match) {
@@ -144,14 +184,20 @@ function findUserName(text) {
     return null;
 }
 
+/* ==============================
+   SON İSMİ BUL
+================================ */
 
 function getLastUserName() {
+
     for (
         let i = memory.length - 1;
         i >= 0;
         i--
     ) {
-        const item = memory[i];
+
+        const item =
+            memory[i];
 
         if (
             !item ||
@@ -173,8 +219,12 @@ function getLastUserName() {
     return null;
 }
 
+/* ==============================
+   CEVABI TEMİZLE
+================================ */
 
 function cleanReply(text) {
+
     let reply =
         String(text || "").trim();
 
@@ -182,52 +232,72 @@ function cleanReply(text) {
         return "";
     }
 
-    // Model yanlışlıkla JSON döndürürse
     try {
+
         const parsed =
             JSON.parse(reply);
 
         if (
             parsed &&
-            typeof parsed.reply === "string"
+            typeof parsed.reply ===
+            "string"
         ) {
+
             reply =
                 parsed.reply.trim();
         }
+
     } catch (error) {
-        // Normal metinse hiçbir şey yapma.
+        // Normal metin
     }
 
-    // Gereksiz Markdown JSON çitlerini temizle
     reply =
         reply
-            .replace(/^```json\s*/i, "")
-            .replace(/^```\s*/i, "")
-            .replace(/\s*```$/i, "")
+            .replace(
+                /^```json\s*/i,
+                ""
+            )
+            .replace(
+                /^```\s*/i,
+                ""
+            )
+            .replace(
+                /\s*```$/i,
+                ""
+            )
             .trim();
 
     return reply;
 }
 
+/* ==============================
+   HAFIZAYI BAŞLAT
+================================ */
 
 memory = loadMemory();
 
+/* ==============================
+   EXPRESS
+================================ */
 
 app.use(
     express.json({
-        limit: "2mb"
+        limit: "10mb"
     })
 );
-
 
 app.use(
     express.static(__dirname)
 );
 
+/* ==============================
+   ANA SAYFA
+================================ */
 
 app.get(
     "/",
     function (req, res) {
+
         res.sendFile(
             path.join(
                 __dirname,
@@ -237,28 +307,42 @@ app.get(
     }
 );
 
+/* ==============================
+   TEST
+================================ */
 
 app.get(
     "/api/test",
     function (req, res) {
 
-        return res.json({
+        res.json({
+
             ok: true,
+
             server: true,
+
             ai: "Groq",
-            model: GROQ_MODEL,
+
+            model:
+                GROQ_MODEL,
+
             apiKey:
                 GROQ_API_KEY
                     ? "BULUNDU"
                     : "BULUNAMADI",
+
             memoryMessages:
                 memory.length,
+
             endpoint:
                 "/api/chat"
         });
     }
 );
 
+/* ==============================
+   CHAT
+================================ */
 
 app.post(
     "/api/chat",
@@ -268,22 +352,20 @@ app.post(
 
             const message =
                 String(
-                    req.body &&
-                    req.body.message
-                        ? req.body.message
-                        : ""
+                    req.body?.message ||
+                    ""
                 ).trim();
-
 
             if (!message) {
 
                 return res.status(400).json({
+
                     ok: false,
+
                     reply:
                         "Lütfen bir mesaj yaz."
                 });
             }
-
 
             if (!GROQ_API_KEY) {
 
@@ -292,34 +374,39 @@ app.post(
                 );
 
                 return res.status(500).json({
+
                     ok: false,
+
                     reply:
-                        "Groq API anahtarı bulunamadı."
+                        "Groq API anahtarı bulunamadı. Render Environment Variables bölümünü kontrol et."
                 });
             }
 
-
-            console.log("");
             console.log(
                 "KULLANICI:",
                 message
             );
+
+            /* Kullanıcı mesajını hafızaya kaydet */
 
             addMemory(
                 "user",
                 message
             );
 
+            /* =========================
+               İSİM KAYDETME
+            ========================= */
 
             const newName =
-                findUserName(message);
-
+                findUserName(
+                    message
+                );
 
             const askingName =
                 /benim\s+adım\s+ne/i.test(message) ||
                 /adım\s+neydi/i.test(message) ||
                 /ismim\s+ne/i.test(message);
-
 
             if (
                 newName &&
@@ -337,12 +424,18 @@ app.post(
                 );
 
                 return res.json({
+
                     ok: true,
+
                     reply: reply,
+
                     timeMs: 0
                 });
             }
 
+            /* =========================
+               İSİM SORUSU
+            ========================= */
 
             if (askingName) {
 
@@ -362,28 +455,35 @@ app.post(
                     );
 
                     return res.json({
+
                         ok: true,
+
                         reply: reply,
+
                         timeMs: 0
                     });
                 }
             }
 
+            /* =========================
+               MODELE HAFIZA
+            ========================= */
 
             const recentMessages =
                 memory.slice(
                     -CONTEXT_MESSAGES
                 );
 
-
             const messages = [
+
                 {
                     role: "system",
+
                     content:
                         SYSTEM_PROMPT
                 }
-            ];
 
+            ];
 
             for (
                 const item of recentMessages
@@ -397,6 +497,7 @@ app.post(
                 }
 
                 messages.push({
+
                     role:
                         item.role ===
                         "assistant"
@@ -410,23 +511,26 @@ app.post(
                 });
             }
 
+            /* =========================
+               GROQ İSTEĞİ
+            ========================= */
 
             const startTime =
                 Date.now();
-
 
             console.log(
                 "GROQ İSTEĞİ GÖNDERİLİYOR..."
             );
 
-
             const response =
                 await fetch(
                     GROQ_URL,
                     {
+
                         method: "POST",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json",
 
@@ -437,6 +541,7 @@ app.post(
 
                         body:
                             JSON.stringify({
+
                                 model:
                                     GROQ_MODEL,
 
@@ -455,10 +560,12 @@ app.post(
                     }
                 );
 
-
             const responseText =
                 await response.text();
 
+            /* =========================
+               GROQ HATASI
+            ========================= */
 
             if (!response.ok) {
 
@@ -471,16 +578,19 @@ app.post(
                     responseText
                 );
 
-                return res.status(
-                    500
-                ).json({
+                return res.status(500).json({
+
                     ok: false,
+
                     reply:
-                        "Groq hatası: " +
+                        "Groq API hatası: " +
                         response.status
                 });
             }
 
+            /* =========================
+               JSON
+            ========================= */
 
             let data;
 
@@ -498,18 +608,20 @@ app.post(
                     responseText
                 );
 
-                return res.status(
-                    500
-                ).json({
+                return res.status(500).json({
+
                     ok: false,
+
                     reply:
                         "Groq geçerli bir cevap göndermedi."
                 });
             }
 
+            /* =========================
+               CEVABI AL
+            ========================= */
 
             let reply = "";
-
 
             if (
                 data &&
@@ -528,15 +640,16 @@ app.post(
                     typeof content ===
                     "string"
                 ) {
+
                     reply =
                         content.trim();
                 }
             }
 
-
             reply =
-                cleanReply(reply);
-
+                cleanReply(
+                    reply
+                );
 
             if (!reply) {
 
@@ -545,26 +658,25 @@ app.post(
                     JSON.stringify(data)
                 );
 
-                return res.status(
-                    500
-                ).json({
+                return res.status(500).json({
+
                     ok: false,
+
                     reply:
                         "ErencanAI boş cevap verdi."
                 });
             }
 
+            /* AI cevabını hafızaya kaydet */
 
             addMemory(
                 "assistant",
                 reply
             );
 
-
             const elapsed =
                 Date.now() -
                 startTime;
-
 
             console.log(
                 "ERENCANAI:",
@@ -576,13 +688,14 @@ app.post(
                 elapsed + " ms"
             );
 
-
             return res.json({
+
                 ok: true,
+
                 reply: reply,
+
                 timeMs: elapsed
             });
-
 
         } catch (error) {
 
@@ -594,11 +707,10 @@ app.post(
                 error
             );
 
+            return res.status(500).json({
 
-            return res.status(
-                500
-            ).json({
                 ok: false,
+
                 reply:
                     "Sunucu bağlantı hatası: " +
                     error.message
@@ -607,21 +719,30 @@ app.post(
     }
 );
 
+/* ==============================
+   HAFIZA
+================================ */
 
 app.get(
     "/api/memory",
     function (req, res) {
 
         return res.json({
+
             ok: true,
+
             count:
                 memory.length,
+
             messages:
                 memory
         });
     }
 );
 
+/* ==============================
+   HAFIZA TEMİZLE
+================================ */
 
 app.post(
     "/api/clear-memory",
@@ -632,27 +753,35 @@ app.post(
         saveMemory();
 
         return res.json({
+
             ok: true,
+
             message:
                 "ErencanAI hafızası temizlendi."
         });
     }
 );
 
+/* ==============================
+   404
+================================ */
 
 app.use(
     function (req, res) {
 
-        return res.status(
-            404
-        ).json({
+        return res.status(404).json({
+
             ok: false,
+
             error:
                 "Bu ErencanAI API adresi bulunamadı."
         });
     }
 );
 
+/* ==============================
+   SUNUCU
+================================ */
 
 app.listen(
     PORT,
