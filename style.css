@@ -23,7 +23,7 @@
     --success: #55d98a;
     --danger: #ff5c6c;
 
-    --shadow: 0 20px 60px rgba(0, 0, 0, .35);
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 html,
@@ -94,8 +94,8 @@ input:focus-visible {
     padding: 18px;
 
     transition:
-        transform .25s ease,
-        width .25s ease;
+        transform 0.25s ease,
+        width 0.25s ease;
 }
 
 /* LOGO */
@@ -125,7 +125,7 @@ input:focus-visible {
     font-weight: 800;
 
     box-shadow:
-        0 8px 25px rgba(124, 92, 255, .25);
+        0 8px 25px rgba(124, 92, 255, 0.25);
 }
 
 .brand-logo {
@@ -146,7 +146,7 @@ input:focus-visible {
     margin-top: 2px;
 }
 
-/* PRO MARKASI */
+/* PRO */
 
 .pro-badge {
     display: inline-flex;
@@ -169,17 +169,15 @@ input:focus-visible {
 
     font-size: 9px;
     font-weight: 900;
-    letter-spacing: .5px;
+    letter-spacing: 0.5px;
 
     box-shadow:
-        0 5px 18px rgba(245, 196, 81, .18);
+        0 5px 18px rgba(245, 196, 81, 0.18);
 }
 
 .brand-pro {
     margin-top: 6px;
 }
-
-/* PRO HESAP GÖSTERGESİ */
 
 .pro-status {
     display: flex;
@@ -196,13 +194,12 @@ input:focus-visible {
 .pro-status-dot {
     width: 6px;
     height: 6px;
-
     border-radius: 50%;
 
     background: var(--pro);
 
     box-shadow:
-        0 0 8px rgba(245, 196, 81, .7);
+        0 0 8px rgba(245, 196, 81, 0.7);
 }
 
 /* YENİ SOHBET */
@@ -230,11 +227,11 @@ input:focus-visible {
     font-weight: 700;
 
     box-shadow:
-        0 10px 30px rgba(124, 92, 255, .18);
+        0 10px 30px rgba(124, 92, 255, 0.18);
 
     transition:
-        transform .15s ease,
-        filter .15s ease;
+        transform 0.15s ease,
+        filter 0.15s ease;
 }
 
 .new-chat-button:hover {
@@ -242,7 +239,7 @@ input:focus-visible {
 }
 
 .new-chat-button:active {
-    transform: scale(.98);
+    transform: scale(0.98);
 }
 
 /* BÖLÜM BAŞLIĞI */
@@ -253,20 +250,30 @@ input:focus-visible {
     font-weight: 800;
     letter-spacing: 1.3px;
 
-    margin:
-        28px 8px 10px;
+    margin: 28px 8px 10px;
 }
 
-/* GEÇMİŞ */
+/* SOHBET GEÇMİŞİ */
 
 .chat-history {
     flex: 1;
+    min-height: 0;
+
     overflow-y: auto;
+    overflow-x: hidden;
+
     padding-right: 3px;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
 }
 
 .chat-history::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
+}
+
+.chat-history::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 .chat-history::-webkit-scrollbar-thumb {
@@ -297,8 +304,8 @@ input:focus-visible {
     text-align: left;
 
     transition:
-        background .15s ease,
-        color .15s ease;
+        background 0.15s ease,
+        color 0.15s ease;
 }
 
 .sidebar-button:hover {
@@ -349,7 +356,11 @@ input:focus-visible {
 ========================= */
 
 .main {
+    position: relative;
+
     min-width: 0;
+    min-height: 0;
+
     flex: 1;
     height: 100%;
 
@@ -359,7 +370,7 @@ input:focus-visible {
     background:
         radial-gradient(
             circle at 50% -20%,
-            rgba(124, 92, 255, .08),
+            rgba(124, 92, 255, 0.08),
             transparent 40%
         ),
         var(--bg);
@@ -382,7 +393,7 @@ input:focus-visible {
     border-bottom: 1px solid var(--border);
 
     background:
-        rgba(9, 11, 16, .72);
+        rgba(9, 11, 16, 0.72);
 
     backdrop-filter: blur(18px);
 }
@@ -429,13 +440,12 @@ input:focus-visible {
     width: 6px;
     height: 6px;
     border-radius: 50%;
+
     background: var(--success);
 
     box-shadow:
-        0 0 8px rgba(85, 217, 138, .65);
+        0 0 8px rgba(85, 217, 138, 0.65);
 }
-
-/* ICON BUTTON */
 
 .icon-button {
     width: 38px;
@@ -451,8 +461,8 @@ input:focus-visible {
     border-radius: 10px;
 
     transition:
-        background .15s ease,
-        color .15s ease;
+        background 0.15s ease,
+        color 0.15s ease;
 }
 
 .icon-button:hover {
@@ -465,19 +475,31 @@ input:focus-visible {
 }
 
 /* =========================
-   CHAT
+   CHAT ALANI
 ========================= */
 
 .chat-area {
-    flex: 1;
+    flex: 1 1 auto;
+
     min-height: 0;
+    height: 0;
 
     overflow-y: auto;
+    overflow-x: hidden;
+
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
 }
 
 .chat-area::-webkit-scrollbar {
-    width: 7px;
+    width: 8px;
+}
+
+.chat-area::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 .chat-area::-webkit-scrollbar-thumb {
@@ -485,14 +507,19 @@ input:focus-visible {
     border-radius: 10px;
 }
 
+.chat-area::-webkit-scrollbar-thumb:hover {
+    background: #343c4b;
+}
+
 .chat-container {
     width: min(900px, 100%);
-    min-height: 100%;
+
+    min-height: max-content;
 
     margin: auto;
 
     padding:
-        45px 25px 170px;
+        45px 25px 200px;
 }
 
 /* =========================
@@ -523,16 +550,16 @@ input:focus-visible {
     background:
         linear-gradient(
             135deg,
-            rgba(124, 92, 255, .18),
-            rgba(160, 124, 255, .06)
+            rgba(124, 92, 255, 0.18),
+            rgba(160, 124, 255, 0.06)
         );
 
-    border: 1px solid rgba(124, 92, 255, .3);
+    border: 1px solid rgba(124, 92, 255, 0.3);
 
     margin-bottom: 24px;
 
     box-shadow:
-        0 25px 70px rgba(124, 92, 255, .12);
+        0 25px 70px rgba(124, 92, 255, 0.12);
 }
 
 .welcome-logo-inner {
@@ -560,7 +587,7 @@ input:focus-visible {
 
 .welcome h1 {
     font-size: clamp(26px, 4vw, 39px);
-    letter-spacing: -.7px;
+    letter-spacing: -0.7px;
     margin-bottom: 12px;
 }
 
@@ -572,8 +599,6 @@ input:focus-visible {
 
     font-size: 14px;
 }
-
-/* PRO WELCOME */
 
 .pro-welcome-badge {
     display: inline-flex;
@@ -597,10 +622,10 @@ input:focus-visible {
 
     font-size: 10px;
     font-weight: 900;
-    letter-spacing: .7px;
+    letter-spacing: 0.7px;
 
     box-shadow:
-        0 8px 25px rgba(245, 196, 81, .16);
+        0 8px 25px rgba(245, 196, 81, 0.16);
 }
 
 /* ÖNERİLER */
@@ -629,20 +654,19 @@ input:focus-visible {
     color: var(--text);
     background: var(--panel);
 
-    border:
-        1px solid var(--border);
+    border: 1px solid var(--border);
 
     border-radius: 13px;
 
     transition:
-        border-color .15s ease,
-        transform .15s ease,
-        background .15s ease;
+        border-color 0.15s ease,
+        transform 0.15s ease,
+        background 0.15s ease;
 }
 
 .suggestion:hover {
     border-color:
-        rgba(124, 92, 255, .55);
+        rgba(124, 92, 255, 0.55);
 
     background: var(--panel-2);
 
@@ -664,7 +688,7 @@ input:focus-visible {
     padding: 20px 0;
 
     animation:
-        messageIn .22s ease;
+        messageIn 0.22s ease;
 }
 
 @keyframes messageIn {
@@ -715,6 +739,7 @@ input:focus-visible {
 .message-body {
     min-width: 0;
     flex: 1;
+    max-width: 100%;
 }
 
 .message-name {
@@ -724,10 +749,16 @@ input:focus-visible {
 }
 
 .message-content {
+    min-width: 0;
+    max-width: 100%;
+
     color: #dce1ea;
+
     line-height: 1.7;
     font-size: 14px;
+
     overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .message-content strong {
@@ -735,10 +766,13 @@ input:focus-visible {
 }
 
 .message-content pre {
+    max-width: 100%;
+
     margin: 12px 0;
     padding: 15px;
 
     overflow-x: auto;
+    white-space: pre;
 
     background: #080a0f;
 
@@ -746,6 +780,17 @@ input:focus-visible {
         1px solid var(--border);
 
     border-radius: 11px;
+
+    scrollbar-width: thin;
+}
+
+.message-content pre::-webkit-scrollbar {
+    height: 7px;
+}
+
+.message-content pre::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
 }
 
 .message-content code {
@@ -780,16 +825,18 @@ input:focus-visible {
 }
 
 .typing span:nth-child(2) {
-    animation-delay: .15s;
+    animation-delay: 0.15s;
 }
 
 .typing span:nth-child(3) {
-    animation-delay: .3s;
+    animation-delay: 0.3s;
 }
 
 @keyframes typing {
-    0%, 60%, 100% {
-        opacity: .3;
+    0%,
+    60%,
+    100% {
+        opacity: 0.3;
         transform: translateY(0);
     }
 
@@ -821,6 +868,8 @@ input:focus-visible {
         );
 
     pointer-events: none;
+
+    z-index: 20;
 }
 
 .composer-wrapper > * {
@@ -832,7 +881,7 @@ input:focus-visible {
     margin: auto;
 
     background:
-        rgba(17, 21, 29, .94);
+        rgba(17, 21, 29, 0.94);
 
     border:
         1px solid var(--border);
@@ -881,8 +930,6 @@ input:focus-visible {
     color: #70798b;
 }
 
-/* COMPOSER BUTONLARI */
-
 .composer-button,
 .send-button {
     width: 40px;
@@ -897,8 +944,8 @@ input:focus-visible {
     border-radius: 11px;
 
     transition:
-        transform .15s ease,
-        background .15s ease;
+        transform 0.15s ease,
+        background 0.15s ease;
 }
 
 .composer-button {
@@ -927,7 +974,7 @@ input:focus-visible {
 }
 
 .send-button:active {
-    transform: scale(.94);
+    transform: scale(0.94);
 }
 
 /* ARAÇLAR */
@@ -962,8 +1009,8 @@ input:focus-visible {
     font-size: 11px;
 
     transition:
-        background .15s ease,
-        color .15s ease;
+        background 0.15s ease,
+        color 0.15s ease;
 }
 
 .quick-tool:hover {
@@ -1039,7 +1086,7 @@ input:focus-visible {
     padding: 20px;
 
     background:
-        rgba(0, 0, 0, .65);
+        rgba(0, 0, 0, 0.65);
 
     backdrop-filter: blur(8px);
 
@@ -1050,7 +1097,7 @@ input:focus-visible {
     display: flex;
 
     animation:
-        modalFade .18s ease;
+        modalFade 0.18s ease;
 }
 
 @keyframes modalFade {
@@ -1080,10 +1127,10 @@ input:focus-visible {
     padding: 22px;
 
     box-shadow:
-        0 30px 100px rgba(0, 0, 0, .5);
+        0 30px 100px rgba(0, 0, 0, 0.5);
 
     animation:
-        modalIn .2s ease;
+        modalIn 0.2s ease;
 }
 
 .modal-box.small {
@@ -1093,7 +1140,7 @@ input:focus-visible {
 @keyframes modalIn {
     from {
         opacity: 0;
-        transform: translateY(10px) scale(.98);
+        transform: translateY(10px) scale(0.98);
     }
 
     to {
@@ -1139,7 +1186,7 @@ input:focus-visible {
 }
 
 /* =========================
-   PRO ÜYELİK
+   PRO
 ========================= */
 
 .pro-modal {
@@ -1206,12 +1253,12 @@ input:focus-visible {
     border-radius: 8px;
 
     background:
-        rgba(245, 196, 81, .1);
+        rgba(245, 196, 81, 0.1);
 
     color: var(--pro);
 }
 
-/* GOOGLE GİRİŞ */
+/* GOOGLE */
 
 .google-button {
     width: 100%;
@@ -1231,16 +1278,16 @@ input:focus-visible {
     font-size: 13px;
 
     transition:
-        transform .15s ease,
-        filter .15s ease;
+        transform 0.15s ease,
+        filter 0.15s ease;
 }
 
 .google-button:hover {
-    filter: brightness(.96);
+    filter: brightness(0.96);
 }
 
 .google-button:active {
-    transform: scale(.98);
+    transform: scale(0.98);
 }
 
 .google-icon {
@@ -1279,7 +1326,7 @@ input:focus-visible {
     background: var(--border);
 }
 
-/* AKTİVASYON KODU */
+/* AKTİVASYON */
 
 .activation-title {
     color: var(--text);
@@ -1381,12 +1428,12 @@ input:focus-visible {
     background:
         linear-gradient(
             135deg,
-            rgba(245, 196, 81, .08),
-            rgba(232, 157, 36, .03)
+            rgba(245, 196, 81, 0.08),
+            rgba(232, 157, 36, 0.03)
         );
 
     border:
-        1px solid rgba(245, 196, 81, .22);
+        1px solid rgba(245, 196, 81, 0.22);
 
     border-radius: 12px;
 }
@@ -1473,7 +1520,7 @@ input:focus-visible {
 
     border-radius: 30px;
 
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .switch span::before {
@@ -1491,7 +1538,7 @@ input:focus-visible {
 
     border-radius: 50%;
 
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .switch input:checked + span {
@@ -1542,20 +1589,20 @@ input:focus-visible {
     color: #ff8994;
 
     background:
-        rgba(255, 92, 108, .08);
+        rgba(255, 92, 108, 0.08);
 
     border:
-        1px solid rgba(255, 92, 108, .18);
+        1px solid rgba(255, 92, 108, 0.18);
 
     border-radius: 10px;
 }
 
 .danger-button:hover {
     background:
-        rgba(255, 92, 108, .14);
+        rgba(255, 92, 108, 0.14);
 }
 
-/* DOSYA ALANI */
+/* DOSYA */
 
 .file-drop {
     text-align: center;
@@ -1657,8 +1704,8 @@ input:focus-visible {
     z-index: 2000;
 
     transition:
-        opacity .2s ease,
-        transform .2s ease;
+        opacity 0.2s ease,
+        transform 0.2s ease;
 }
 
 .toast.show,
@@ -1670,7 +1717,7 @@ input:focus-visible {
 }
 
 /* =========================
-   SOHBET GEÇMİŞİ BUTONU
+   SOHBET GEÇMİŞİ
 ========================= */
 
 .history-item {
@@ -1709,11 +1756,24 @@ input:focus-visible {
 }
 
 /* =========================
+   FOTOĞRAF / VİDEO / MİKROFON
+   ŞİMDİLİK GİZLİ
+========================= */
+
+.photo-tool,
+.video-tool,
+.voice-tool,
+.mic-button,
+.image-button,
+.video-button {
+    display: none !important;
+}
+
+/* =========================
    MOBİL
 ========================= */
 
 @media (max-width: 800px) {
-
     .sidebar {
         position: fixed;
 
@@ -1727,7 +1787,7 @@ input:focus-visible {
             translateX(-100%);
 
         box-shadow:
-            20px 0 50px rgba(0, 0, 0, .35);
+            20px 0 50px rgba(0, 0, 0, 0.35);
     }
 
     .sidebar.open {
@@ -1742,13 +1802,14 @@ input:focus-visible {
 
     .composer-wrapper {
         left: 0;
+
         padding:
             10px 12px 9px;
     }
 
     .chat-container {
         padding:
-            30px 15px 155px;
+            30px 15px 175px;
     }
 
     .suggestions {
@@ -1782,7 +1843,6 @@ input:focus-visible {
 }
 
 @media (max-width: 500px) {
-
     .composer-tools {
         overflow-x: auto;
     }
@@ -1810,7 +1870,17 @@ input:focus-visible {
     .pro-badge {
         font-size: 8px;
     }
+
+    .chat-container {
+        padding:
+            25px 12px 175px;
+    }
+
+    .message {
+        gap: 9px;
+    }
 }
+
 
 
 
