@@ -194,6 +194,7 @@ input:focus-visible {
 .pro-status-dot {
     width: 6px;
     height: 6px;
+
     border-radius: 50%;
 
     background: var(--pro);
@@ -281,6 +282,45 @@ input:focus-visible {
     border-radius: 10px;
 }
 
+/* GEÇMİŞ */
+
+.history-item {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 10px;
+    margin-bottom: 4px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border-radius: 9px;
+
+    text-align: left;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-size: 12px;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.history-item:hover {
+    background: var(--panel);
+    color: var(--text);
+}
+
+.history-item.active {
+    background: var(--panel-2);
+    color: var(--text);
+}
+
 /* ALT */
 
 .sidebar-bottom {
@@ -326,11 +366,16 @@ input:focus-visible {
     border-top: 1px solid var(--border);
 
     cursor: pointer;
+
+    color: var(--text);
 }
 
 .account-avatar {
     width: 35px;
     height: 35px;
+
+    flex-shrink: 0;
+
     border-radius: 10px;
     font-size: 15px;
 }
@@ -413,6 +458,7 @@ input:focus-visible {
 .model-icon {
     width: 34px;
     height: 34px;
+
     border-radius: 10px;
     font-size: 14px;
 }
@@ -433,18 +479,40 @@ input:focus-visible {
 
     color: var(--muted);
     font-size: 10px;
+
     margin-top: 2px;
 }
 
 .status-dot {
     width: 6px;
     height: 6px;
+
     border-radius: 50%;
 
     background: var(--success);
 
     box-shadow:
         0 0 8px rgba(85, 217, 138, 0.65);
+}
+
+.version-badge {
+    padding: 7px 10px;
+
+    color: #1a1305;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--pro),
+            var(--pro-2)
+        );
+
+    border-radius: 8px;
+
+    font-size: 9px;
+    font-weight: 900;
+
+    margin-right: 8px;
 }
 
 .icon-button {
@@ -475,7 +543,7 @@ input:focus-visible {
 }
 
 /* =========================
-   CHAT ALANI
+   CHAT
 ========================= */
 
 .chat-area {
@@ -733,6 +801,7 @@ input:focus-visible {
 .user-avatar {
     background: var(--panel-3);
     color: var(--text);
+
     border: 1px solid var(--border);
 }
 
@@ -759,6 +828,7 @@ input:focus-visible {
 
     overflow-wrap: anywhere;
     word-break: break-word;
+    white-space: pre-wrap;
 }
 
 .message-content strong {
@@ -776,8 +846,7 @@ input:focus-visible {
 
     background: #080a0f;
 
-    border:
-        1px solid var(--border);
+    border: 1px solid var(--border);
 
     border-radius: 11px;
 
@@ -853,7 +922,7 @@ input:focus-visible {
 .composer-wrapper {
     position: absolute;
 
-    left: 280px;
+    left: 0;
     right: 0;
     bottom: 0;
 
@@ -1040,7 +1109,8 @@ input:focus-visible {
 .attachment-preview {
     display: none;
 
-    padding: 8px 12px 0;
+    padding:
+        8px 12px 0;
 }
 
 .attachment-preview.active {
@@ -1052,7 +1122,8 @@ input:focus-visible {
     align-items: center;
     gap: 7px;
 
-    padding: 7px 10px;
+    padding:
+        7px 10px;
 
     background: var(--panel-3);
 
@@ -1165,7 +1236,9 @@ input:focus-visible {
 
 .modal-header p {
     color: var(--muted);
+
     font-size: 12px;
+
     margin-top: 5px;
 }
 
@@ -1226,7 +1299,8 @@ input:focus-visible {
     align-items: center;
     gap: 10px;
 
-    padding: 11px 12px;
+    padding:
+        11px 12px;
 
     background: var(--panel-2);
 
@@ -1258,7 +1332,9 @@ input:focus-visible {
     color: var(--pro);
 }
 
-/* GOOGLE */
+/* =========================
+   GOOGLE
+========================= */
 
 .google-button {
     width: 100%;
@@ -1358,7 +1434,8 @@ input:focus-visible {
 
     height: 42px;
 
-    padding: 0 12px;
+    padding:
+        0 12px;
 
     background: var(--panel-2);
 
@@ -1381,7 +1458,8 @@ input:focus-visible {
 .activation-button {
     height: 42px;
 
-    padding: 0 15px;
+    padding:
+        0 15px;
 
     flex-shrink: 0;
 
@@ -1554,7 +1632,8 @@ input:focus-visible {
 /* BUTONLAR */
 
 .primary-button {
-    padding: 11px 16px;
+    padding:
+        11px 16px;
 
     background:
         linear-gradient(
@@ -1602,7 +1681,9 @@ input:focus-visible {
         rgba(255, 92, 108, 0.14);
 }
 
-/* DOSYA */
+/* =========================
+   DOSYA
+========================= */
 
 .file-drop {
     text-align: center;
@@ -1717,45 +1798,6 @@ input:focus-visible {
 }
 
 /* =========================
-   SOHBET GEÇMİŞİ
-========================= */
-
-.history-item {
-    display: flex;
-    align-items: center;
-
-    width: 100%;
-
-    padding: 10px;
-
-    margin-bottom: 4px;
-
-    color: var(--muted);
-
-    background: transparent;
-
-    border-radius: 9px;
-
-    text-align: left;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    font-size: 12px;
-}
-
-.history-item:hover {
-    background: var(--panel);
-    color: var(--text);
-}
-
-.history-item.active {
-    background: var(--panel-2);
-    color: var(--text);
-}
-
-/* =========================
    FOTOĞRAF / VİDEO / MİKROFON
    ŞİMDİLİK GİZLİ
 ========================= */
@@ -1774,6 +1816,7 @@ input:focus-visible {
 ========================= */
 
 @media (max-width: 800px) {
+
     .sidebar {
         position: fixed;
 
@@ -1843,6 +1886,7 @@ input:focus-visible {
 }
 
 @media (max-width: 500px) {
+
     .composer-tools {
         overflow-x: auto;
     }
