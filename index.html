@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="tr">
 
@@ -5,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ErencanAI</title>
+    <title>ErencanAI Pro 8.00</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -22,8 +23,22 @@
 
             <div>
                 <div class="brand-name">ErencanAI</div>
-                <div class="brand-version">AI Assistant</div>
+                <div class="brand-version">PRO 8.00</div>
             </div>
+        </div>
+
+        <!-- PRO DURUMU -->
+        <div class="pro-status-card">
+            <div class="pro-status-icon">⭐</div>
+
+            <div>
+                <strong>ErencanAI Pro</strong>
+                <small>8.00 sürümü</small>
+            </div>
+
+            <span class="pro-active-badge" id="proStatusBadge">
+                AKTİF
+            </span>
         </div>
 
         <button
@@ -67,23 +82,29 @@
 
             </button>
 
-            <div class="account-card">
+            <!-- HESAP -->
+            <button
+                class="account-card"
+                id="accountButton"
+                type="button">
 
-                <div class="account-avatar">
+                <div class="account-avatar" id="accountAvatar">
                     E
                 </div>
 
                 <div class="account-info">
 
-                    <strong>ErencanAI</strong>
+                    <strong id="accountName">
+                        Pro hesabı
+                    </strong>
 
-                    <small>
-                        Kişisel asistan
+                    <small id="accountStatus">
+                        Google ile giriş yap
                     </small>
 
                 </div>
 
-            </div>
+            </button>
 
         </div>
 
@@ -116,14 +137,14 @@
                     <div>
 
                         <div class="model-title">
-                            ErencanAI
+                            ErencanAI Pro
                         </div>
 
                         <div class="model-status">
 
                             <span class="status-dot"></span>
 
-                            Çevrimiçi
+                            Pro 8.00
 
                         </div>
 
@@ -135,6 +156,10 @@
 
 
             <div class="topbar-right">
+
+                <div class="version-badge">
+                    ⭐ PRO 8.00
+                </div>
 
                 <button
                     class="icon-button"
@@ -173,16 +198,21 @@
 
                     </div>
 
+                    <div class="pro-welcome-badge">
+                        ⭐ ErencanAI Pro 8.00
+                    </div>
+
                     <h1>
-                        Merhaba, ben ErencanAI 👋
+                        Merhaba, ben ErencanAI Pro 👋
                     </h1>
 
                     <p>
-                        Sorularını cevaplayabilir,
-                        kod yazabilir, fikir üretebilir
-                        ve birçok konuda sana yardımcı
+                        Daha gelişmiş özellikler,
+                        araştırma, hafıza, kodlama ve
+                        Pro araçlarıyla sana yardımcı
                         olabilirim.
                     </p>
+
 
                     <!-- ÖNERİLER -->
                     <div class="suggestions">
@@ -271,7 +301,7 @@
                     <textarea
                         id="messageInput"
                         rows="1"
-                        placeholder="ErencanAI'ye mesaj yaz..."
+                        placeholder="ErencanAI Pro'ya mesaj yaz..."
                         autocomplete="off"
                     ></textarea>
 
@@ -298,28 +328,32 @@
                 </div>
 
 
-                <!-- ARAÇLAR -->
+                <!-- PRO ARAÇLARI -->
                 <div class="composer-tools">
 
                     <div class="tool-group">
 
                         <button
-                            class="quick-tool"
+                            class="quick-tool pro-tool"
                             id="imageButton"
                             type="button">
 
                             🖼️
                             Görsel
 
+                            <span>PRO</span>
+
                         </button>
 
                         <button
-                            class="quick-tool"
+                            class="quick-tool pro-tool"
                             id="videoButton"
                             type="button">
 
                             🎬
                             Video
+
+                            <span>PRO</span>
 
                         </button>
 
@@ -333,10 +367,22 @@
 
                         </button>
 
+                        <button
+                            class="quick-tool pro-tool"
+                            id="researchButton"
+                            type="button">
+
+                            🔎
+                            Araştır
+
+                            <span>PRO</span>
+
+                        </button>
+
                     </div>
 
                     <div class="composer-info">
-                        ErencanAI geliştirme sürümü
+                        ErencanAI Pro 8.00
                     </div>
 
                 </div>
@@ -355,6 +401,80 @@
 </div>
 
 
+<!-- =====================================================
+     HESAP / GOOGLE GİRİŞ MODALI
+     ===================================================== -->
+
+<div
+    class="modal"
+    id="accountModal">
+
+    <div class="modal-box small">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    👤 ErencanAI Pro hesabı
+                </h2>
+
+                <p>
+                    Pro özelliklerini kullanmak için
+                    hesabınla giriş yap.
+                </p>
+
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="accountModal">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div class="google-login-area">
+
+            <div class="google-login-logo">
+                G
+            </div>
+
+            <h3>
+                Google ile giriş yap
+            </h3>
+
+            <p>
+                Hesabınla güvenli şekilde giriş yaparak
+                Pro özelliklerine erişebilirsin.
+            </p>
+
+            <button
+                class="google-login-button"
+                id="googleLoginButton"
+                type="button">
+
+                <span>G</span>
+                Google ile devam et
+
+            </button>
+
+            <small class="login-note">
+                Google giriş bağlantısı Pro sunucusuna
+                bağlandığında aktif olacaktır.
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 <!-- AYARLAR MODALI -->
 
 <div
@@ -368,11 +488,11 @@
             <div>
 
                 <h2>
-                    ⚙️ ErencanAI Ayarları
+                    ⚙️ ErencanAI Pro Ayarları
                 </h2>
 
                 <p>
-                    Uygulamanı özelleştir.
+                    Pro deneyimini özelleştir.
                 </p>
 
             </div>
@@ -387,6 +507,7 @@
             </button>
 
         </div>
+
 
         <div class="settings-list">
 
@@ -428,7 +549,7 @@
                     </strong>
 
                     <small>
-                        Sohbetleri bu bilgisayarda sakla.
+                        Sohbetlerini hesabında sakla.
                     </small>
 
                 </div>
@@ -438,6 +559,35 @@
                     <input
                         type="checkbox"
                         id="historySwitch"
+                        checked
+                    >
+
+                    <span></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="setting">
+
+                <div>
+
+                    <strong>
+                        🧠 Pro hafıza
+                    </strong>
+
+                    <small>
+                        Kişisel hafıza özelliğini kullan.
+                    </small>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="memorySwitch"
                         checked
                     >
 
@@ -476,6 +626,7 @@
             </div>
 
         </div>
+
 
         <button
             class="danger-button"
@@ -561,11 +712,11 @@
             <div>
 
                 <h2>
-                    🖼️ Görsel oluştur
+                    🖼️ Pro görsel oluştur
                 </h2>
 
                 <p>
-                    Görsel üretim API'si bağlandığında çalışacak.
+                    Pro görsel üretim sistemi.
                 </p>
 
             </div>
@@ -592,7 +743,7 @@
             id="generateImageButton"
             type="button">
 
-            ✨ Görsel oluştur
+            ✨ Pro görsel oluştur
 
         </button>
 
@@ -614,11 +765,11 @@
             <div>
 
                 <h2>
-                    🎬 Video oluştur
+                    🎬 Pro video oluştur
                 </h2>
 
                 <p>
-                    Video üretim API'si bağlandığında çalışacak.
+                    Pro video üretim sistemi.
                 </p>
 
             </div>
@@ -645,7 +796,7 @@
             id="generateVideoButton"
             type="button">
 
-            🎬 Video oluştur
+            🎬 Pro video oluştur
 
         </button>
 
@@ -667,803 +818,10 @@
 </div>
 
 
-<!-- =====================================================
-     ER EN CAN AI JAVASCRIPT
-     ===================================================== -->
+<!-- PRO JAVASCRIPT -->
 
-<script>
-
-"use strict";
-
-
-const API_URL = "/api/chat";
-
-
-const state = {
-    thinking: false
-};
-
-
-const chatContainer =
-    document.getElementById("chatContainer");
-
-const chatArea =
-    document.getElementById("chatArea");
-
-const messageInput =
-    document.getElementById("messageInput");
-
-const sendButton =
-    document.getElementById("sendButton");
-
-const welcome =
-    document.getElementById("welcome");
-
-const newChatButton =
-    document.getElementById("newChatButton");
-
-const clearChatButton =
-    document.getElementById("clearChatButton");
-
-
-/* =====================================================
-   MESAJ EKLE
-   ===================================================== */
-
-function addMessage(name, text, type) {
-
-    const message =
-        document.createElement("div");
-
-    message.className =
-        "message message-" + type;
-
-
-    const nameElement =
-        document.createElement("strong");
-
-    nameElement.textContent =
-        name;
-
-
-    const textElement =
-        document.createElement("div");
-
-    textElement.className =
-        "message-text";
-
-    textElement.textContent =
-        text;
-
-
-    message.appendChild(
-        nameElement
-    );
-
-    message.appendChild(
-        textElement
-    );
-
-
-    chatContainer.appendChild(
-        message
-    );
-
-
-    scrollBottom();
-
-
-    return {
-        message,
-        textElement
-    };
-}
-
-
-/* =====================================================
-   SCROLL
-   ===================================================== */
-
-function scrollBottom() {
-
-    requestAnimationFrame(() => {
-
-        chatArea.scrollTop =
-            chatArea.scrollHeight;
-
-    });
-
-}
-
-
-/* =====================================================
-   HOŞ GELDİN EKRANI
-   ===================================================== */
-
-function hideWelcome() {
-
-    if (welcome) {
-        welcome.style.display = "none";
-    }
-
-}
-
-
-/* =====================================================
-   MESAJ GÖNDER
-   ===================================================== */
-
-async function sendMessage() {
-
-    if (state.thinking) {
-        return;
-    }
-
-
-    const text =
-        messageInput.value.trim();
-
-
-    if (!text) {
-        return;
-    }
-
-
-    console.log(
-        "KULLANICI:",
-        text
-    );
-
-
-    state.thinking = true;
-
-
-    sendButton.disabled = true;
-
-    messageInput.disabled = true;
-
-
-    hideWelcome();
-
-
-    addMessage(
-        "Sen",
-        text,
-        "user"
-    );
-
-
-    messageInput.value = "";
-
-
-    const aiMessage =
-        addMessage(
-            "ErencanAI",
-            "Düşünüyor...",
-            "ai"
-        );
-
-
-    try {
-
-        /*
-         * SUNUCUYA İSTEK
-         */
-
-        const response =
-            await fetch(
-                API_URL,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            message: text
-                        })
-                }
-            );
-
-
-        /*
-         * HTTP HATASI
-         */
-
-        if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
-
-            throw new Error(
-                errorText ||
-                "API hatası: " +
-                response.status
-            );
-
-        }
-
-
-        /*
-         * BURASI ÖNEMLİ
-         *
-         * Sunucumuz streaming değil,
-         * JSON döndürüyor.
-         *
-         * Örneğin:
-         *
-         * {
-         *   "ok": true,
-         *   "reply": "Merhaba",
-         *   "timeMs": 1987
-         * }
-         *
-         * Bu nedenle response.json()
-         * kullanıyoruz.
-         */
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "SUNUCU CEVABI:",
-            data
-        );
-
-
-        /*
-         * SADECE reply ALANI
-         */
-
-        let reply = "";
-
-
-        if (
-            data &&
-            typeof data.reply === "string"
-        ) {
-
-            reply =
-                data.reply;
-
-        }
-
-
-        /*
-         * Eğer sunucu farklı bir
-         * alan kullanırsa diye
-         * yedek seçenekler.
-         */
-
-        else if (
-            data &&
-            typeof data.response === "string"
-        ) {
-
-            reply =
-                data.response;
-
-        }
-
-
-        else if (
-            data &&
-            typeof data.message === "string"
-        ) {
-
-            reply =
-                data.message;
-
-        }
-
-
-        reply =
-            reply.trim();
-
-
-        /*
-         * CEVAP BOŞSA
-         */
-
-        if (!reply) {
-
-            throw new Error(
-                "AI cevap göndermedi."
-            );
-
-        }
-
-
-        /*
-         * EKRANA SADECE CEVABI YAZ
-         *
-         * JSON'un tamamı görünmeyecek.
-         */
-
-        aiMessage.textElement.textContent =
-            reply;
-
-
-        scrollBottom();
-
-
-        console.log(
-            "ERENCANAI:",
-            reply
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "ERENCANAI HATASI:",
-            error
-        );
-
-
-        aiMessage.textElement.textContent =
-            "Hata: " +
-            error.message;
-
-
-        aiMessage.message.classList.add(
-            "message-error"
-        );
-
-
-    } finally {
-
-        state.thinking = false;
-
-
-        sendButton.disabled = false;
-
-        messageInput.disabled = false;
-
-
-        messageInput.focus();
-
-    }
-
-}
-
-
-/* =====================================================
-   ENTER
-   ===================================================== */
-
-messageInput.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
-
-            event.preventDefault();
-
-            sendMessage();
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   GÖNDER
-   ===================================================== */
-
-sendButton.addEventListener(
-    "click",
-    function(event) {
-
-        event.preventDefault();
-
-        sendMessage();
-
-    }
-);
-
-
-/* =====================================================
-   YENİ SOHBET
-   ===================================================== */
-
-function newChat() {
-
-    chatContainer
-        .querySelectorAll(".message")
-        .forEach(
-            message => {
-
-                message.remove();
-
-            }
-        );
-
-
-    if (welcome) {
-
-        welcome.style.display = "";
-
-    }
-
-
-    messageInput.value = "";
-
-    messageInput.focus();
-
-}
-
-
-newChatButton.addEventListener(
-    "click",
-    newChat
-);
-
-
-clearChatButton.addEventListener(
-    "click",
-    newChat
-);
-
-
-/* =====================================================
-   ÖNERİ BUTONLARI
-   ===================================================== */
-
-document
-    .querySelectorAll(".suggestion")
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    const prompt =
-                        this.dataset.prompt;
-
-
-                    if (!prompt) {
-                        return;
-                    }
-
-
-                    messageInput.value =
-                        prompt;
-
-
-                    messageInput.focus();
-
-
-                    sendMessage();
-
-                }
-            );
-
-        }
-    );
-
-
-/* =====================================================
-   DOSYA BUTONU
-   ===================================================== */
-
-const attachButton =
-    document.getElementById(
-        "attachButton"
-    );
-
-
-const fileInput =
-    document.getElementById(
-        "fileInput"
-    );
-
-
-if (
-    attachButton &&
-    fileInput
-) {
-
-    attachButton.addEventListener(
-        "click",
-        function() {
-
-            fileInput.click();
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   DOSYA SEÇİLİNCE
-   ===================================================== */
-
-if (fileInput) {
-
-    fileInput.addEventListener(
-        "change",
-        function() {
-
-            if (!this.files.length) {
-                return;
-            }
-
-
-            const file =
-                this.files[0];
-
-
-            console.log(
-                "DOSYA:",
-                file.name
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   AYARLAR
-   ===================================================== */
-
-const settingsButton =
-    document.getElementById(
-        "settingsButton"
-    );
-
-
-const settingsModal =
-    document.getElementById(
-        "settingsModal"
-    );
-
-
-if (
-    settingsButton &&
-    settingsModal
-) {
-
-    settingsButton.addEventListener(
-        "click",
-        function() {
-
-            settingsModal.classList.add(
-                "active"
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   MODAL KAPATMA
-   ===================================================== */
-
-document
-    .querySelectorAll("[data-close]")
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    const modalId =
-                        this.dataset.close;
-
-
-                    const modal =
-                        document.getElementById(
-                            modalId
-                        );
-
-
-                    if (modal) {
-
-                        modal.classList.remove(
-                            "active"
-                        );
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-/* =====================================================
-   GÖRSEL
-   ===================================================== */
-
-const imageButton =
-    document.getElementById(
-        "imageButton"
-    );
-
-
-const imageModal =
-    document.getElementById(
-        "imageModal"
-    );
-
-
-if (
-    imageButton &&
-    imageModal
-) {
-
-    imageButton.addEventListener(
-        "click",
-        function() {
-
-            imageModal.classList.add(
-                "active"
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   VİDEO
-   ===================================================== */
-
-const videoButton =
-    document.getElementById(
-        "videoButton"
-    );
-
-
-const videoModal =
-    document.getElementById(
-        "videoModal"
-    );
-
-
-if (
-    videoButton &&
-    videoModal
-) {
-
-    videoButton.addEventListener(
-        "click",
-        function() {
-
-            videoModal.classList.add(
-                "active"
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   TEMA
-   ===================================================== */
-
-const themeSwitch =
-    document.getElementById(
-        "themeSwitch"
-    );
-
-
-if (themeSwitch) {
-
-    themeSwitch.addEventListener(
-        "change",
-        function() {
-
-            document.body.classList.toggle(
-                "light-theme",
-                !this.checked
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   TOAST
-   ===================================================== */
-
-const toast =
-    document.getElementById(
-        "toast"
-    );
-
-
-const toastText =
-    document.getElementById(
-        "toastText"
-    );
-
-
-function showToast(text) {
-
-    if (
-        !toast ||
-        !toastText
-    ) {
-        return;
-    }
-
-
-    toastText.textContent =
-        text;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    setTimeout(
-        function() {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        },
-        2500
-    );
-
-}
-
-
-/* =====================================================
-   BAŞLANGIÇ
-   ===================================================== */
-
-console.log(
-    "================================"
-);
-
-console.log(
-    "ERENCANAI FRONTEND HAZIR"
-);
-
-console.log(
-    "JSON CEVAP MODU AKTİF"
-);
-
-console.log(
-    "API:",
-    API_URL
-);
-
-console.log(
-    "================================"
-);
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
+```
