@@ -3831,7 +3831,19 @@ kullan.
                     ? "AKTİF"
                     : "GEREKMİYOR"
             );
+if (researchContext) {
+    messages.push({
+        role: "system",
+        content: `ÖNEMLİ GÜNCEL İNTERNET BİLGİSİ:
 
+${researchContext}
+
+Bu bilgi internet araştırmasından alınmıştır.
+Eski hafıza veya model bilgisi bununla çelişirse
+İNTERNET ARAŞTIRMASI SONUCUNU esas al.
+Güncel bilgi sorularında eski bilgiyi kullanma.`
+    });
+}
             console.log(
                 "GROQ İSTEĞİ GÖNDERİLİYOR..."
             );
