@@ -1,0 +1,26 @@
+.env
+node_modules/
+
+*.bak
+*-yedek.js
+*_*yedek.js
+*bozuk*yedek*
+.env.*
+
+server_eski.js
+
+content
+messages
+model
+ollama
+role
+stream
+curl.exe
+
+
+index-yedek.html
+style - Kopya.css
+
+
+memory.json
+users_memory.json
