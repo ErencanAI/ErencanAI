@@ -40,44 +40,35 @@ const MEMORY_FILE =
         "memory.json"
     );
 
-const MAX_MEMORY_MESSAGES = 400;
+const MAX_MEMORY_MESSAGES =
+    400;
 
 /*
-   Modele gönderilecek son konuşma sayısı.
+    Modele gönderilecek son konuşma sayısı.
 */
-const CONTEXT_MESSAGES = 30;
+const CONTEXT_MESSAGES =
+    30;
 
 /* =========================================================
    API AYARLARI
 ========================================================= */
 
-const REQUEST_TIMEOUT = 30000;
+const REQUEST_TIMEOUT =
+    30000;
 
-const MAX_RETRIES = 2;
+const MAX_RETRIES =
+    2;
 
-const MAX_MESSAGE_LENGTH = 12000;
+const MAX_MESSAGE_LENGTH =
+    12000;
 
-const MAX_REPLY_LENGTH = 30000;
+const MAX_REPLY_LENGTH =
+    30000;
 
 /* =========================================================
    TARİH / ZAMAN
 ========================================================= */
 
-/*
-   ErencanAI her istekte sunucunun güncel
-   tarih ve saat bilgisini modele gönderir.
-
-   Böylece model:
-   - bugünün tarihini
-   - yılı
-   - ayı
-   - günü
-   - saati
-   bilir.
-
-   Not:
-   Bu internet erişimi değildir.
-*/
 function getCurrentDateInfo() {
 
     const now =
@@ -99,6 +90,7 @@ function getCurrentDateInfo() {
         );
 
     return {
+
         iso:
             now.toISOString(),
 
@@ -128,23 +120,15 @@ function getCurrentDateInfo() {
 const SYSTEM_PROMPT = `
 Sen ErencanAI adlı gelişmiş, hızlı, doğal, güvenilir ve yardımcı bir yapay zeka asistanısın.
 
-==============================
-TEMEL KİMLİK
-==============================
-
 - Adın ErencanAI.
 - Kullanıcıyla doğal şekilde konuş.
 - Ana dilin Türkçedir.
-- Kullanıcı başka bir dil kullanırsa gerekirse o dile uyum sağlayabilirsin.
+- Kullanıcı başka bir dil kullanırsa gerektiğinde o dile uyum sağla.
 - Kullanıcının konuşma tarzını anlayıp uygun şekilde cevap ver.
 - Samimi ol ama gereksiz yere aşırı samimi olma.
 - Saygılı ol.
 - Kullanıcı hata yaptığında küçümseme.
 - Kullanıcı sinirliyse gereksiz şekilde uzatma.
-
-==============================
-EN ÖNEMLİ KURALLAR
-==============================
 
 1. Bilmediğin bilgiyi uydurma.
 2. Emin olmadığın bilgiyi kesin gerçek gibi söyleme.
@@ -158,10 +142,6 @@ EN ÖNEMLİ KURALLAR
 10. Güncel internet bilgisine sahip olmadığın durumda bunu dürüstçe belirt.
 11. İnternetten doğrulanması gereken bilgileri uydurma.
 12. Kullanıcı daha önce konuşulan bir konuyu devam ettiriyorsa bağlamı kullan.
-
-==============================
-GÜNCEL TARİH SİSTEMİ
-==============================
 
 Sana her istekte güncel Türkiye tarih ve saat bilgisi ayrıca verilecektir.
 
@@ -177,8 +157,8 @@ Tarih bilgisinin verilmiş olması internete erişebildiğin anlamına gelmez.
 Örneğin:
 
 Eğer mevcut tarih 2026 ise,
-2026 yılında gerçekleşmiş bir Dünya Kupası finalini
-"henüz oynanmadı" şeklinde anlatma.
+2026 yılında gerçekleşmiş bir olayı
+"henüz gerçekleşmedi" şeklinde anlatma.
 
 Eğer mevcut tarih olayın tarihinden sonraysa,
 olayın gerçekleşmiş olabileceğini dikkate al.
@@ -186,45 +166,46 @@ olayın gerçekleşmiş olabileceğini dikkate al.
 Eğer olayın sonucu sistem tarafından doğrulanmış şekilde verilmemişse,
 sonucu uydurma.
 
-==============================
-CEVAP TARZI
-==============================
-
 Basit soru:
+
 - 1-3 cümle.
 
 Normal soru:
+
 - Gerektiği kadar açıklama.
 
 Teknik soru:
+
 - Gerektiğinde numaralı adımlar.
 
 Kod isteği:
+
 - Eksiksiz ve çalışabilir kod.
 
 "Sadece ne yapacağımı söyle":
+
 - Yalnızca uygulanacak adımları ver.
 
 "Baştan sona kodu ver":
+
 - Dosyanın tamamını ver.
 
 Kullanıcı detay isterse:
+
 - Detaylandır.
 
 Kullanıcı kısa isterse:
+
 - Kısa cevap ver.
 
 Gereksiz:
+
 - Tekrar
 - Giriş cümlesi
 - Sonuç tekrarı
 - Aynı açıklamanın farklı versiyonları
 
 kullanma.
-
-==============================
-DOĞRULUK
-==============================
 
 Özellikle şu konularda dikkatli ol:
 
@@ -246,10 +227,6 @@ DOĞRULUK
 Modelin eğitim bilgisinde olmayan bir bilgi için
 kesin konuşma.
 
-==============================
-AKIL YÜRÜTME
-==============================
-
 Soruyu önce doğru anlamaya çalış.
 
 Teknik problem varsa:
@@ -262,12 +239,9 @@ Teknik problem varsa:
 6. Çözümün mevcut sistemi bozup bozmayacağını düşün.
 
 Kullanıcı "olmadı" derse:
+
 - Aynı çözümü körü körüne tekrar etme.
 - Yeni olası nedeni değerlendir.
-
-==============================
-KODLAMA
-==============================
 
 JavaScript:
 
@@ -431,10 +405,6 @@ Render:
 - restart
 - health check
 
-==============================
-ERENCANAI PROJESİ
-==============================
-
 Proje:
 ErencanAI
 
@@ -466,10 +436,6 @@ GET /api/health
 
 Mevcut çalışan sistemi gereksiz yere değiştirme.
 
-==============================
-HAFIZA
-==============================
-
 Hafızadaki bilgileri gerektiğinde kullan.
 
 Ancak:
@@ -480,10 +446,6 @@ Ancak:
 - Kullanıcının açıkça söylediği isim gibi basit bilgileri hatırlayabilirsin.
 - Gizli bilgileri cevapta gösterme.
 
-==============================
-GÜVENLİ KODLAMA
-==============================
-
 API anahtarını asla gösterme.
 
 .env içindeki gizli bilgileri asla yazdırma.
@@ -493,10 +455,6 @@ API anahtarını istemciye gönderme.
 Kod içine gerçek API anahtarı koyma.
 
 Şifreleri ve tokenları cevapta gösterme.
-
-==============================
-HATA AYIKLAMA
-==============================
 
 Şunları tanıyabil:
 
@@ -522,10 +480,6 @@ Express errors
 DOM errors
 CSS errors
 
-==============================
-EMOJİ
-==============================
-
 Uygunsa kullan.
 
 Teknik cevaplarda azalt.
@@ -550,10 +504,6 @@ Kod:
 
 Unity:
 🎮
-
-==============================
-SON HEDEF
-==============================
 
 DOĞRU
 DOĞAL
@@ -808,7 +758,7 @@ function cleanReply(text) {
     }
 
     /*
-       JSON cevap geldiyse düz metne çevir.
+        JSON cevap geldiyse düz metne çevir.
     */
 
     try {
@@ -831,12 +781,12 @@ function cleanReply(text) {
     } catch (error) {
 
         /*
-           Normal metin.
+            Normal metin.
         */
     }
 
     /*
-       Markdown code fence.
+        Markdown code fence.
     */
 
     reply =
@@ -852,17 +802,19 @@ function cleanReply(text) {
             .trim();
 
     /*
-       Gereksiz AI etiketleri.
+        Gereksiz AI etiketleri.
     */
 
     reply =
-        reply.replace(
-            /^(ErencanAI|AI|Assistant)\s*:\s*/i,
-            ""
-        ).trim();
+        reply
+            .replace(
+                /^(ErencanAI|AI|Assistant)\s*:\s*/i,
+                ""
+            )
+            .trim();
 
     /*
-       Aşırı uzun cevap koruması.
+        Aşırı uzun cevap koruması.
     */
 
     if (
@@ -942,19 +894,34 @@ async function requestGroq(
                                     messages,
 
                                 /*
-                                   Dengeli yaratıcılık.
+                                    Hızlı ve dengeli cevap.
                                 */
 
                                 temperature:
                                     0.20,
 
                                 /*
-                                   Modelin cevap için
-                                   yeterli alanı olsun.
+                                    Cevap için yeterli alan.
                                 */
 
                                 max_tokens:
                                     1200,
+
+                                /*
+                                    GPT-OSS reasoning.
+                                    Low = daha hızlı.
+                                */
+
+                                reasoning_effort:
+                                    "low",
+
+                                /*
+                                    Reasoning metnini
+                                    kullanıcıya gösterme.
+                                */
+
+                                reasoning_format:
+                                    "hidden",
 
                                 stream:
                                     false
@@ -979,7 +946,16 @@ async function requestGroq(
                 const error =
                     new Error(
                         "Groq HTTP " +
-                        response.status
+                        response.status +
+                        (
+                            responseText
+                                ? " - " +
+                                  responseText.slice(
+                                      0,
+                                      500
+                                  )
+                                : ""
+                        )
                     );
 
                 error.status =
@@ -1026,8 +1002,7 @@ async function requestGroq(
             );
 
             /*
-               Yetki hatalarında
-               tekrar denemeye gerek yok.
+                Yetki hatalarında tekrar deneme.
             */
 
             if (
@@ -1039,7 +1014,19 @@ async function requestGroq(
             }
 
             /*
-               Son deneme değilse bekle.
+                400 hatalarında da
+                aynı isteği tekrar etme.
+            */
+
+            if (
+                error.status === 400
+            ) {
+
+                break;
+            }
+
+            /*
+                Son deneme değilse bekle.
             */
 
             if (
@@ -1407,15 +1394,15 @@ Bu bilgi mevcut zaman bilgisidir.
 Tarih sorularında bu bilgiyi kullan.
 
 Ancak bu bilgi internet erişimi sağlamaz.
+
 Güncel haber, skor veya son dakika bilgisi
 gerekiyorsa doğrulanmış veri yoksa uydurma.
-                        `.trim()
+`.trim()
                 }
-
             ];
 
             /*
-               Eski konuşmaları ekle.
+                Eski konuşmaları ekle.
             */
 
             for (
@@ -1604,6 +1591,16 @@ gerekiyorsa doğrulanmış veri yoksa uydurma.
                 error.message
             );
 
+            if (
+                error.status
+            ) {
+
+                console.error(
+                    "HTTP DURUMU:",
+                    error.status
+                );
+            }
+
             console.error(
                 "================================="
             );
@@ -1652,6 +1649,19 @@ gerekiyorsa doğrulanmış veri yoksa uydurma.
 
                 userMessage =
                     "Groq API anahtarı geçersiz veya yetkisiz.";
+            }
+
+            /* -----------------------------------------
+               BAD REQUEST
+            ----------------------------------------- */
+
+            else if (
+                error.status ===
+                400
+            ) {
+
+                userMessage =
+                    "Groq isteği geçersiz. Model veya API ayarlarını kontrol et.";
             }
 
             /* -----------------------------------------
@@ -1814,6 +1824,45 @@ app.use(
 
             error:
                 "Bu ErencanAI API adresi bulunamadı."
+        });
+    }
+);
+
+/* =========================================================
+   GENEL HATA YAKALAYICI
+========================================================= */
+
+app.use(
+    function (
+        error,
+        req,
+        res,
+        next
+    ) {
+
+        console.error(
+            "EXPRESS GENEL HATA:",
+            error.message
+        );
+
+        if (
+            res.headersSent
+        ) {
+
+            return next(
+                error
+            );
+        }
+
+        return res.status(
+            500
+        ).json({
+
+            ok:
+                false,
+
+            reply:
+                "Sunucuda beklenmeyen bir hata oluştu."
         });
     }
 );
