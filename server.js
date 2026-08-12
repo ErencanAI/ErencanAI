@@ -9,14 +9,14 @@ const fs = require("fs");
 const app = express();
 
 /* =========================================================
-   SUNUCU
+SUNUCU
 ========================================================= */
 
 const PORT =
     Number(process.env.PORT) || 3000;
 
 /* =========================================================
-   GROQ
+GROQ
 ========================================================= */
 
 const GROQ_API_KEY =
@@ -31,7 +31,7 @@ const GROQ_MODEL =
     "openai/gpt-oss-20b";
 
 /* =========================================================
-   HAFIZA
+ESKİ HAFIZA
 ========================================================= */
 
 const MEMORY_FILE =
@@ -47,7 +47,23 @@ const CONTEXT_MESSAGES =
     30;
 
 /* =========================================================
-   API AYARLARI
+KULLANICIYA ÖZEL HAFIZA
+========================================================= */
+
+const USERS_MEMORY_FILE =
+    path.join(
+        __dirname,
+        "users_memory.json"
+    );
+
+const MAX_USER_MEMORY_MESSAGES =
+    400;
+
+const USER_CONTEXT_MESSAGES =
+    30;
+
+/* =========================================================
+API AYARLARI
 ========================================================= */
 
 const REQUEST_TIMEOUT =
@@ -63,7 +79,7 @@ const MAX_REPLY_LENGTH =
     30000;
 
 /* =========================================================
-   TARİH / ZAMAN
+TARİH / ZAMAN
 ========================================================= */
 
 function getCurrentDateInfo() {
@@ -111,7 +127,7 @@ function getCurrentDateInfo() {
 }
 
 /* =========================================================
-   GELİŞMİŞ SİSTEM PROMPTU
+GELİŞMİŞ SİSTEM PROMPTU
 ========================================================= */
 
 const SYSTEM_PROMPT = `
@@ -183,62 +199,6 @@ Korece
 
 Bu dillerden biriyle konuşulduğunda mümkün olduğunca o dilde doğal cevap ver.
 
-ÖRNEK:
-
-Kullanıcı:
-"Hello, how are you?"
-
-Cevap:
-İngilizce.
-
-Kullanıcı:
-"Wie geht es dir?"
-
-Cevap:
-Almanca.
-
-Kullanıcı:
-"Bonjour, comment ça va ?"
-
-Cevap:
-Fransızca.
-
-Kullanıcı:
-"¿Cómo estás?"
-
-Cevap:
-İspanyolca.
-
-Kullanıcı:
-"Come stai?"
-
-Cevap:
-İtalyanca.
-
-Kullanıcı:
-"こんにちは"
-
-Cevap:
-Japonca.
-
-Kullanıcı:
-"你好"
-
-Cevap:
-Çince.
-
-Kullanıcı:
-"안녕하세요"
-
-Cevap:
-Korece.
-
-Kullanıcı:
-"Merhaba"
-
-Cevap:
-Türkçe.
-
 DİL KURALLARI:
 
 1. Kullanıcının kullandığı dili otomatik algıla.
@@ -284,86 +244,42 @@ TARİH:
 
 Sana her istekte güncel Türkiye tarih ve saat bilgisi ayrıca verilecektir.
 
-Bu bilgiyi gerçek kabul et.
+Bu bilgi mevcut zaman bilgisidir.
 
 Ancak:
 
-- Tarih bilgisi = mevcut zaman bilgisi.
-- İnternet erişimi = güncel haber, skor, fiyat, sonuç ve web verisi.
-
-Tarih bilgisinin verilmiş olması internete erişebildiğin anlamına gelmez.
-
-Güncel haber, spor sonucu, fiyat, hava durumu veya başka internet verisi doğrulanmamışsa uydurma.
+- Tarih bilgisi internet erişimi değildir.
+- Güncel haber, spor sonucu, fiyat, hava durumu veya başka internet verisi doğrulanmamışsa uydurma.
 
 CEVAP UZUNLUĞU:
 
 Basit soru:
-
 - 1-3 cümle.
 
 Normal soru:
-
 - Gerektiği kadar açıklama.
 
 Teknik soru:
-
 - Gerektiğinde numaralı adımlar.
 
 Kod isteği:
-
 - Eksiksiz ve çalışabilir kod.
 
 "Sadece ne yapacağımı söyle":
-
 - Yalnızca uygulanacak adımları ver.
 
 "Baştan sona kodu ver":
-
 - Dosyanın tamamını ver.
 
 Kullanıcı detay isterse:
-
 - Detaylandır.
 
 Kullanıcı kısa isterse:
-
 - Kısa cevap ver.
 
-Gereksiz:
-
-- Tekrar
-- Giriş cümlesi
-- Sonuç tekrarı
-- Aynı açıklamanın farklı versiyonları
-
-kullanma.
-
-GÜNCEL KONULAR:
-
-Özellikle şu konularda dikkatli ol:
-
-- Güncel haberler
-- Spor sonuçları
-- Dünya Kupası
-- Futbol
-- Transferler
-- Teknoloji
-- Yazılım sürümleri
-- Fiyatlar
-- Tarihler
-- Hava durumu
-- Politik gelişmeler
-- Şirket haberleri
-- Güncel kişiler
-- Güncel etkinlikler
-
-Modelin eğitim bilgisinde olmayan bir bilgi için kesin konuşma.
+Gereksiz tekrar yapma.
 
 TEKNİK PROBLEM ÇÖZME:
-
-Soruyu önce doğru anlamaya çalış.
-
-Teknik problem varsa:
 
 1. Hatanın ne olduğunu belirle.
 2. Kaynağını belirle.
@@ -373,7 +289,6 @@ Teknik problem varsa:
 6. Çözümün mevcut sistemi bozup bozmayacağını düşün.
 
 Kullanıcı "olmadı" derse:
-
 - Aynı çözümü körü körüne tekrar etme.
 - Yeni olası nedeni değerlendir.
 
@@ -429,6 +344,7 @@ EXPRESS:
 - Render
 - health check
 - timeout
+- retry
 - error handling
 
 HTML:
@@ -553,9 +469,6 @@ Groq
 Model:
 openai/gpt-oss-20b
 
-Hafıza:
-memory.json
-
 Frontend:
 index.html
 app.js
@@ -572,17 +485,27 @@ GET /api/health
 
 HAFIZA:
 
-Mevcut çalışan sistemi gereksiz yere değiştirme.
+ErencanAI kullanıcıya özel hafıza sistemi kullanır.
 
-Hafızadaki bilgileri gerektiğinde kullan.
+Her kullanıcının hafızası ayrı tutulmalıdır.
 
-Ancak:
+Bir kullanıcının bilgilerini başka kullanıcıya aktarma.
 
-- Kullanıcıya ait olmayan bilgileri kullanıcıya aitmiş gibi söyleme.
-- Hafızadaki eski bilgileri güncel gerçek olarak kabul etme.
-- Yeni bilgi eski bilgiyle çelişirse yeni bilgiyi dikkate al.
-- Kullanıcının açıkça söylediği isim gibi basit bilgileri hatırlayabilirsin.
-- Gizli bilgileri cevapta gösterme.
+Kullanıcının kimliği USER-ID sistemiyle belirlenir.
+
+Kullanıcıya özel hafızadaki bilgiler yalnızca o kullanıcı için bağlam olarak kullanılmalıdır.
+
+Kullanıcı adı gibi basit bilgiler hatırlanabilir.
+
+Yeni bilgi eski bilgiyle çelişiyorsa yeni bilgiyi dikkate al.
+
+Gizli bilgileri cevapta gösterme.
+
+API anahtarını asla gösterme.
+
+.env içindeki gizli bilgileri asla yazdırma.
+
+Kod içine gerçek API anahtarı koyma.
 
 GÜVENLİK:
 
@@ -592,13 +515,9 @@ API anahtarını asla gösterme.
 
 API anahtarını istemciye gönderme.
 
-Kod içine gerçek API anahtarı koyma.
-
 Şifreleri ve tokenları cevapta gösterme.
 
 HATA TANIMA:
-
-Şunları tanıyabil:
 
 SyntaxError
 ReferenceError
@@ -622,39 +541,13 @@ Express errors
 DOM errors
 CSS errors
 
-Uygunsa kullan.
-
-TEKNİK CEVAPLAR:
-
-Teknik cevaplarda gereksiz uzunluğu azalt.
-
-Başarılı:
-✅
-
-Hata:
-❌
-
-Uyarı:
-⚠️
-
-Bilgi:
-🔎
-
-Fikir:
-💡
-
-Kod:
-💻
-
-Unity:
-🎮
-
 SONUÇ:
 
 DOĞRU
 DOĞAL
 HIZLI
 ÇOK DİLLİ
+KULLANICIYA ÖZEL HAFIZALI
 GÜNCEL TARİH BİLGİSİNİ DİKKATE ALAN
 ANLAŞILIR
 FAYDALI
@@ -665,13 +558,19 @@ Mevcut çalışan sistemi gereksiz yere bozma.
 `.trim();
 
 /* =========================================================
-   HAFIZA DEĞİŞKENİ
+ESKİ HAFIZA
 ========================================================= */
 
 let memory = [];
 
 /* =========================================================
-   HAFIZA YÜKLE
+KULLANICI HAFIZALARI
+========================================================= */
+
+let userMemories = {};
+
+/* =========================================================
+ESKİ HAFIZA YÜKLE
 ========================================================= */
 
 function loadMemory() {
@@ -741,7 +640,7 @@ function loadMemory() {
 }
 
 /* =========================================================
-   HAFIZA KAYDET
+ESKİ HAFIZA KAYDET
 ========================================================= */
 
 function saveMemory() {
@@ -772,7 +671,7 @@ function saveMemory() {
 }
 
 /* =========================================================
-   HAFIZAYA EKLE
+ESKİ HAFIZAYA EKLE
 ========================================================= */
 
 function addMemory(
@@ -821,10 +720,260 @@ function addMemory(
 }
 
 /* =========================================================
-   İSİM BUL
+KULLANICI HAFIZASI DOSYASI OLUŞTUR
 ========================================================= */
 
-function findUserName(text) {
+function loadUserMemories() {
+
+    try {
+
+        if (
+            !fs.existsSync(
+                USERS_MEMORY_FILE
+            )
+        ) {
+
+            fs.writeFileSync(
+                USERS_MEMORY_FILE,
+                "{}",
+                "utf8"
+            );
+
+            return {};
+        }
+
+        const content =
+            fs.readFileSync(
+                USERS_MEMORY_FILE,
+                "utf8"
+            );
+
+        if (
+            !content.trim()
+        ) {
+
+            return {};
+        }
+
+        const data =
+            JSON.parse(
+                content
+            );
+
+        if (
+            !data ||
+            typeof data !== "object" ||
+            Array.isArray(data)
+        ) {
+
+            return {};
+        }
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "KULLANICI HAFIZASI OKUMA HATASI:",
+            error.message
+        );
+
+        return {};
+    }
+}
+
+/* =========================================================
+KULLANICI HAFIZASI KAYDET
+========================================================= */
+
+function saveUserMemories() {
+
+    try {
+
+        fs.writeFileSync(
+            USERS_MEMORY_FILE,
+            JSON.stringify(
+                userMemories,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "KULLANICI HAFIZASI KAYDETME HATASI:",
+            error.message
+        );
+
+        return false;
+    }
+}
+
+/* =========================================================
+USER ID TEMİZLE
+========================================================= */
+
+function cleanUserId(value) {
+
+    let userId =
+        String(
+            value || ""
+        ).trim();
+
+    if (
+        !userId
+    ) {
+
+        return "default-user";
+    }
+
+    userId =
+        userId
+            .replace(
+                /[^a-zA-Z0-9_-]/g,
+                ""
+            )
+            .slice(
+                0,
+                100
+            );
+
+    if (
+        !userId
+    ) {
+
+        return "default-user";
+    }
+
+    return userId;
+}
+
+/* =========================================================
+USER ID AL
+========================================================= */
+
+function getUserId(req) {
+
+    const headerId =
+        req.get(
+            "X-User-ID"
+        );
+
+    const queryId =
+        req.query &&
+        req.query.userId
+            ? req.query.userId
+            : "";
+
+    const bodyId =
+        req.body &&
+        req.body.userId
+            ? req.body.userId
+            : "";
+
+    return cleanUserId(
+        headerId ||
+        bodyId ||
+        queryId
+    );
+}
+
+/* =========================================================
+KULLANICI HAFIZASI AL
+========================================================= */
+
+function getUserMemory(
+    userId
+) {
+
+    const id =
+        cleanUserId(
+            userId
+        );
+
+    if (
+        !Array.isArray(
+            userMemories[id]
+        )
+    ) {
+
+        userMemories[id] = [];
+    }
+
+    return userMemories[id];
+}
+
+/* =========================================================
+KULLANICI HAFIZASINA EKLE
+========================================================= */
+
+function addUserMemory(
+    userId,
+    role,
+    content
+) {
+
+    const id =
+        cleanUserId(
+            userId
+        );
+
+    const cleanContent =
+        String(
+            content || ""
+        ).trim();
+
+    if (
+        !cleanContent
+    ) {
+
+        return;
+    }
+
+    const userMemory =
+        getUserMemory(
+            id
+        );
+
+    userMemory.push({
+
+        role:
+            role === "assistant"
+                ? "assistant"
+                : "user",
+
+        content:
+            cleanContent,
+
+        time:
+            new Date().toISOString()
+    });
+
+    if (
+        userMemory.length >
+        MAX_USER_MEMORY_MESSAGES
+    ) {
+
+        userMemories[id] =
+            userMemory.slice(
+                -MAX_USER_MEMORY_MESSAGES
+            );
+    }
+
+    saveUserMemories();
+}
+
+/* =========================================================
+İSİM BUL
+========================================================= */
+
+function findUserName(
+    text
+) {
 
     const value =
         String(
@@ -847,7 +996,54 @@ function findUserName(text) {
 }
 
 /* =========================================================
-   SON KULLANICI ADINI BUL
+KULLANICI HAFIZASINDAN İSİM BUL
+========================================================= */
+
+function getUserName(
+    userId
+) {
+
+    const userMemory =
+        getUserMemory(
+            userId
+        );
+
+    for (
+        let i =
+            userMemory.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const item =
+            userMemory[i];
+
+        if (
+            !item ||
+            item.role !== "user"
+        ) {
+
+            continue;
+        }
+
+        const name =
+            findUserName(
+                item.content
+            );
+
+        if (
+            name
+        ) {
+
+            return name;
+        }
+    }
+
+    return null;
+}
+
+/* =========================================================
+ESKİ SİSTEM İÇİN İSİM
 ========================================================= */
 
 function getLastUserName() {
@@ -887,10 +1083,12 @@ function getLastUserName() {
 }
 
 /* =========================================================
-   CEVAP TEMİZLE
+CEVAP TEMİZLE
 ========================================================= */
 
-function cleanReply(text) {
+function cleanReply(
+    text
+) {
 
     let reply =
         String(
@@ -963,7 +1161,7 @@ function cleanReply(text) {
 }
 
 /* =========================================================
-   GROQ İSTEĞİ
+GROQ İSTEĞİ
 ========================================================= */
 
 async function requestGroq(
@@ -1155,14 +1353,17 @@ async function requestGroq(
 }
 
 /* =========================================================
-   BAŞLANGIÇ
+BAŞLANGIÇ HAFIZALARI
 ========================================================= */
 
 memory =
     loadMemory();
 
+userMemories =
+    loadUserMemories();
+
 /* =========================================================
-   EXPRESS
+EXPRESS
 ========================================================= */
 
 app.use(
@@ -1179,7 +1380,7 @@ app.use(
 );
 
 /* =========================================================
-   ANA SAYFA
+ANA SAYFA
 ========================================================= */
 
 app.get(
@@ -1199,7 +1400,7 @@ app.get(
 );
 
 /* =========================================================
-   TEST API
+TEST API
 ========================================================= */
 
 app.get(
@@ -1234,6 +1435,11 @@ app.get(
             memoryMessages:
                 memory.length,
 
+            userCount:
+                Object.keys(
+                    userMemories
+                ).length,
+
             endpoint:
                 "/api/chat",
 
@@ -1244,13 +1450,16 @@ app.get(
                 dateInfo.year,
 
             languages:
-                "Çoklu dil desteği aktif"
+                "Çoklu dil desteği aktif",
+
+            personalMemory:
+                true
         });
     }
 );
 
 /* =========================================================
-   CHAT API
+CHAT API
 ========================================================= */
 
 app.post(
@@ -1264,6 +1473,11 @@ app.post(
             Date.now();
 
         try {
+
+            const userId =
+                getUserId(
+                    req
+                );
 
             let message =
                 String(
@@ -1340,6 +1554,11 @@ app.post(
                 message
             );
 
+            console.log(
+                "USER ID:",
+                userId
+            );
+
             const dateInfo =
                 getCurrentDateInfo();
 
@@ -1349,13 +1568,19 @@ app.post(
             );
 
             /* -----------------------------------------
-               HAFIZA
+               KULLANICI HAFIZASI
             ----------------------------------------- */
 
-            addMemory(
+            addUserMemory(
+                userId,
                 "user",
                 message
             );
+
+            const userMemory =
+                getUserMemory(
+                    userId
+                );
 
             /* -----------------------------------------
                İSİM SİSTEMİ
@@ -1379,9 +1604,10 @@ app.post(
                 const reply =
                     "Tamam, adını " +
                     newName +
-                    " olarak hatırlayacağım. 😊";
+                    " olarak hatırlayacağım.";
 
-                addMemory(
+                addUserMemory(
+                    userId,
                     "assistant",
                     reply
                 );
@@ -1396,7 +1622,10 @@ app.post(
 
                     timeMs:
                         Date.now() -
-                        startTime
+                        startTime,
+
+                    userMemory:
+                        true
                 });
             }
 
@@ -1405,7 +1634,9 @@ app.post(
             ) {
 
                 const userName =
-                    getLastUserName();
+                    getUserName(
+                        userId
+                    );
 
                 if (
                     userName
@@ -1416,7 +1647,8 @@ app.post(
                         userName +
                         ".";
 
-                    addMemory(
+                    addUserMemory(
+                        userId,
                         "assistant",
                         reply
                     );
@@ -1431,7 +1663,10 @@ app.post(
 
                         timeMs:
                             Date.now() -
-                            startTime
+                            startTime,
+
+                        userMemory:
+                            true
                     });
                 }
             }
@@ -1441,8 +1676,8 @@ app.post(
             ----------------------------------------- */
 
             const recentMessages =
-                memory.slice(
-                    -CONTEXT_MESSAGES
+                userMemory.slice(
+                    -USER_CONTEXT_MESSAGES
                 );
 
             /* -----------------------------------------
@@ -1484,14 +1719,24 @@ Tarih sorularında bu bilgiyi kullan.
 
 Ancak bu bilgi internet erişimi sağlamaz.
 
-Güncel haber, skor veya son dakika bilgisi
-gerekiyorsa doğrulanmış veri yoksa uydurma.
-
 KULLANICI DİLİ:
 
 Kullanıcının son mesajındaki dili belirle.
 Mümkünse cevabı aynı dilde ver.
 Kullanıcı açıkça başka bir dil isterse o dile geç.
+
+KULLANICI HAFIZASI:
+
+Bu konuşma yalnızca USER ID:
+${userId}
+
+için geçerlidir.
+
+Bu kullanıcının hafızasını başka kullanıcıların
+hafızasıyla karıştırma.
+
+Bu kullanıcıya ait geçmiş mesajları bağlam olarak
+kullanabilirsin.
 `
                         .trim()
                 }
@@ -1528,7 +1773,7 @@ Kullanıcı açıkça başka bir dil isterse o dile geç.
             }
 
             console.log(
-                "BAĞLAM:",
+                "KULLANICI HAFIZASI:",
                 recentMessages.length +
                 " mesaj"
             );
@@ -1607,8 +1852,24 @@ Kullanıcı açıkça başka bir dil isterse o dile geç.
             }
 
             /* -----------------------------------------
-               HAFIZA
+               KULLANICI HAFIZASINA AI CEVABI
             ----------------------------------------- */
+
+            addUserMemory(
+                userId,
+                "assistant",
+                reply
+            );
+
+            /* -----------------------------------------
+               ESKİ HAFIZAYA DA KAYDET
+               MEVCUT SİSTEM BOZULMASIN
+            ----------------------------------------- */
+
+            addMemory(
+                "user",
+                message
+            );
 
             addMemory(
                 "assistant",
@@ -1657,7 +1918,13 @@ Kullanıcı açıkça başka bir dil isterse o dile geç.
                     GROQ_MODEL,
 
                 currentDate:
-                    dateInfo.turkey
+                    dateInfo.turkey,
+
+                userMemory:
+                    true,
+
+                userId:
+                    userId
             });
 
         } catch (error) {
@@ -1768,7 +2035,7 @@ Kullanıcı açıkça başka bir dil isterse o dile geç.
 );
 
 /* =========================================================
-   HAFIZA
+ESKİ HAFIZA API
 ========================================================= */
 
 app.get(
@@ -1793,7 +2060,83 @@ app.get(
 );
 
 /* =========================================================
-   HAFIZA TEMİZLE
+KULLANICI HAFIZASI API
+========================================================= */
+
+app.get(
+    "/api/user-memory",
+    function (
+        req,
+        res
+    ) {
+
+        const userId =
+            getUserId(
+                req
+            );
+
+        const userMemory =
+            getUserMemory(
+                userId
+            );
+
+        return res.json({
+
+            ok:
+                true,
+
+            userMemory:
+                true,
+
+            count:
+                userMemory.length,
+
+            messages:
+                userMemory
+        });
+    }
+);
+
+/* =========================================================
+KULLANICI HAFIZASI TEMİZLE
+========================================================= */
+
+app.post(
+    "/api/clear-user-memory",
+    function (
+        req,
+        res
+    ) {
+
+        const userId =
+            getUserId(
+                req
+            );
+
+        userMemories[userId] =
+            [];
+
+        const saved =
+            saveUserMemories();
+
+        return res.json({
+
+            ok:
+                saved,
+
+            userMemory:
+                true,
+
+            message:
+                saved
+                    ? "Bu kullanıcının ErencanAI hafızası temizlendi."
+                    : "Kullanıcı hafızası temizlenemedi."
+        });
+    }
+);
+
+/* =========================================================
+ESKİ HAFIZA TEMİZLE
 ========================================================= */
 
 app.post(
@@ -1823,7 +2166,7 @@ app.post(
 );
 
 /* =========================================================
-   SAĞLIK
+SAĞLIK
 ========================================================= */
 
 app.get(
@@ -1853,6 +2196,11 @@ app.get(
             memory:
                 memory.length,
 
+            users:
+                Object.keys(
+                    userMemories
+                ).length,
+
             currentDate:
                 dateInfo.turkey,
 
@@ -1862,13 +2210,16 @@ app.get(
                 ),
 
             multilingual:
+                true,
+
+            personalMemory:
                 true
         });
     }
 );
 
 /* =========================================================
-   404
+404
 ========================================================= */
 
 app.use(
@@ -1891,7 +2242,7 @@ app.use(
 );
 
 /* =========================================================
-   GENEL HATA YAKALAYICI
+GENEL HATA YAKALAYICI
 ========================================================= */
 
 app.use(
@@ -1930,7 +2281,7 @@ app.use(
 );
 
 /* =========================================================
-   SUNUCU
+SUNUCU
 ========================================================= */
 
 app.listen(
@@ -1971,6 +2322,10 @@ app.listen(
         );
 
         console.log(
+            "USER MEMORY: /api/user-memory"
+        );
+
+        console.log(
             "AI: Groq"
         );
 
@@ -1980,9 +2335,16 @@ app.listen(
         );
 
         console.log(
-            "HAFIZA:",
+            "ESKİ HAFIZA:",
             memory.length +
             " mesaj"
+        );
+
+        console.log(
+            "KULLANICI SAYISI:",
+            Object.keys(
+                userMemories
+            ).length
         );
 
         console.log(
@@ -1994,6 +2356,11 @@ app.listen(
 
         console.log(
             "ÇOKLU DİL:",
+            "AKTİF"
+        );
+
+        console.log(
+            "KULLANICIYA ÖZEL HAFIZA:",
             "AKTİF"
         );
 
