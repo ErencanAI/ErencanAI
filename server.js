@@ -79,6 +79,69 @@ const MAX_REPLY_LENGTH =
     30000;
 
 /* =========================================================
+DOSYA YÜKLEME AYARLARI
+========================================================= */
+
+const UPLOADS_DIR =
+    path.join(
+        __dirname,
+        "uploads"
+    );
+
+const MAX_FILE_SIZE =
+    10 * 1024 * 1024;
+
+const ALLOWED_FILE_EXTENSIONS = [
+
+    ".txt",
+    ".json",
+    ".js",
+    ".html",
+    ".css",
+    ".py",
+    ".cs",
+    ".md",
+    ".csv",
+    ".pdf",
+    ".docx",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
+
+];
+
+/* =========================================================
+UPLOADS KLASÖRÜ
+========================================================= */
+
+try {
+
+    if (
+        !fs.existsSync(
+            UPLOADS_DIR
+        )
+    ) {
+
+        fs.mkdirSync(
+            UPLOADS_DIR,
+            {
+                recursive: true
+            }
+        );
+
+    }
+
+} catch (error) {
+
+    console.error(
+        "UPLOADS KLASÖRÜ OLUŞTURULAMADI:",
+        error.message
+    );
+
+}
+
+/* =========================================================
 TARİH / ZAMAN
 ========================================================= */
 
@@ -123,6 +186,7 @@ function getCurrentDateInfo() {
                     }
                 ).format(now)
             )
+
     };
 }
 
@@ -254,27 +318,35 @@ Ancak:
 CEVAP UZUNLUĞU:
 
 Basit soru:
+
 - 1-3 cümle.
 
 Normal soru:
+
 - Gerektiği kadar açıklama.
 
 Teknik soru:
+
 - Gerektiğinde numaralı adımlar.
 
 Kod isteği:
+
 - Eksiksiz ve çalışabilir kod.
 
 "Sadece ne yapacağımı söyle":
+
 - Yalnızca uygulanacak adımları ver.
 
 "Baştan sona kodu ver":
+
 - Dosyanın tamamını ver.
 
 Kullanıcı detay isterse:
+
 - Detaylandır.
 
 Kullanıcı kısa isterse:
+
 - Kısa cevap ver.
 
 Gereksiz tekrar yapma.
@@ -289,6 +361,7 @@ TEKNİK PROBLEM ÇÖZME:
 6. Çözümün mevcut sistemi bozup bozmayacağını düşün.
 
 Kullanıcı "olmadı" derse:
+
 - Aynı çözümü körü körüne tekrar etme.
 - Yeni olası nedeni değerlendir.
 
@@ -455,6 +528,42 @@ RENDER:
 - restart
 - health check
 
+DOSYA:
+
+ErencanAI dosya yükleme özelliğine sahiptir.
+
+Kullanıcı tarafından gönderilen dosyalar güvenli şekilde alınmalıdır.
+
+Desteklenen temel dosya türleri:
+
+TXT
+JSON
+JS
+HTML
+CSS
+PY
+CS
+MD
+CSV
+PDF
+DOCX
+PNG
+JPG
+JPEG
+WEBP
+
+Maksimum dosya boyutu 10 MB'dır.
+
+Dosyalar kullanıcı kimliğiyle ilişkilendirilir.
+
+Bir kullanıcının dosyalarını başka kullanıcıya aktarma.
+
+API anahtarını asla gösterme.
+
+.env içindeki gizli bilgileri asla yazdırma.
+
+Kod içine gerçek API anahtarı koyma.
+
 PROJE:
 
 Proje:
@@ -476,6 +585,9 @@ style.css
 
 Ana API:
 POST /api/chat
+
+Dosya API:
+POST /api/upload
 
 Test:
 GET /api/test
@@ -500,12 +612,6 @@ Kullanıcı adı gibi basit bilgiler hatırlanabilir.
 Yeni bilgi eski bilgiyle çelişiyorsa yeni bilgiyi dikkate al.
 
 Gizli bilgileri cevapta gösterme.
-
-API anahtarını asla gösterme.
-
-.env içindeki gizli bilgileri asla yazdırma.
-
-Kod içine gerçek API anahtarı koyma.
 
 GÜVENLİK:
 
@@ -703,6 +809,7 @@ function addMemory(
 
         time:
             new Date().toISOString()
+
     });
 
     if (
@@ -817,7 +924,9 @@ function saveUserMemories() {
 USER ID TEMİZLE
 ========================================================= */
 
-function cleanUserId(value) {
+function cleanUserId(
+    value
+) {
 
     let userId =
         String(
@@ -856,7 +965,9 @@ function cleanUserId(value) {
 USER ID AL
 ========================================================= */
 
-function getUserId(req) {
+function getUserId(
+    req
+) {
 
     const headerId =
         req.get(
@@ -951,6 +1062,7 @@ function addUserMemory(
 
         time:
             new Date().toISOString()
+
     });
 
     if (
@@ -1161,6 +1273,59 @@ function cleanReply(
 }
 
 /* =========================================================
+DOSYA ADI TEMİZLE
+========================================================= */
+
+function cleanFileName(
+    fileName
+) {
+
+    let name =
+        String(
+            fileName || ""
+        );
+
+    name =
+        path.basename(
+            name
+        );
+
+    name =
+        name.replace(
+            /[^a-zA-Z0-9ÇĞİÖŞÜçğıöşü._-]/g,
+            "_"
+        );
+
+    if (
+        !name
+    ) {
+
+        name =
+            "dosya";
+    }
+
+    return name;
+}
+
+/* =========================================================
+DOSYA UZANTISI KONTROL
+========================================================= */
+
+function isAllowedFile(
+    fileName
+) {
+
+    const extension =
+        path.extname(
+            fileName
+        ).toLowerCase();
+
+    return ALLOWED_FILE_EXTENSIONS.includes(
+        extension
+    );
+}
+
+/* =========================================================
 GROQ İSTEĞİ
 ========================================================= */
 
@@ -1209,6 +1374,7 @@ async function requestGroq(
                             "Authorization":
                                 "Bearer " +
                                 GROQ_API_KEY
+
                         },
 
                         body:
@@ -1234,10 +1400,12 @@ async function requestGroq(
 
                                 stream:
                                     false
+
                             }),
 
                         signal:
                             controller.signal
+
                     }
                 );
 
@@ -1331,7 +1499,9 @@ async function requestGroq(
             ) {
 
                 await new Promise(
-                    function (resolve) {
+                    function (
+                        resolve
+                    ) {
 
                         setTimeout(
                             resolve,
@@ -1369,7 +1539,7 @@ EXPRESS
 app.use(
     express.json({
         limit:
-            "2mb"
+            "15mb"
     })
 );
 
@@ -1396,6 +1566,7 @@ app.get(
                 "index.html"
             )
         );
+
     }
 );
 
@@ -1443,6 +1614,9 @@ app.get(
             endpoint:
                 "/api/chat",
 
+            uploadEndpoint:
+                "/api/upload",
+
             currentDate:
                 dateInfo.turkey,
 
@@ -1453,8 +1627,273 @@ app.get(
                 "Çoklu dil desteği aktif",
 
             personalMemory:
+                true,
+
+            fileUpload:
                 true
+
         });
+
+    }
+);
+
+/* =========================================================
+DOSYA YÜKLEME API
+========================================================= */
+
+app.post(
+    "/api/upload",
+    function (
+        req,
+        res
+    ) {
+
+        try {
+
+            const userId =
+                getUserId(
+                    req
+                );
+
+            const fileName =
+                cleanFileName(
+                    req.body &&
+                    req.body.fileName
+                        ? req.body.fileName
+                        : ""
+                );
+
+            const fileData =
+                req.body &&
+                req.body.fileData
+                    ? String(
+                        req.body.fileData
+                    )
+                    : "";
+
+            if (
+                !fileName ||
+                !fileData
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Dosya bulunamadı."
+
+                });
+            }
+
+            if (
+                !isAllowedFile(
+                    fileName
+                )
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Bu dosya türüne izin verilmiyor."
+
+                });
+            }
+
+            let base64Data =
+                fileData;
+
+            if (
+                base64Data.includes(
+                    ","
+                )
+            ) {
+
+                base64Data =
+                    base64Data.split(
+                        ","
+                    )[1];
+
+            }
+
+            let buffer;
+
+            try {
+
+                buffer =
+                    Buffer.from(
+                        base64Data,
+                        "base64"
+                    );
+
+            } catch (error) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Dosya verisi geçersiz."
+
+                });
+            }
+
+            if (
+                !buffer ||
+                !buffer.length
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Dosya boş veya geçersiz."
+
+                });
+            }
+
+            if (
+                buffer.length >
+                MAX_FILE_SIZE
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Dosya çok büyük. Maksimum dosya boyutu 10 MB."
+
+                });
+            }
+
+            const time =
+                Date.now();
+
+            const random =
+                Math.random()
+                    .toString(36)
+                    .slice(
+                        2,
+                        10
+                    );
+
+            const extension =
+                path.extname(
+                    fileName
+                );
+
+            const baseName =
+                path.basename(
+                    fileName,
+                    extension
+                );
+
+            const safeBaseName =
+                cleanFileName(
+                    baseName
+                );
+
+            const finalFileName =
+                userId +
+                "_" +
+                time +
+                "_" +
+                random +
+                "_" +
+                safeBaseName +
+                extension;
+
+            const filePath =
+                path.join(
+                    UPLOADS_DIR,
+                    finalFileName
+                );
+
+            fs.writeFileSync(
+                filePath,
+                buffer
+            );
+
+            console.log(
+                "DOSYA YÜKLENDİ:",
+                fileName
+            );
+
+            console.log(
+                "USER ID:",
+                userId
+            );
+
+            console.log(
+                "DOSYA BOYUTU:",
+                buffer.length,
+                "byte"
+            );
+
+            return res.json({
+
+                ok:
+                    true,
+
+                file:
+                    fileName,
+
+                savedFile:
+                    finalFileName,
+
+                size:
+                    buffer.length,
+
+                userId:
+                    userId,
+
+                message:
+                    "Dosya başarıyla yüklendi."
+
+            });
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "DOSYA YÜKLEME HATASI:",
+                error.message
+            );
+
+            return res.status(
+                500
+            ).json({
+
+                ok:
+                    false,
+
+                reply:
+                    "Dosya yüklenirken bir hata oluştu."
+
+            });
+
+        }
+
     }
 );
 
@@ -1500,6 +1939,7 @@ app.post(
 
                     reply:
                         "Lütfen bir mesaj yaz."
+
                 });
             }
 
@@ -1517,6 +1957,7 @@ app.post(
 
                     reply:
                         "Mesaj çok uzun. Lütfen daha kısa bir mesaj gönder."
+
                 });
             }
 
@@ -1537,6 +1978,7 @@ app.post(
 
                     reply:
                         "Groq API anahtarı bulunamadı."
+
                 });
             }
 
@@ -1568,7 +2010,7 @@ app.post(
             );
 
             /* -----------------------------------------
-               KULLANICI HAFIZASI
+            KULLANICI HAFIZASI
             ----------------------------------------- */
 
             addUserMemory(
@@ -1583,7 +2025,7 @@ app.post(
                 );
 
             /* -----------------------------------------
-               İSİM SİSTEMİ
+            İSİM SİSTEMİ
             ----------------------------------------- */
 
             const newName =
@@ -1626,6 +2068,7 @@ app.post(
 
                     userMemory:
                         true
+
                 });
             }
 
@@ -1667,12 +2110,13 @@ app.post(
 
                         userMemory:
                             true
+
                     });
                 }
             }
 
             /* -----------------------------------------
-               BAĞLAM
+            BAĞLAM
             ----------------------------------------- */
 
             const recentMessages =
@@ -1681,7 +2125,7 @@ app.post(
                 );
 
             /* -----------------------------------------
-               GROQ MESAJLARI
+            GROQ MESAJLARI
             ----------------------------------------- */
 
             const messages = [
@@ -1693,6 +2137,7 @@ app.post(
 
                     content:
                         SYSTEM_PROMPT
+
                 },
 
                 {
@@ -1737,9 +2182,10 @@ hafızasıyla karıştırma.
 
 Bu kullanıcıya ait geçmiş mesajları bağlam olarak
 kullanabilirsin.
-`
-                        .trim()
+`.trim()
+
                 }
+
             ];
 
             for (
@@ -1769,6 +2215,7 @@ kullanabilirsin.
                         String(
                             item.content
                         )
+
                 });
             }
 
@@ -1783,7 +2230,7 @@ kullanabilirsin.
             );
 
             /* -----------------------------------------
-               GROQ
+            GROQ
             ----------------------------------------- */
 
             const data =
@@ -1792,7 +2239,7 @@ kullanabilirsin.
                 );
 
             /* -----------------------------------------
-               CEVAP
+            CEVAP
             ----------------------------------------- */
 
             let reply =
@@ -1819,11 +2266,12 @@ kullanabilirsin.
 
                     reply =
                         choice.message.content.trim();
+
                 }
             }
 
             /* -----------------------------------------
-               CEVAP TEMİZLE
+            CEVAP TEMİZLE
             ----------------------------------------- */
 
             reply =
@@ -1848,11 +2296,12 @@ kullanabilirsin.
 
                     reply:
                         "ErencanAI boş cevap verdi. Lütfen tekrar dene."
+
                 });
             }
 
             /* -----------------------------------------
-               KULLANICI HAFIZASINA AI CEVABI
+            KULLANICI HAFIZASINA AI CEVABI
             ----------------------------------------- */
 
             addUserMemory(
@@ -1862,8 +2311,7 @@ kullanabilirsin.
             );
 
             /* -----------------------------------------
-               ESKİ HAFIZAYA DA KAYDET
-               MEVCUT SİSTEM BOZULMASIN
+            ESKİ HAFIZAYA DA KAYDET
             ----------------------------------------- */
 
             addMemory(
@@ -1877,7 +2325,7 @@ kullanabilirsin.
             );
 
             /* -----------------------------------------
-               SÜRE
+            SÜRE
             ----------------------------------------- */
 
             const elapsed =
@@ -1900,7 +2348,7 @@ kullanabilirsin.
             );
 
             /* -----------------------------------------
-               CEVAP
+            CEVAP
             ----------------------------------------- */
 
             return res.json({
@@ -1925,9 +2373,12 @@ kullanabilirsin.
 
                 userId:
                     userId
+
             });
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
             const elapsed =
                 Date.now() -
@@ -2029,8 +2480,10 @@ kullanabilirsin.
 
                 timeMs:
                     elapsed
+
             });
         }
+
     }
 );
 
@@ -2055,7 +2508,9 @@ app.get(
 
             messages:
                 memory
+
         });
+
     }
 );
 
@@ -2093,7 +2548,9 @@ app.get(
 
             messages:
                 userMemory
+
         });
+
     }
 );
 
@@ -2131,7 +2588,9 @@ app.post(
                 saved
                     ? "Bu kullanıcının ErencanAI hafızası temizlendi."
                     : "Kullanıcı hafızası temizlenemedi."
+
         });
+
     }
 );
 
@@ -2161,7 +2620,9 @@ app.post(
                 saved
                     ? "ErencanAI hafızası temizlendi."
                     : "Hafıza temizlenemedi."
+
         });
+
     }
 );
 
@@ -2213,8 +2674,13 @@ app.get(
                 true,
 
             personalMemory:
+                true,
+
+            fileUpload:
                 true
+
         });
+
     }
 );
 
@@ -2237,7 +2703,9 @@ app.use(
 
             error:
                 "Bu ErencanAI API adresi bulunamadı."
+
         });
+
     }
 );
 
@@ -2276,7 +2744,9 @@ app.use(
 
             reply:
                 "Sunucuda beklenmeyen bir hata oluştu."
+
         });
+
     }
 );
 
@@ -2311,6 +2781,10 @@ app.listen(
 
         console.log(
             "API: /api/chat"
+        );
+
+        console.log(
+            "UPLOAD: /api/upload"
         );
 
         console.log(
@@ -2365,6 +2839,16 @@ app.listen(
         );
 
         console.log(
+            "DOSYA YÜKLEME:",
+            "AKTİF"
+        );
+
+        console.log(
+            "MAKSİMUM DOSYA:",
+            "10 MB"
+        );
+
+        console.log(
             "TÜRKİYE TARİHİ:",
             dateInfo.turkey
         );
@@ -2372,5 +2856,6 @@ app.listen(
         console.log(
             "================================="
         );
+
     }
 );
