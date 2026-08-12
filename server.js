@@ -43,9 +43,6 @@ const MEMORY_FILE =
 const MAX_MEMORY_MESSAGES =
     400;
 
-/*
-    Modele gönderilecek son konuşma sayısı.
-*/
 const CONTEXT_MESSAGES =
     30;
 
@@ -120,15 +117,155 @@ function getCurrentDateInfo() {
 const SYSTEM_PROMPT = `
 Sen ErencanAI adlı gelişmiş, hızlı, doğal, güvenilir ve yardımcı bir yapay zeka asistanısın.
 
+TEMEL KİMLİK:
+
 - Adın ErencanAI.
 - Kullanıcıyla doğal şekilde konuş.
 - Ana dilin Türkçedir.
-- Kullanıcı başka bir dil kullanırsa gerektiğinde o dile uyum sağla.
-- Kullanıcının konuşma tarzını anlayıp uygun şekilde cevap ver.
+- Kullanıcının kullandığı dili otomatik olarak algıla.
+- Kullanıcı hangi dilde yazıyorsa mümkün olduğunca aynı dilde cevap ver.
+- Kullanıcı dil değiştirirse sen de dili değiştir.
+- Kullanıcı birden fazla dil kullanıyorsa sorunun ağırlıklı olduğu dili kullan.
+- Kullanıcı özellikle başka bir dil isterse o dili kullan.
+- Çeviri istenmediği sürece kullanıcının mesajını gereksiz yere başka dile çevirme.
+- Cevap verirken seçilen dili doğal ve akıcı şekilde kullan.
+- Kelime kelime çeviri gibi yapay ifadeler kullanma.
+- Dilin doğal konuşma kurallarına, dil bilgisine ve yazımına dikkat et.
+- Bir dilde yeterince emin değilsen uydurma; mümkün olduğunca doğru ve anlaşılır ifade kullan.
+
+DESTEKLENEN YAYGIN DİLLER:
+
+Türkçe
+İngilizce
+Almanca
+Fransızca
+İspanyolca
+İtalyanca
+Portekizce
+Brezilya Portekizcesi
+Rusça
+Ukraynaca
+Lehçe
+Felemenkçe
+İsveççe
+Norveççe
+Danca
+Fince
+Çekçe
+Slovakça
+Macarca
+Romence
+Bulgarca
+Yunanca
+Sırpça
+Hırvatça
+Boşnakça
+Slovence
+Arapça
+İbranice
+Farsça
+Hintçe
+Urduca
+Bengalce
+Pencapça
+Marathi
+Tamilce
+Teluguca
+Endonezce
+Malayca
+Vietnamca
+Tayca
+Çince
+Basitleştirilmiş Çince
+Geleneksel Çince
+Japonca
+Korece
+
+Bu dillerden biriyle konuşulduğunda mümkün olduğunca o dilde doğal cevap ver.
+
+ÖRNEK:
+
+Kullanıcı:
+"Hello, how are you?"
+
+Cevap:
+İngilizce.
+
+Kullanıcı:
+"Wie geht es dir?"
+
+Cevap:
+Almanca.
+
+Kullanıcı:
+"Bonjour, comment ça va ?"
+
+Cevap:
+Fransızca.
+
+Kullanıcı:
+"¿Cómo estás?"
+
+Cevap:
+İspanyolca.
+
+Kullanıcı:
+"Come stai?"
+
+Cevap:
+İtalyanca.
+
+Kullanıcı:
+"こんにちは"
+
+Cevap:
+Japonca.
+
+Kullanıcı:
+"你好"
+
+Cevap:
+Çince.
+
+Kullanıcı:
+"안녕하세요"
+
+Cevap:
+Korece.
+
+Kullanıcı:
+"Merhaba"
+
+Cevap:
+Türkçe.
+
+DİL KURALLARI:
+
+1. Kullanıcının kullandığı dili otomatik algıla.
+2. Aynı dilde cevap vermeyi tercih et.
+3. Kullanıcı açıkça dil değiştirirse hemen uyum sağla.
+4. Kullanıcı "İngilizce konuş" derse İngilizce konuş.
+5. Kullanıcı "Türkçe konuş" derse Türkçe konuş.
+6. Kullanıcı "Almanca cevapla" derse Almanca cevapla.
+7. Kullanıcı çeviri isterse istenen hedef dile çevir.
+8. Çeviri sırasında anlamı koru.
+9. Özel isimleri gereksiz yere değiştirme.
+10. Kod içindeki programlama sözdizimini bozma.
+11. Teknik terimleri gerektiğinde orijinal halleriyle kullan.
+12. Dil değişimi için kullanıcıdan tekrar tekrar izin isteme.
+13. Kullanıcının dilini yanlış algılarsan sonraki mesajdaki dili takip et.
+
+DOĞAL KONUŞMA:
+
 - Samimi ol ama gereksiz yere aşırı samimi olma.
 - Saygılı ol.
 - Kullanıcı hata yaptığında küçümseme.
 - Kullanıcı sinirliyse gereksiz şekilde uzatma.
+- Kullanıcının konuşma tarzını anlayıp uygun şekilde cevap ver.
+- Gereksiz emoji kullanma.
+- Kullanıcı kısa cevap istiyorsa kısa cevap ver.
+
+DOĞRULUK:
 
 1. Bilmediğin bilgiyi uydurma.
 2. Emin olmadığın bilgiyi kesin gerçek gibi söyleme.
@@ -143,6 +280,8 @@ Sen ErencanAI adlı gelişmiş, hızlı, doğal, güvenilir ve yardımcı bir ya
 11. İnternetten doğrulanması gereken bilgileri uydurma.
 12. Kullanıcı daha önce konuşulan bir konuyu devam ettiriyorsa bağlamı kullan.
 
+TARİH:
+
 Sana her istekte güncel Türkiye tarih ve saat bilgisi ayrıca verilecektir.
 
 Bu bilgiyi gerçek kabul et.
@@ -154,17 +293,9 @@ Ancak:
 
 Tarih bilgisinin verilmiş olması internete erişebildiğin anlamına gelmez.
 
-Örneğin:
+Güncel haber, spor sonucu, fiyat, hava durumu veya başka internet verisi doğrulanmamışsa uydurma.
 
-Eğer mevcut tarih 2026 ise,
-2026 yılında gerçekleşmiş bir olayı
-"henüz gerçekleşmedi" şeklinde anlatma.
-
-Eğer mevcut tarih olayın tarihinden sonraysa,
-olayın gerçekleşmiş olabileceğini dikkate al.
-
-Eğer olayın sonucu sistem tarafından doğrulanmış şekilde verilmemişse,
-sonucu uydurma.
+CEVAP UZUNLUĞU:
 
 Basit soru:
 
@@ -207,6 +338,8 @@ Gereksiz:
 
 kullanma.
 
+GÜNCEL KONULAR:
+
 Özellikle şu konularda dikkatli ol:
 
 - Güncel haberler
@@ -224,8 +357,9 @@ kullanma.
 - Güncel kişiler
 - Güncel etkinlikler
 
-Modelin eğitim bilgisinde olmayan bir bilgi için
-kesin konuşma.
+Modelin eğitim bilgisinde olmayan bir bilgi için kesin konuşma.
+
+TEKNİK PROBLEM ÇÖZME:
 
 Soruyu önce doğru anlamaya çalış.
 
@@ -243,7 +377,7 @@ Kullanıcı "olmadı" derse:
 - Aynı çözümü körü körüne tekrar etme.
 - Yeni olası nedeni değerlendir.
 
-JavaScript:
+JAVASCRIPT:
 
 - ES5
 - ES6+
@@ -265,7 +399,7 @@ JavaScript:
 - modules
 - hata yönetimi
 
-Node.js:
+NODE.JS:
 
 - CommonJS
 - require
@@ -280,7 +414,7 @@ Node.js:
 - environment variables
 - debugging
 
-Express:
+EXPRESS:
 
 - express.json
 - express.static
@@ -325,7 +459,7 @@ CSS:
 - gradients
 - shadows
 
-Python:
+PYTHON:
 
 - değişkenler
 - fonksiyonlar
@@ -350,7 +484,7 @@ C#:
 - exception handling
 - async
 
-Unity:
+UNITY:
 
 - GameObject
 - Component
@@ -383,7 +517,7 @@ API:
 - retry
 - environment variables
 
-GitHub:
+GITHUB:
 
 - repository
 - commit
@@ -393,7 +527,7 @@ GitHub:
 - dosya yönetimi
 - deployment
 
-Render:
+RENDER:
 
 - Web Service
 - Build Command
@@ -404,6 +538,8 @@ Render:
 - logs
 - restart
 - health check
+
+PROJE:
 
 Proje:
 ErencanAI
@@ -434,6 +570,8 @@ GET /api/test
 Health:
 GET /api/health
 
+HAFIZA:
+
 Mevcut çalışan sistemi gereksiz yere değiştirme.
 
 Hafızadaki bilgileri gerektiğinde kullan.
@@ -446,6 +584,8 @@ Ancak:
 - Kullanıcının açıkça söylediği isim gibi basit bilgileri hatırlayabilirsin.
 - Gizli bilgileri cevapta gösterme.
 
+GÜVENLİK:
+
 API anahtarını asla gösterme.
 
 .env içindeki gizli bilgileri asla yazdırma.
@@ -455,6 +595,8 @@ API anahtarını istemciye gönderme.
 Kod içine gerçek API anahtarı koyma.
 
 Şifreleri ve tokenları cevapta gösterme.
+
+HATA TANIMA:
 
 Şunları tanıyabil:
 
@@ -482,7 +624,9 @@ CSS errors
 
 Uygunsa kullan.
 
-Teknik cevaplarda azalt.
+TEKNİK CEVAPLAR:
+
+Teknik cevaplarda gereksiz uzunluğu azalt.
 
 Başarılı:
 ✅
@@ -505,9 +649,12 @@ Kod:
 Unity:
 🎮
 
+SONUÇ:
+
 DOĞRU
 DOĞAL
 HIZLI
+ÇOK DİLLİ
 GÜNCEL TARİH BİLGİSİNİ DİKKATE ALAN
 ANLAŞILIR
 FAYDALI
@@ -757,10 +904,6 @@ function cleanReply(text) {
         return "";
     }
 
-    /*
-        JSON cevap geldiyse düz metne çevir.
-    */
-
     try {
 
         const parsed =
@@ -780,14 +923,8 @@ function cleanReply(text) {
 
     } catch (error) {
 
-        /*
-            Normal metin.
-        */
+        // Normal metin.
     }
-
-    /*
-        Markdown code fence.
-    */
 
     reply =
         reply
@@ -801,10 +938,6 @@ function cleanReply(text) {
             )
             .trim();
 
-    /*
-        Gereksiz AI etiketleri.
-    */
-
     reply =
         reply
             .replace(
@@ -812,10 +945,6 @@ function cleanReply(text) {
                 ""
             )
             .trim();
-
-    /*
-        Aşırı uzun cevap koruması.
-    */
 
     if (
         reply.length >
@@ -893,32 +1022,14 @@ async function requestGroq(
                                 messages:
                                     messages,
 
-                                /*
-                                    Hızlı ve dengeli cevap.
-                                */
-
                                 temperature:
                                     0.20,
-
-                                /*
-                                    Cevap için yeterli alan.
-                                */
 
                                 max_tokens:
                                     1200,
 
-                                /*
-                                    GPT-OSS reasoning.
-                                    Low = daha hızlı.
-                                */
-
                                 reasoning_effort:
                                     "low",
-
-                                /*
-                                    Reasoning metnini
-                                    kullanıcıya gösterme.
-                                */
 
                                 reasoning_format:
                                     "hidden",
@@ -1001,10 +1112,6 @@ async function requestGroq(
                 error.message
             );
 
-            /*
-                Yetki hatalarında tekrar deneme.
-            */
-
             if (
                 error.status === 401 ||
                 error.status === 403
@@ -1013,21 +1120,12 @@ async function requestGroq(
                 break;
             }
 
-            /*
-                400 hatalarında da
-                aynı isteği tekrar etme.
-            */
-
             if (
                 error.status === 400
             ) {
 
                 break;
             }
-
-            /*
-                Son deneme değilse bekle.
-            */
 
             if (
                 attempt <=
@@ -1143,7 +1241,10 @@ app.get(
                 dateInfo.turkey,
 
             year:
-                dateInfo.year
+                dateInfo.year,
+
+            languages:
+                "Çoklu dil desteği aktif"
         });
     }
 );
@@ -1171,10 +1272,6 @@ app.post(
                         ? req.body.message
                         : ""
                 ).trim();
-
-            /* -----------------------------------------
-               MESAJ KONTROLÜ
-            ----------------------------------------- */
 
             if (
                 !message
@@ -1208,10 +1305,6 @@ app.post(
                         "Mesaj çok uzun. Lütfen daha kısa bir mesaj gönder."
                 });
             }
-
-            /* -----------------------------------------
-               API KEY
-            ----------------------------------------- */
 
             if (
                 !GROQ_API_KEY
@@ -1247,10 +1340,6 @@ app.post(
                 message
             );
 
-            /* -----------------------------------------
-               TARİH
-            ----------------------------------------- */
-
             const dateInfo =
                 getCurrentDateInfo();
 
@@ -1260,7 +1349,7 @@ app.post(
             );
 
             /* -----------------------------------------
-               KULLANICI HAFIZASI
+               HAFIZA
             ----------------------------------------- */
 
             addMemory(
@@ -1397,13 +1486,16 @@ Ancak bu bilgi internet erişimi sağlamaz.
 
 Güncel haber, skor veya son dakika bilgisi
 gerekiyorsa doğrulanmış veri yoksa uydurma.
-`.trim()
+
+KULLANICI DİLİ:
+
+Kullanıcının son mesajındaki dili belirle.
+Mümkünse cevabı aynı dilde ver.
+Kullanıcı açıkça başka bir dil isterse o dile geç.
+`
+                        .trim()
                 }
             ];
-
-            /*
-                Eski konuşmaları ekle.
-            */
 
             for (
                 const item of
@@ -1486,17 +1578,13 @@ gerekiyorsa doğrulanmış veri yoksa uydurma.
             }
 
             /* -----------------------------------------
-               TEMİZLE
+               CEVAP TEMİZLE
             ----------------------------------------- */
 
             reply =
                 cleanReply(
                     reply
                 );
-
-            /* -----------------------------------------
-               BOŞ CEVAP
-            ----------------------------------------- */
 
             if (
                 !reply
@@ -1608,10 +1696,6 @@ gerekiyorsa doğrulanmış veri yoksa uydurma.
             let userMessage =
                 "Sunucu bağlantı hatası.";
 
-            /* -----------------------------------------
-               TIMEOUT
-            ----------------------------------------- */
-
             if (
                 error.name ===
                 "AbortError"
@@ -1619,13 +1703,8 @@ gerekiyorsa doğrulanmış veri yoksa uydurma.
 
                 userMessage =
                     "AI yanıtı zaman aşımına uğradı. Tekrar dene.";
-            }
 
-            /* -----------------------------------------
-               FETCH
-            ----------------------------------------- */
-
-            else if (
+            } else if (
                 error.message &&
                 error.message
                     .toLowerCase()
@@ -1634,13 +1713,8 @@ gerekiyorsa doğrulanmış veri yoksa uydurma.
 
                 userMessage =
                     "Groq bağlantısı kurulamadı. Sunucu bağlantısını kontrol et.";
-            }
 
-            /* -----------------------------------------
-               AUTH
-            ----------------------------------------- */
-
-            else if (
+            } else if (
                 error.status ===
                 401 ||
                 error.status ===
@@ -1649,39 +1723,24 @@ gerekiyorsa doğrulanmış veri yoksa uydurma.
 
                 userMessage =
                     "Groq API anahtarı geçersiz veya yetkisiz.";
-            }
 
-            /* -----------------------------------------
-               BAD REQUEST
-            ----------------------------------------- */
-
-            else if (
+            } else if (
                 error.status ===
                 400
             ) {
 
                 userMessage =
                     "Groq isteği geçersiz. Model veya API ayarlarını kontrol et.";
-            }
 
-            /* -----------------------------------------
-               RATE LIMIT
-            ----------------------------------------- */
-
-            else if (
+            } else if (
                 error.status ===
                 429
             ) {
 
                 userMessage =
                     "Groq kullanım sınırına ulaşıldı. Biraz sonra tekrar dene.";
-            }
 
-            /* -----------------------------------------
-               SERVER
-            ----------------------------------------- */
-
-            else if (
+            } else if (
                 error.status &&
                 error.status >=
                 500
@@ -1800,7 +1859,10 @@ app.get(
             uptime:
                 Math.floor(
                     process.uptime()
-                )
+                ),
+
+            multilingual:
+                true
         });
     }
 );
@@ -1928,6 +1990,11 @@ app.listen(
             GROQ_API_KEY
                 ? "BULUNDU"
                 : "BULUNAMADI"
+        );
+
+        console.log(
+            "ÇOKLU DİL:",
+            "AKTİF"
         );
 
         console.log(
