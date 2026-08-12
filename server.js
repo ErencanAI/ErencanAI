@@ -1,11 +1,10 @@
 "use strict";
-
 require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-
+const crypto = require("crypto");
 const app = express();
 
 /* =========================================================
@@ -2718,7 +2717,82 @@ app.use(
         __dirname
     )
 );
+/* =========================================================
+OTOMATİK KULLANICI COOKIE SİSTEMİ
+========================================================= */
 
+app.use(
+    function (
+        req,
+        res,
+        next
+    ) {
+
+        const cookies =
+            String(
+                req.headers.cookie || ""
+            )
+            .split(";")
+            .reduce(
+                function (
+                    result,
+                    item
+                ) {
+
+                    const parts =
+                        item.trim().split("=");
+
+                    const key =
+                        parts.shift();
+
+                    const value =
+                        parts.join("=");
+
+                    if (
+                        key
+                    ) {
+                        result[key] =
+                            decodeURIComponent(
+                                value || ""
+                            );
+                    }
+
+                    return result;
+
+                },
+                {}
+            );
+
+        let userId =
+            cookies.erencan_user_id;
+
+        if (
+            !userId
+        ) {
+            userId =
+                crypto.randomUUID();
+        }
+
+        userId =
+            cleanUserId(
+                userId
+            );
+
+        res.setHeader(
+            "Set-Cookie",
+            "erencan_user_id=" +
+            encodeURIComponent(
+                userId
+            ) +
+            "; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax"
+        );
+
+        req.erencanUserId =
+            userId;
+
+        next();
+    }
+);
 /* =========================================================
 ANA SAYFA
 ========================================================= */
