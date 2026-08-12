@@ -5,15 +5,19 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const multer = require("multer");
 
 const app = express();
 
 /* =========================================================
-   TEMEL AYARLAR
+   SUNUCU
 ========================================================= */
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT =
+    Number(process.env.PORT) || 3000;
+
+/* =========================================================
+   GROQ
+========================================================= */
 
 const GROQ_API_KEY =
     process.env.GROQ_API_KEY ||
@@ -27,247 +31,283 @@ const GROQ_MODEL =
     "openai/gpt-oss-20b";
 
 /* =========================================================
-   DOSYALAR
+   HAFIZA
 ========================================================= */
 
 const MEMORY_FILE =
-    path.join(__dirname, "memory.json");
-
-const UPLOAD_DIR =
-    path.join(__dirname, "uploads");
-
-/* =========================================================
-   HAFIZA AYARLARI
-========================================================= */
+    path.join(
+        __dirname,
+        "memory.json"
+    );
 
 const MAX_MEMORY_MESSAGES = 400;
+
+/*
+   Modele gönderilecek son konuşma sayısı.
+*/
 const CONTEXT_MESSAGES = 30;
 
 /* =========================================================
-   MESAJ AYARLARI
+   API AYARLARI
 ========================================================= */
 
+const REQUEST_TIMEOUT = 30000;
+
+const MAX_RETRIES = 2;
+
 const MAX_MESSAGE_LENGTH = 12000;
+
 const MAX_REPLY_LENGTH = 30000;
 
 /* =========================================================
-   SUNUCU AYARLARI
+   TARİH / ZAMAN
 ========================================================= */
 
-const REQUEST_TIMEOUT_MS = 60000;
+/*
+   ErencanAI her istekte sunucunun güncel
+   tarih ve saat bilgisini modele gönderir.
 
-/* =========================================================
-   DOSYA AYARLARI
-========================================================= */
+   Böylece model:
+   - bugünün tarihini
+   - yılı
+   - ayı
+   - günü
+   - saati
+   bilir.
 
-const MAX_FILE_SIZE =
-    10 * 1024 * 1024;
+   Not:
+   Bu internet erişimi değildir.
+*/
+function getCurrentDateInfo() {
 
-/* =========================================================
-   UPLOAD KLASÖRÜ
-========================================================= */
+    const now =
+        new Date();
 
-if (!fs.existsSync(UPLOAD_DIR)) {
-    fs.mkdirSync(
-        UPLOAD_DIR,
-        {
-            recursive: true
-        }
-    );
+    const formatter =
+        new Intl.DateTimeFormat(
+            "tr-TR",
+            {
+                timeZone:
+                    "Europe/Istanbul",
+
+                dateStyle:
+                    "full",
+
+                timeStyle:
+                    "long"
+            }
+        );
+
+    return {
+        iso:
+            now.toISOString(),
+
+        turkey:
+            formatter.format(now),
+
+        year:
+            Number(
+                new Intl.DateTimeFormat(
+                    "en-US",
+                    {
+                        timeZone:
+                            "Europe/Istanbul",
+
+                        year:
+                            "numeric"
+                    }
+                ).format(now)
+            )
+    };
 }
 
 /* =========================================================
-   MULTER
-========================================================= */
-
-const storage =
-    multer.diskStorage({
-
-        destination: function (
-            req,
-            file,
-            cb
-        ) {
-
-            cb(
-                null,
-                UPLOAD_DIR
-            );
-        },
-
-        filename: function (
-            req,
-            file,
-            cb
-        ) {
-
-            const originalName =
-                path.basename(
-                    file.originalname || "dosya"
-                );
-
-            const safeName =
-                originalName
-                    .replace(
-                        /[^a-zA-Z0-9._-]/g,
-                        "_"
-                    );
-
-            const uniqueName =
-                Date.now() +
-                "-" +
-                Math.random()
-                    .toString(36)
-                    .slice(2, 10) +
-                "-" +
-                safeName;
-
-            cb(
-                null,
-                uniqueName
-            );
-        }
-    });
-
-const upload =
-    multer({
-
-        storage: storage,
-
-        limits: {
-            fileSize:
-                MAX_FILE_SIZE
-        }
-    });
-
-/* =========================================================
-   ER̆ENCANAI SİSTEM PROMPTU
+   GELİŞMİŞ SİSTEM PROMPTU
 ========================================================= */
 
 const SYSTEM_PROMPT = `
-Sen ErencanAI adlı gelişmiş, hızlı, güvenilir ve doğal konuşan bir yapay zeka asistanısın.
+Sen ErencanAI adlı gelişmiş, hızlı, doğal, güvenilir ve yardımcı bir yapay zeka asistanısın.
 
-GENEL DAVRANIŞ:
+==============================
+TEMEL KİMLİK
+==============================
 
-- Öncelikle kullanıcının ne istediğini doğru anla.
-- Her zaman Türkçe cevap ver.
-- Kullanıcının konuşma tarzına doğal şekilde uyum sağla.
-- Basit sorulara kısa ve net cevap ver.
-- Karmaşık sorulara gerektiği kadar ayrıntılı cevap ver.
-- Kullanıcı özellikle detay istiyorsa ayrıntılı anlat.
-- Kullanıcı sadece uygulanacak adımları istiyorsa doğrudan adımları ver.
-- Gereksiz giriş cümleleri kullanma.
-- Gereksiz tekrar yapma.
-- Bilmediğin bilgiyi uydurma.
-- Emin olmadığın bilgiyi kesin bilgi gibi gösterme.
-- Güncel bilgi gerektiğinde verilen web araştırması sonuçlarını kullan.
-- Güncel bilgi ile eski bilgiyi karıştırma.
-- Tarihleri dikkatli değerlendir.
-- Kullanıcının önceki mesajlarını bağlam olarak kullan.
-- Hafızadaki bilgileri yalnızca gerektiğinde kullan.
-- JSON biçiminde cevap verme.
-- Cevabın başına "AI:" yazma.
-- Cevabın başına "ErencanAI:" yazma.
-- Doğal konuş.
-- Gerektiğinde madde işaretleri kullan.
-- Gerektiğinde kod bloğu kullan.
+- Adın ErencanAI.
+- Kullanıcıyla doğal şekilde konuş.
+- Ana dilin Türkçedir.
+- Kullanıcı başka bir dil kullanırsa gerekirse o dile uyum sağlayabilirsin.
+- Kullanıcının konuşma tarzını anlayıp uygun şekilde cevap ver.
+- Samimi ol ama gereksiz yere aşırı samimi olma.
+- Saygılı ol.
+- Kullanıcı hata yaptığında küçümseme.
+- Kullanıcı sinirliyse gereksiz şekilde uzatma.
 
-GÜNCEL BİLGİ:
+==============================
+EN ÖNEMLİ KURALLAR
+==============================
 
-- Sistem sana mevcut tarih ve saati ayrıca verebilir.
-- "bugün", "dün", "yarın", "şu an", "en son", "güncel", "son durum",
-  "kim kazandı", "ne oldu", "2026'da", "bu hafta", "bu ay"
-  gibi ifadeler güncel bilgi gerektirebilir.
-- Web araştırması sonuçları verilmişse bunları öncelikli bilgi olarak değerlendir.
-- Web araştırması sonucu ile hafızadaki eski bilgiyi karıştırma.
-- Tarihi kesin olarak bilmiyorsan tahmin etme.
-- Güncel olaylarda kullanıcıya eski bilgi verme.
+1. Bilmediğin bilgiyi uydurma.
+2. Emin olmadığın bilgiyi kesin gerçek gibi söyleme.
+3. Güncel bilgi gerektiğinde mevcut tarih bilgisini kullan.
+4. Tarihleri birbirine karıştırma.
+5. Geçmiş olayları gelecekteymiş gibi anlatma.
+6. Gelecekteki olayları gerçekleşmiş gibi anlatma.
+7. Bir olayın gerçekleşip gerçekleşmediğini mevcut tarih ile karşılaştır.
+8. Kullanıcı "bugün", "dün", "yarın", "şu an", "bu yıl" gibi ifadeler kullanırsa mevcut tarih bilgisini dikkate al.
+9. Kullanıcı belirli bir tarih sorarsa tarihi açıkça belirt.
+10. Güncel internet bilgisine sahip olmadığın durumda bunu dürüstçe belirt.
+11. İnternetten doğrulanması gereken bilgileri uydurma.
+12. Kullanıcı daha önce konuşulan bir konuyu devam ettiriyorsa bağlamı kullan.
 
-AKIL YÜRÜTME:
+==============================
+GÜNCEL TARİH SİSTEMİ
+==============================
 
-- Problemi mantıksal parçalara ayır.
-- Önce problemi doğru tanımla.
-- Sonra çözüm üret.
-- Teknik sorularda hata mesajını dikkatlice incele.
-- Dosya ve satır bilgilerini dikkate al.
-- Kod vermeden önce sözdizimini kontrol et.
-- Parantezleri kontrol et.
-- Süslü parantezleri kontrol et.
-- Tırnakları kontrol et.
-- Değişken isimlerini kontrol et.
-- Fonksiyonların birbiriyle uyumunu kontrol et.
-- Asenkron işlemlerde hata yönetimi kullan.
-- Kullanıcı "olmadı" derse önceki çözümün neden çalışmadığını düşün.
-- Aynı hatalı çözümü tekrar etme.
-- Çalışan sistemi gereksiz yere değiştirme.
+Sana her istekte güncel Türkiye tarih ve saat bilgisi ayrıca verilecektir.
 
-KODLAMA UZMANLIĞI:
+Bu bilgiyi gerçek kabul et.
+
+Ancak:
+
+- Tarih bilgisi = mevcut zaman bilgisi.
+- İnternet erişimi = güncel haber, skor, fiyat, sonuç ve web verisi.
+
+Tarih bilgisinin verilmiş olması internete erişebildiğin anlamına gelmez.
+
+Örneğin:
+
+Eğer mevcut tarih 2026 ise,
+2026 yılında gerçekleşmiş bir Dünya Kupası finalini
+"henüz oynanmadı" şeklinde anlatma.
+
+Eğer mevcut tarih olayın tarihinden sonraysa,
+olayın gerçekleşmiş olabileceğini dikkate al.
+
+Eğer olayın sonucu sistem tarafından doğrulanmış şekilde verilmemişse,
+sonucu uydurma.
+
+==============================
+CEVAP TARZI
+==============================
+
+Basit soru:
+- 1-3 cümle.
+
+Normal soru:
+- Gerektiği kadar açıklama.
+
+Teknik soru:
+- Gerektiğinde numaralı adımlar.
+
+Kod isteği:
+- Eksiksiz ve çalışabilir kod.
+
+"Sadece ne yapacağımı söyle":
+- Yalnızca uygulanacak adımları ver.
+
+"Baştan sona kodu ver":
+- Dosyanın tamamını ver.
+
+Kullanıcı detay isterse:
+- Detaylandır.
+
+Kullanıcı kısa isterse:
+- Kısa cevap ver.
+
+Gereksiz:
+- Tekrar
+- Giriş cümlesi
+- Sonuç tekrarı
+- Aynı açıklamanın farklı versiyonları
+
+kullanma.
+
+==============================
+DOĞRULUK
+==============================
+
+Özellikle şu konularda dikkatli ol:
+
+- Güncel haberler
+- Spor sonuçları
+- Dünya Kupası
+- Futbol
+- Transferler
+- Teknoloji
+- Yazılım sürümleri
+- Fiyatlar
+- Tarihler
+- Hava durumu
+- Politik gelişmeler
+- Şirket haberleri
+- Güncel kişiler
+- Güncel etkinlikler
+
+Modelin eğitim bilgisinde olmayan bir bilgi için
+kesin konuşma.
+
+==============================
+AKIL YÜRÜTME
+==============================
+
+Soruyu önce doğru anlamaya çalış.
+
+Teknik problem varsa:
+
+1. Hatanın ne olduğunu belirle.
+2. Kaynağını belirle.
+3. En olası nedeni belirle.
+4. Çözümü sırala.
+5. Gerekirse tam kod ver.
+6. Çözümün mevcut sistemi bozup bozmayacağını düşün.
+
+Kullanıcı "olmadı" derse:
+- Aynı çözümü körü körüne tekrar etme.
+- Yeni olası nedeni değerlendir.
+
+==============================
+KODLAMA
+==============================
 
 JavaScript:
 
-- JavaScript
 - ES5
 - ES6+
 - let
 - const
-- var
-- arrow functions
-- destructuring
-- spread
-- rest
-- template literals
-- CommonJS
-- modules
-- async
-- await
+- async/await
 - Promise
-- Promise.all
 - fetch
 - AbortController
-- try/catch
-- error handling
 - DOM
-- events
-- event listeners
+- event listener
+- JSON
 - localStorage
 - sessionStorage
-- JSON
 - regex
-- arrays
-- objects
+- array
+- object
 - classes
-- inheritance
-- closures
-- callbacks
-- debounce
-- throttle
-- APIs
+- modules
+- hata yönetimi
 
 Node.js:
 
-- Node.js
-- npm
 - CommonJS
 - require
 - fs
 - path
-- process
-- process.env
 - dotenv
+- process.env
 - fetch
 - AbortController
 - HTTP
-- REST
 - JSON
-- file system
 - environment variables
 - debugging
-- asynchronous programming
 
-Express.js:
+Express:
 
-- Express
-- middleware
 - express.json
 - express.static
 - GET
@@ -275,85 +315,69 @@ Express.js:
 - PUT
 - PATCH
 - DELETE
+- middleware
 - REST API
 - status codes
-- routes
-- error middleware
-- CORS
-- deployment
 - Render
-- health checks
-- timeouts
-- API error handling
+- health check
+- timeout
+- error handling
 
 HTML:
 
 - HTML5
 - semantic HTML
-- forms
+- form
 - input
 - textarea
 - button
 - modal
 - sidebar
-- chat interface
+- chat arayüzü
+- responsive yapı
 - accessibility
-- responsive design
 
 CSS:
 
-- CSS
-- CSS variables
 - Flexbox
 - Grid
-- media queries
-- responsive design
-- animations
-- transitions
+- responsive tasarım
+- media query
+- animation
+- transition
 - modal
 - sidebar
 - chat UI
 - gradients
 - shadows
-- mobile layouts
 
 Python:
 
-- Python
-- variables
-- functions
-- lists
-- tuples
-- dictionaries
-- sets
-- classes
-- files
+- değişkenler
+- fonksiyonlar
+- listeler
+- dictionary
+- class
+- dosya işlemleri
 - JSON
-- APIs
-- exceptions
+- API
 - debugging
-- automation
 
 C#:
 
-- C#
-- variables
-- methods
-- classes
-- objects
+- class
+- method
+- object
 - inheritance
-- interfaces
-- enums
-- arrays
+- interface
+- enum
 - List
 - Dictionary
-- exceptions
+- exception handling
 - async
-- Unity C#
 
 Unity:
 
-- Unity
 - GameObject
 - Component
 - MonoBehaviour
@@ -368,8 +392,7 @@ Unity:
 - Animator
 - PlayerController
 - GameManager
-- C# scripts
-- Unity debugging
+- Unity C#
 
 API:
 
@@ -379,24 +402,22 @@ API:
 - JSON
 - headers
 - Authorization
-- Bearer tokens
+- Bearer
 - fetch
-- HTTP status codes
+- HTTP status
 - timeout
 - retry
-- API error handling
 - environment variables
 
 GitHub:
 
-- repositories
-- commits
-- branches
+- repository
+- commit
+- branch
 - push
 - pull
-- files
-- GitHub deployment
-- project management
+- dosya yönetimi
+- deployment
 
 Render:
 
@@ -408,101 +429,146 @@ Render:
 - deployment
 - logs
 - restart
-- health checks
+- health check
 
-DOSYA ANALİZİ:
+==============================
+ERENCANAI PROJESİ
+==============================
 
-- Kullanıcı bir dosya yüklediğinde dosyanın adını ve türünü değerlendir.
-- Dosyanın içeriği bağlama verilmişse içeriğini analiz et.
-- Kod dosyalarında hataları bul.
-- Metin dosyalarını özetleyebil.
-- JSON dosyalarını analiz edebil.
-- HTML/CSS/JS dosyalarını inceleyebil.
-- Dosyanın tamamı verilmemişse bunu belirt.
-- Dosyada olmayan bilgileri uydurma.
-- Görsel veya ikili dosyanın içeriği okunamıyorsa bunu açıkça belirt.
+Proje:
+ErencanAI
 
-HATA AYIKLAMA:
+Backend:
+Node.js + Express
 
-Aşağıdaki hataları tanı ve çöz:
+AI:
+Groq
 
-- SyntaxError
-- ReferenceError
-- TypeError
-- MODULE_NOT_FOUND
-- ENOENT
-- EACCES
-- fetch failed
-- ECONNREFUSED
-- ETIMEDOUT
-- AbortError
-- Headers Timeout Error
-- authentication errors
-- invalid API key
-- JSON parse errors
-- Express route errors
-- HTTP 400
-- HTTP 401
-- HTTP 403
-- HTTP 404
-- HTTP 429
-- HTTP 500
-- CSS errors
-- DOM errors
+Model:
+openai/gpt-oss-20b
 
-HATA GELDİĞİNDE:
+Hafıza:
+memory.json
 
-1. Hata türünü belirle.
-2. Hatanın kaynağını belirle.
-3. Nedenini açıkla.
-4. En güvenli çözümü ver.
-5. Gerekirse düzeltilmiş kodu eksiksiz ver.
-6. Mevcut özelliklerin bozulup bozulmayacağını kontrol et.
-7. Kullanıcının yapacağı işlemleri sırayla anlat.
+Frontend:
+index.html
+app.js
+style.css
 
-ERENCANAI:
+Ana API:
+POST /api/chat
 
-- Projenin adı ErencanAI.
-- Backend Node.js + Express kullanır.
-- Yapay zeka Groq API kullanır.
-- Ana model openai/gpt-oss-20b'dir.
-- memory.json kalıcı hafıza olarak kullanılır.
-- Frontend index.html, app.js ve style.css dosyalarından oluşur.
-- Dosya yükleme sistemi vardır.
-- Yeni özellikler mevcut sistemi bozmadan eklenmelidir.
-- Gelecekte ses, görsel, video ve araştırma özellikleri eklenebilir.
+Test:
+GET /api/test
 
-CEVAP KALİTESİ:
+Health:
+GET /api/health
 
-- Doğru.
-- Doğal.
-- Hızlı.
-- Anlaşılır.
-- Faydalı.
-- Güncel.
-- Teknik olarak mümkün.
-- Gereksiz özgüven göstermeyen.
-- Kullanıcının seviyesine uyum sağlayan.
+Mevcut çalışan sistemi gereksiz yere değiştirme.
 
-EMOJİ:
+==============================
+HAFIZA
+==============================
 
-- Gerektiğinde kullan.
-- Teknik cevaplarda abartma.
-- Başarı: ✅
-- Hata: ❌
-- Uyarı: ⚠️
-- Bilgi: 🔎
-- Fikir: 💡
-- Kod: 💻
-- Unity: 🎮
+Hafızadaki bilgileri gerektiğinde kullan.
 
-EN ÖNEMLİ KURAL:
+Ancak:
 
-ÇALIŞAN SİSTEMİ GEREKSİZ YERE BOZMA.
+- Kullanıcıya ait olmayan bilgileri kullanıcıya aitmiş gibi söyleme.
+- Hafızadaki eski bilgileri güncel gerçek olarak kabul etme.
+- Yeni bilgi eski bilgiyle çelişirse yeni bilgiyi dikkate al.
+- Kullanıcının açıkça söylediği isim gibi basit bilgileri hatırlayabilirsin.
+- Gizli bilgileri cevapta gösterme.
+
+==============================
+GÜVENLİ KODLAMA
+==============================
+
+API anahtarını asla gösterme.
+
+.env içindeki gizli bilgileri asla yazdırma.
+
+API anahtarını istemciye gönderme.
+
+Kod içine gerçek API anahtarı koyma.
+
+Şifreleri ve tokenları cevapta gösterme.
+
+==============================
+HATA AYIKLAMA
+==============================
+
+Şunları tanıyabil:
+
+SyntaxError
+ReferenceError
+TypeError
+MODULE_NOT_FOUND
+ENOENT
+EACCES
+fetch failed
+ECONNREFUSED
+ETIMEDOUT
+AbortError
+Headers Timeout Error
+HTTP 400
+HTTP 401
+HTTP 403
+HTTP 404
+HTTP 429
+HTTP 500
+JSON parse errors
+Express errors
+DOM errors
+CSS errors
+
+==============================
+EMOJİ
+==============================
+
+Uygunsa kullan.
+
+Teknik cevaplarda azalt.
+
+Başarılı:
+✅
+
+Hata:
+❌
+
+Uyarı:
+⚠️
+
+Bilgi:
+🔎
+
+Fikir:
+💡
+
+Kod:
+💻
+
+Unity:
+🎮
+
+==============================
+SON HEDEF
+==============================
+
+DOĞRU
+DOĞAL
+HIZLI
+GÜNCEL TARİH BİLGİSİNİ DİKKATE ALAN
+ANLAŞILIR
+FAYDALI
+
+cevaplar üret.
+
+Mevcut çalışan sistemi gereksiz yere bozma.
 `.trim();
 
 /* =========================================================
-   HAFIZA
+   HAFIZA DEĞİŞKENİ
 ========================================================= */
 
 let memory = [];
@@ -515,7 +581,11 @@ function loadMemory() {
 
     try {
 
-        if (!fs.existsSync(MEMORY_FILE)) {
+        if (
+            !fs.existsSync(
+                MEMORY_FILE
+            )
+        ) {
 
             fs.writeFileSync(
                 MEMORY_FILE,
@@ -532,14 +602,22 @@ function loadMemory() {
                 "utf8"
             );
 
-        if (!content.trim()) {
+        if (
+            !content.trim()
+        ) {
+
             return [];
         }
 
         const data =
-            JSON.parse(content);
+            JSON.parse(
+                content
+            );
 
-        if (!Array.isArray(data)) {
+        if (
+            !Array.isArray(data)
+        ) {
+
             return [];
         }
 
@@ -610,7 +688,10 @@ function addMemory(
             content || ""
         ).trim();
 
-    if (!cleanContent) {
+    if (
+        !cleanContent
+    ) {
+
         return;
     }
 
@@ -643,7 +724,7 @@ function addMemory(
 }
 
 /* =========================================================
-   KULLANICI ADI BUL
+   İSİM BUL
 ========================================================= */
 
 function findUserName(text) {
@@ -651,28 +732,32 @@ function findUserName(text) {
     const value =
         String(
             text || ""
-        ).trim();
+        );
 
     const match =
         value.match(
             /(?:benim\s+adım|benim\s+ismim|adım|ismim)\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)\b/i
         );
 
-    if (!match) {
-        return null;
+    if (
+        match
+    ) {
+
+        return match[1];
     }
 
-    return match[1];
+    return null;
 }
 
 /* =========================================================
-   SON KULLANICI ADI
+   SON KULLANICI ADINI BUL
 ========================================================= */
 
 function getLastUserName() {
 
     for (
-        let i = memory.length - 1;
+        let i =
+            memory.length - 1;
         i >= 0;
         i--
     ) {
@@ -684,6 +769,7 @@ function getLastUserName() {
             !item ||
             item.role !== "user"
         ) {
+
             continue;
         }
 
@@ -692,279 +778,15 @@ function getLastUserName() {
                 item.content
             );
 
-        if (name) {
+        if (
+            name
+        ) {
+
             return name;
         }
     }
 
     return null;
-}
-
-/* =========================================================
-   TARİH / SAAT
-========================================================= */
-
-function getCurrentDateTime() {
-
-    const now =
-        new Date();
-
-    const date =
-        now.toLocaleDateString(
-            "tr-TR",
-            {
-                timeZone: "Europe/Istanbul",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                weekday: "long"
-            }
-        );
-
-    const time =
-        now.toLocaleTimeString(
-            "tr-TR",
-            {
-                timeZone: "Europe/Istanbul",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit"
-            }
-        );
-
-    return {
-        iso:
-            now.toISOString(),
-
-        date:
-            date,
-
-        time:
-            time
-    };
-}
-
-/* =========================================================
-   GÜNCEL SORU MU?
-========================================================= */
-
-function needsWebSearch(text) {
-
-    const value =
-        String(
-            text || ""
-        )
-        .toLocaleLowerCase(
-            "tr-TR"
-        );
-
-    const keywords = [
-
-        "bugün",
-        "bugunku",
-        "şu an",
-        "şuan",
-        "şimdiki",
-        "güncel",
-        "güncel mi",
-        "en son",
-        "son durum",
-        "son dakika",
-        "haber",
-        "haberler",
-        "kim kazandı",
-        "kim kazandi",
-        "kim şampiyon",
-        "kim sampiyon",
-        "ne oldu",
-        "kaç oldu",
-        "kac oldu",
-        "hangi takım kazandı",
-        "hangi takim kazandi",
-        "dünya kupası",
-        "dunya kupasi",
-        "ligde",
-        "puan durumu",
-        "transfer",
-        "transfer oldu",
-        "şu anda",
-        "şuanki",
-        "şimdilik",
-        "2026",
-        "2025",
-        "2027",
-        "bu hafta",
-        "bu ay",
-        "bu yıl",
-        "bu yil",
-        "yarın",
-        "yarin",
-        "dün",
-        "dun",
-        "kaç gün",
-        "kaç hafta",
-        "ne zaman",
-        "latest",
-        "today",
-        "current",
-        "recent",
-        "latest news"
-    ];
-
-    return keywords.some(
-        keyword =>
-            value.includes(keyword)
-    );
-}
-
-/* =========================================================
-   DOSYA TÜRÜ KONTROLÜ
-========================================================= */
-
-function isReadableTextFile(
-    file
-) {
-
-    if (!file) {
-        return false;
-    }
-
-    const extension =
-        path.extname(
-            file.originalname || ""
-        )
-        .toLowerCase();
-
-    const allowedExtensions = [
-
-        ".txt",
-        ".json",
-        ".js",
-        ".jsx",
-        ".ts",
-        ".tsx",
-        ".html",
-        ".htm",
-        ".css",
-        ".scss",
-        ".md",
-        ".csv",
-        ".xml",
-        ".yml",
-        ".yaml",
-        ".py",
-        ".java",
-        ".c",
-        ".cpp",
-        ".h",
-        ".hpp",
-        ".cs",
-        ".php",
-        ".sql",
-        ".sh",
-        ".bat",
-        ".env",
-        ".ini",
-        ".log"
-    ];
-
-    return allowedExtensions.includes(
-        extension
-    );
-}
-
-/* =========================================================
-   DOSYA İÇERİĞİ OKU
-========================================================= */
-
-function readUploadedFile(
-    file
-) {
-
-    if (!file) {
-        return null;
-    }
-
-    if (
-        !isReadableTextFile(
-            file
-        )
-    ) {
-
-        return {
-            readable: false,
-            content: ""
-        };
-    }
-
-    try {
-
-        const stat =
-            fs.statSync(
-                file.path
-            );
-
-        const maxReadable =
-            500000;
-
-        const bytesToRead =
-            Math.min(
-                stat.size,
-                maxReadable
-            );
-
-        const buffer =
-            Buffer.alloc(
-                bytesToRead
-            );
-
-        const fd =
-            fs.openSync(
-                file.path,
-                "r"
-            );
-
-        fs.readSync(
-            fd,
-            buffer,
-            0,
-            bytesToRead,
-            0
-        );
-
-        fs.closeSync(fd);
-
-        let content =
-            buffer.toString(
-                "utf8"
-            );
-
-        if (
-            stat.size >
-            maxReadable
-        ) {
-
-            content +=
-                "\n\n[DOSYA ÇOK BÜYÜK: İlk 500 KB okundu.]";
-        }
-
-        return {
-            readable: true,
-            content: content
-        };
-
-    } catch (error) {
-
-        console.error(
-            "DOSYA OKUMA HATASI:",
-            error.message
-        );
-
-        return {
-            readable: false,
-            content: ""
-        };
-    }
 }
 
 /* =========================================================
@@ -978,9 +800,16 @@ function cleanReply(text) {
             text || ""
         ).trim();
 
-    if (!reply) {
+    if (
+        !reply
+    ) {
+
         return "";
     }
+
+    /*
+       JSON cevap geldiyse düz metne çevir.
+    */
 
     try {
 
@@ -991,16 +820,24 @@ function cleanReply(text) {
 
         if (
             parsed &&
-            typeof parsed.reply === "string"
+            typeof parsed.reply ===
+            "string"
         ) {
 
             reply =
                 parsed.reply.trim();
         }
 
-    } catch {
-        /* Normal metin */
+    } catch (error) {
+
+        /*
+           Normal metin.
+        */
     }
+
+    /*
+       Markdown code fence.
+    */
 
     reply =
         reply
@@ -1014,11 +851,19 @@ function cleanReply(text) {
             )
             .trim();
 
+    /*
+       Gereksiz AI etiketleri.
+    */
+
     reply =
         reply.replace(
-            /^(?:AI|ErencanAI)\s*:\s*/i,
+            /^(ErencanAI|AI|Assistant)\s*:\s*/i,
             ""
-        );
+        ).trim();
+
+    /*
+       Aşırı uzun cevap koruması.
+    */
 
     if (
         reply.length >
@@ -1033,49 +878,7 @@ function cleanReply(text) {
             "\n\n[Yanıt çok uzundu ve kısaltıldı.]";
     }
 
-    return reply.trim();
-}
-
-/* =========================================================
-   TIMEOUT FETCH
-========================================================= */
-
-async function fetchWithTimeout(
-    url,
-    options,
-    timeoutMs
-) {
-
-    const controller =
-        new AbortController();
-
-    const timeout =
-        setTimeout(
-            function () {
-
-                controller.abort();
-
-            },
-            timeoutMs
-        );
-
-    try {
-
-        return await fetch(
-            url,
-            {
-                ...options,
-                signal:
-                    controller.signal
-            }
-        );
-
-    } finally {
-
-        clearTimeout(
-            timeout
-        );
-    }
+    return reply;
 }
 
 /* =========================================================
@@ -1083,70 +886,186 @@ async function fetchWithTimeout(
 ========================================================= */
 
 async function requestGroq(
-    messages,
-    useWebSearch
+    messages
 ) {
 
-    const body = {
+    let lastError =
+        null;
 
-        model:
-            GROQ_MODEL,
+    for (
+        let attempt = 1;
+        attempt <=
+        MAX_RETRIES + 1;
+        attempt++
+    ) {
 
-        messages:
-            messages,
+        const controller =
+            new AbortController();
 
-        temperature:
-            0.25,
+        const timeout =
+            setTimeout(
+                function () {
 
-        max_completion_tokens:
-            1600,
+                    controller.abort();
 
-        stream:
-            false
-    };
+                },
+                REQUEST_TIMEOUT
+            );
 
-    /*
-       Güncel soru ise Groq Browser Search kullan.
-       GPT-OSS 20B bunu destekliyor.
-    */
+        try {
 
-    if (useWebSearch) {
+            const response =
+                await fetch(
+                    GROQ_URL,
+                    {
 
-        body.tool_choice =
-            "required";
+                        method:
+                            "POST",
 
-        body.tools = [
-            {
-                type:
-                    "browser_search"
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                "Bearer " +
+                                GROQ_API_KEY
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                model:
+                                    GROQ_MODEL,
+
+                                messages:
+                                    messages,
+
+                                /*
+                                   Dengeli yaratıcılık.
+                                */
+
+                                temperature:
+                                    0.20,
+
+                                /*
+                                   Modelin cevap için
+                                   yeterli alanı olsun.
+                                */
+
+                                max_tokens:
+                                    1200,
+
+                                stream:
+                                    false
+                            }),
+
+                        signal:
+                            controller.signal
+                    }
+                );
+
+            clearTimeout(
+                timeout
+            );
+
+            const responseText =
+                await response.text();
+
+            if (
+                !response.ok
+            ) {
+
+                const error =
+                    new Error(
+                        "Groq HTTP " +
+                        response.status
+                    );
+
+                error.status =
+                    response.status;
+
+                error.body =
+                    responseText;
+
+                throw error;
             }
-        ];
+
+            let data;
+
+            try {
+
+                data =
+                    JSON.parse(
+                        responseText
+                    );
+
+            } catch (error) {
+
+                throw new Error(
+                    "Groq geçersiz JSON gönderdi."
+                );
+            }
+
+            return data;
+
+        } catch (error) {
+
+            clearTimeout(
+                timeout
+            );
+
+            lastError =
+                error;
+
+            console.error(
+                "GROQ DENEME " +
+                attempt +
+                " HATASI:",
+                error.message
+            );
+
+            /*
+               Yetki hatalarında
+               tekrar denemeye gerek yok.
+            */
+
+            if (
+                error.status === 401 ||
+                error.status === 403
+            ) {
+
+                break;
+            }
+
+            /*
+               Son deneme değilse bekle.
+            */
+
+            if (
+                attempt <=
+                MAX_RETRIES
+            ) {
+
+                await new Promise(
+                    function (resolve) {
+
+                        setTimeout(
+                            resolve,
+                            500 * attempt
+                        );
+
+                    }
+                );
+            }
+        }
     }
 
-    return fetchWithTimeout(
-        GROQ_URL,
-        {
-
-            method:
-                "POST",
-
-            headers: {
-
-                "Content-Type":
-                    "application/json",
-
-                "Authorization":
-                    "Bearer " +
-                    GROQ_API_KEY
-            },
-
-            body:
-                JSON.stringify(
-                    body
-                )
-        },
-
-        REQUEST_TIMEOUT_MS
+    throw (
+        lastError ||
+        new Error(
+            "Groq bağlantısı kurulamadı."
+        )
     );
 }
 
@@ -1162,24 +1081,15 @@ memory =
 ========================================================= */
 
 app.use(
-    express.json(
-        {
-            limit:
-                "2mb"
-        }
-    )
+    express.json({
+        limit:
+            "2mb"
+    })
 );
 
 app.use(
     express.static(
         __dirname
-    )
-);
-
-app.use(
-    "/uploads",
-    express.static(
-        UPLOAD_DIR
     )
 );
 
@@ -1204,166 +1114,6 @@ app.get(
 );
 
 /* =========================================================
-   DOSYA YÜKLEME
-========================================================= */
-
-app.post(
-    "/api/upload",
-
-    upload.single("file"),
-
-    function (
-        req,
-        res
-    ) {
-
-        try {
-
-            if (!req.file) {
-
-                return res.status(
-                    400
-                ).json({
-
-                    ok:
-                        false,
-
-                    reply:
-                        "Lütfen bir dosya seç."
-                });
-            }
-
-            console.log(
-                "DOSYA YÜKLENDİ:",
-                req.file.originalname
-            );
-
-            const readable =
-                isReadableTextFile(
-                    req.file
-                );
-
-            return res.json({
-
-                ok:
-                    true,
-
-                message:
-                    "Dosya başarıyla yüklendi.",
-
-                file: {
-
-                    originalName:
-                        req.file.originalname,
-
-                    fileName:
-                        req.file.filename,
-
-                    size:
-                        req.file.size,
-
-                    mimeType:
-                        req.file.mimetype,
-
-                    readable:
-                        readable,
-
-                    url:
-                        "/uploads/" +
-                        encodeURIComponent(
-                            req.file.filename
-                        )
-                }
-            });
-
-        } catch (error) {
-
-            console.error(
-                "DOSYA YÜKLEME HATASI:",
-                error
-            );
-
-            return res.status(
-                500
-            ).json({
-
-                ok:
-                    false,
-
-                reply:
-                    "Dosya yüklenirken bir hata oluştu."
-            });
-        }
-    }
-);
-
-/* =========================================================
-   DOSYA YÜKLEME HATA MIDDLEWARE
-========================================================= */
-
-app.use(
-    "/api/upload",
-
-    function (
-        error,
-        req,
-        res,
-        next
-    ) {
-
-        console.error(
-            "DOSYA API HATASI:",
-            error
-        );
-
-        if (
-            error instanceof
-            multer.MulterError
-        ) {
-
-            if (
-                error.code ===
-                "LIMIT_FILE_SIZE"
-            ) {
-
-                return res.status(
-                    400
-                ).json({
-
-                    ok:
-                        false,
-
-                    reply:
-                        "Dosya çok büyük. En fazla 10 MB yükleyebilirsin."
-                });
-            }
-
-            return res.status(
-                400
-            ).json({
-
-                ok:
-                    false,
-
-                reply:
-                    "Dosya yükleme hatası."
-            });
-        }
-
-        return res.status(
-            500
-        ).json({
-
-            ok:
-                false,
-
-            reply:
-                "Dosya yüklenirken beklenmeyen bir hata oluştu."
-        });
-    }
-);
-
-/* =========================================================
    TEST API
 ========================================================= */
 
@@ -1374,8 +1124,8 @@ app.get(
         res
     ) {
 
-        const current =
-            getCurrentDateTime();
+        const dateInfo =
+            getCurrentDateInfo();
 
         return res.json({
 
@@ -1402,20 +1152,11 @@ app.get(
             endpoint:
                 "/api/chat",
 
-            fileUpload:
-                true,
-
-            webSearch:
-                true,
-
             currentDate:
-                current.date,
+                dateInfo.turkey,
 
-            currentTime:
-                current.time,
-
-            maxFileSize:
-                "10 MB"
+            year:
+                dateInfo.year
         });
     }
 );
@@ -1444,28 +1185,13 @@ app.post(
                         : ""
                 ).trim();
 
-            /*
-               Frontend isterse dosya bilgisini
-               JSON olarak gönderebilir.
-            */
-
-            let uploadedFile =
-                null;
+            /* -----------------------------------------
+               MESAJ KONTROLÜ
+            ----------------------------------------- */
 
             if (
-                req.body &&
-                req.body.file
+                !message
             ) {
-
-                uploadedFile =
-                    req.body.file;
-            }
-
-            /* ---------------------------------------------
-               MESAJ KONTROLÜ
-            --------------------------------------------- */
-
-            if (!message) {
 
                 return res.status(
                     400
@@ -1496,11 +1222,13 @@ app.post(
                 });
             }
 
-            /* ---------------------------------------------
+            /* -----------------------------------------
                API KEY
-            --------------------------------------------- */
+            ----------------------------------------- */
 
-            if (!GROQ_API_KEY) {
+            if (
+                !GROQ_API_KEY
+            ) {
 
                 console.error(
                     "GROQ API KEY BULUNAMADI."
@@ -1514,7 +1242,7 @@ app.post(
                         false,
 
                     reply:
-                        "Groq API anahtarı bulunamadı. .env dosyasını kontrol et."
+                        "Groq API anahtarı bulunamadı."
                 });
             }
 
@@ -1532,18 +1260,30 @@ app.post(
                 message
             );
 
-            /* ---------------------------------------------
-               HAFIZA
-            --------------------------------------------- */
+            /* -----------------------------------------
+               TARİH
+            ----------------------------------------- */
+
+            const dateInfo =
+                getCurrentDateInfo();
+
+            console.log(
+                "TÜRKİYE TARİHİ:",
+                dateInfo.turkey
+            );
+
+            /* -----------------------------------------
+               KULLANICI HAFIZASI
+            ----------------------------------------- */
 
             addMemory(
                 "user",
                 message
             );
 
-            /* ---------------------------------------------
+            /* -----------------------------------------
                İSİM SİSTEMİ
-            --------------------------------------------- */
+            ----------------------------------------- */
 
             const newName =
                 findUserName(
@@ -1551,10 +1291,9 @@ app.post(
                 );
 
             const askingName =
-                /(?:benim\s+adım|benim\s+ismim|ismim|adım)\s+ne(?:ydi)?/i
-                    .test(
-                        message
-                    );
+                /(?:benim\s+adım|benim\s+ismim|ismim|adım)\s+ne(?:ydi)?/i.test(
+                    message
+                );
 
             if (
                 newName &&
@@ -1585,12 +1324,16 @@ app.post(
                 });
             }
 
-            if (askingName) {
+            if (
+                askingName
+            ) {
 
                 const userName =
                     getLastUserName();
 
-                if (userName) {
+                if (
+                    userName
+                ) {
 
                     const reply =
                         "Senin adın " +
@@ -1617,44 +1360,18 @@ app.post(
                 }
             }
 
-            /* ---------------------------------------------
-               TARİH
-            --------------------------------------------- */
-
-            const current =
-                getCurrentDateTime();
-
-            /* ---------------------------------------------
-               GÜNCEL BİLGİ KONTROLÜ
-            --------------------------------------------- */
-
-            const webSearch =
-                needsWebSearch(
-                    message
-                );
-
-            console.log(
-                "GÜNCEL SORU:",
-                webSearch
-                    ? "EVET"
-                    : "HAYIR"
-            );
-
-            if (webSearch) {
-
-                console.log(
-                    "WEB ARAŞTIRMASI: AKTİF"
-                );
-            }
-
-            /* ---------------------------------------------
-               SON MESAJLAR
-            --------------------------------------------- */
+            /* -----------------------------------------
+               BAĞLAM
+            ----------------------------------------- */
 
             const recentMessages =
                 memory.slice(
                     -CONTEXT_MESSAGES
                 );
+
+            /* -----------------------------------------
+               GROQ MESAJLARI
+            ----------------------------------------- */
 
             const messages = [
 
@@ -1674,113 +1391,43 @@ app.post(
 
                     content:
                         `
-ŞU ANKİ TARİH VE SAAT:
+GÜNCEL TARİH VE ZAMAN BİLGİSİ:
 
-Tarih:
-${current.date}
+Türkiye tarihi ve saati:
+${dateInfo.turkey}
 
-Saat:
-${current.time}
+ISO zaman:
+${dateInfo.iso}
 
-ISO:
-${current.iso}
+Yıl:
+${dateInfo.year}
 
-Zaman dilimi:
-Europe/Istanbul
+Bu bilgi mevcut zaman bilgisidir.
 
-Bu tarih ve saati güncel zaman bilgisi olarak kabul et.
-`
+Tarih sorularında bu bilgiyi kullan.
+
+Ancak bu bilgi internet erişimi sağlamaz.
+Güncel haber, skor veya son dakika bilgisi
+gerekiyorsa doğrulanmış veri yoksa uydurma.
+                        `.trim()
                 }
+
             ];
 
-            /* ---------------------------------------------
-               WEB ARAŞTIRMASI TALİMATI
-            --------------------------------------------- */
-
-            if (webSearch) {
-
-                messages.push({
-
-                    role:
-                        "system",
-
-                    content:
-                        `
-Bu soru güncel bilgi gerektirebilir.
-
-Web araması etkin.
-Gerekli güncel bilgiyi web araştırmasından kontrol et.
-
-Özellikle:
-- tarihleri
-- güncel sonuçları
-- son haberleri
-- spor sonuçlarını
-- şampiyonları
-- güncel teknoloji bilgilerini
-- güncel kişi/kurum bilgilerini
-- 2026 yılı olaylarını
-
-eski model bilgisinden tahmin etmek yerine araştırma sonuçlarına göre değerlendir.
-
-Eğer web araştırması sonucu mevcutsa, cevabı araştırma sonucuna göre oluştur.
-`
-                });
-            }
-
-            /* ---------------------------------------------
-               YÜKLENEN DOSYA
-            --------------------------------------------- */
-
-            if (uploadedFile) {
-
-                messages.push({
-
-                    role:
-                        "system",
-
-                    content:
-                        `
-KULLANICI BİR DOSYA YÜKLEDİ.
-
-Dosya adı:
-${String(
-    uploadedFile.originalName ||
-    uploadedFile.fileName ||
-    "Bilinmeyen dosya"
-)}
-
-Dosya türü:
-${String(
-    uploadedFile.mimeType ||
-    "Bilinmeyen"
-)}
-
-Dosya boyutu:
-${String(
-    uploadedFile.size ||
-    "Bilinmeyen"
-)} byte
-
-Dosya içeriği ayrıca verilmişse analiz et.
-İçerik verilmemişse dosyanın yalnızca metadata bilgilerinin bulunduğunu kabul et.
-`
-                });
-            }
-
-            /* ---------------------------------------------
-               HAFIZA BAĞLAMI
-            --------------------------------------------- */
+            /*
+               Eski konuşmaları ekle.
+            */
 
             for (
-                const item of recentMessages
+                const item of
+                recentMessages
             ) {
 
                 if (
                     !item ||
+                    !item.content ||
                     typeof item.content !==
-                        "string" ||
-                    !item.content.trim()
+                    "string"
                 ) {
 
                     continue;
@@ -1795,202 +1442,45 @@ Dosya içeriği ayrıca verilmişse analiz et.
                             : "user",
 
                     content:
-                        item.content
+                        String(
+                            item.content
+                        )
                 });
             }
 
-            /* ---------------------------------------------
-               GROQ
-            --------------------------------------------- */
+            console.log(
+                "BAĞLAM:",
+                recentMessages.length +
+                " mesaj"
+            );
 
             console.log(
                 "GROQ İSTEĞİ GÖNDERİLİYOR..."
             );
 
-            let response;
+            /* -----------------------------------------
+               GROQ
+            ----------------------------------------- */
 
-            try {
-
-                response =
-                    await requestGroq(
-                        messages,
-                        webSearch
-                    );
-
-            } catch (error) {
-
-                console.error(
-                    "GROQ BAĞLANTI HATASI:",
-                    error.message
+            const data =
+                await requestGroq(
+                    messages
                 );
 
-                if (
-                    error.name ===
-                    "AbortError"
-                ) {
-
-                    return res.status(
-                        504
-                    ).json({
-
-                        ok:
-                            false,
-
-                        reply:
-                            "Groq yanıt vermek için çok uzun süre bekledi. Lütfen tekrar dene."
-                    });
-                }
-
-                return res.status(
-                    502
-                ).json({
-
-                    ok:
-                        false,
-
-                    reply:
-                        "Groq bağlantısı kurulamadı. Sunucu bağlantısını kontrol et."
-                });
-            }
-
-            /* ---------------------------------------------
-               GROQ HTTP CEVABI
-            --------------------------------------------- */
-
-            const responseText =
-                await response.text();
-
-            if (!response.ok) {
-
-                console.error(
-                    "GROQ HTTP HATASI:",
-                    response.status
-                );
-
-                console.error(
-                    "GROQ CEVABI:",
-                    responseText.slice(
-                        0,
-                        3000
-                    )
-                );
-
-                let errorMessage =
-                    "Groq API hatası.";
-
-                try {
-
-                    const errorData =
-                        JSON.parse(
-                            responseText
-                        );
-
-                    if (
-                        errorData &&
-                        errorData.error &&
-                        errorData.error.message
-                    ) {
-
-                        errorMessage =
-                            errorData
-                                .error
-                                .message;
-                    }
-
-                } catch {
-                    /* JSON değil */
-                }
-
-                if (
-                    response.status ===
-                    401
-                ) {
-
-                    errorMessage =
-                        "Groq API anahtarı geçersiz.";
-                }
-
-                if (
-                    response.status ===
-                    403
-                ) {
-
-                    errorMessage =
-                        "Groq bu isteğe izin vermedi.";
-                }
-
-                if (
-                    response.status ===
-                    429
-                ) {
-
-                    errorMessage =
-                        "Groq kullanım limiti aşıldı. Biraz sonra tekrar dene.";
-                }
-
-                return res.status(
-                    502
-                ).json({
-
-                    ok:
-                        false,
-
-                    reply:
-                        errorMessage
-                });
-            }
-
-            /* ---------------------------------------------
-               JSON
-            --------------------------------------------- */
-
-            let data;
-
-            try {
-
-                data =
-                    JSON.parse(
-                        responseText
-                    );
-
-            } catch (error) {
-
-                console.error(
-                    "GROQ JSON PARSE HATASI:",
-                    error.message
-                );
-
-                console.error(
-                    responseText.slice(
-                        0,
-                        3000
-                    )
-                );
-
-                return res.status(
-                    502
-                ).json({
-
-                    ok:
-                        false,
-
-                    reply:
-                        "Groq geçerli bir JSON cevap göndermedi."
-                });
-            }
-
-            /* ---------------------------------------------
+            /* -----------------------------------------
                CEVAP
-            --------------------------------------------- */
+            ----------------------------------------- */
 
-            let reply = "";
+            let reply =
+                "";
 
             if (
                 data &&
                 Array.isArray(
                     data.choices
                 ) &&
-                data.choices.length > 0
+                data.choices.length >
+                0
             ) {
 
                 const choice =
@@ -1998,78 +1488,61 @@ Dosya içeriği ayrıca verilmişse analiz et.
 
                 if (
                     choice &&
-                    choice.message
+                    choice.message &&
+                    typeof choice.message.content ===
+                    "string"
                 ) {
 
-                    if (
-                        typeof
-                        choice.message.content ===
-                        "string"
-                    ) {
-
-                        reply =
-                            choice
-                                .message
-                                .content
-                                .trim();
-                    }
+                    reply =
+                        choice.message.content.trim();
                 }
             }
 
-            /* ---------------------------------------------
+            /* -----------------------------------------
                TEMİZLE
-            --------------------------------------------- */
+            ----------------------------------------- */
 
             reply =
                 cleanReply(
                     reply
                 );
 
-            /* ---------------------------------------------
+            /* -----------------------------------------
                BOŞ CEVAP
-            --------------------------------------------- */
+            ----------------------------------------- */
 
-            if (!reply) {
-
-                console.error(
-                    "GROQ BOŞ CEVAP VERDİ."
-                );
+            if (
+                !reply
+            ) {
 
                 console.error(
-                    JSON.stringify(
-                        data,
-                        null,
-                        2
-                    ).slice(
-                        0,
-                        5000
-                    )
+                    "BOŞ GROQ CEVABI"
                 );
 
                 return res.status(
-                    502
+                    500
                 ).json({
 
                     ok:
                         false,
 
                     reply:
-                        "ErencanAI boş cevap aldı. Lütfen tekrar dene."
+                        "ErencanAI boş cevap verdi. Lütfen tekrar dene."
                 });
             }
 
-            /* ---------------------------------------------
-               HAFIZAYA EKLE
-            --------------------------------------------- */
+            /* -----------------------------------------
+               HAFIZA
+            ----------------------------------------- */
 
             addMemory(
                 "assistant",
                 reply
             );
 
-            /* ---------------------------------------------
+            /* -----------------------------------------
                SÜRE
-            --------------------------------------------- */
+            ----------------------------------------- */
 
             const elapsed =
                 Date.now() -
@@ -2090,9 +1563,9 @@ Dosya içeriği ayrıca verilmişse analiz et.
                 "================================="
             );
 
-            /* ---------------------------------------------
+            /* -----------------------------------------
                CEVAP
-            --------------------------------------------- */
+            ----------------------------------------- */
 
             return res.json({
 
@@ -2105,33 +1578,108 @@ Dosya içeriği ayrıca verilmişse analiz et.
                 timeMs:
                     elapsed,
 
-                webSearch:
-                    webSearch,
+                model:
+                    GROQ_MODEL,
 
                 currentDate:
-                    current.date,
-
-                currentTime:
-                    current.time
+                    dateInfo.turkey
             });
 
         } catch (error) {
 
+            const elapsed =
+                Date.now() -
+                startTime;
+
+            console.error("");
             console.error(
                 "================================="
             );
 
             console.error(
-                "ERENCANAI SUNUCU HATASI:"
+                "ERENCANAI HATASI"
             );
 
             console.error(
-                error
+                error.message
             );
 
             console.error(
                 "================================="
             );
+
+            let userMessage =
+                "Sunucu bağlantı hatası.";
+
+            /* -----------------------------------------
+               TIMEOUT
+            ----------------------------------------- */
+
+            if (
+                error.name ===
+                "AbortError"
+            ) {
+
+                userMessage =
+                    "AI yanıtı zaman aşımına uğradı. Tekrar dene.";
+            }
+
+            /* -----------------------------------------
+               FETCH
+            ----------------------------------------- */
+
+            else if (
+                error.message &&
+                error.message
+                    .toLowerCase()
+                    .includes("fetch")
+            ) {
+
+                userMessage =
+                    "Groq bağlantısı kurulamadı. Sunucu bağlantısını kontrol et.";
+            }
+
+            /* -----------------------------------------
+               AUTH
+            ----------------------------------------- */
+
+            else if (
+                error.status ===
+                401 ||
+                error.status ===
+                403
+            ) {
+
+                userMessage =
+                    "Groq API anahtarı geçersiz veya yetkisiz.";
+            }
+
+            /* -----------------------------------------
+               RATE LIMIT
+            ----------------------------------------- */
+
+            else if (
+                error.status ===
+                429
+            ) {
+
+                userMessage =
+                    "Groq kullanım sınırına ulaşıldı. Biraz sonra tekrar dene.";
+            }
+
+            /* -----------------------------------------
+               SERVER
+            ----------------------------------------- */
+
+            else if (
+                error.status &&
+                error.status >=
+                500
+            ) {
+
+                userMessage =
+                    "Groq sunucusunda geçici bir hata oluştu.";
+            }
 
             return res.status(
                 500
@@ -2141,14 +1689,17 @@ Dosya içeriği ayrıca verilmişse analiz et.
                     false,
 
                 reply:
-                    "Sunucuda beklenmeyen bir hata oluştu."
+                    userMessage,
+
+                timeMs:
+                    elapsed
             });
         }
     }
 );
 
 /* =========================================================
-   HAFIZA GÖRÜNTÜLEME
+   HAFIZA
 ========================================================= */
 
 app.get(
@@ -2173,7 +1724,7 @@ app.get(
 );
 
 /* =========================================================
-   HAFIZA TEMİZLEME
+   HAFIZA TEMİZLE
 ========================================================= */
 
 app.post(
@@ -2183,7 +1734,8 @@ app.post(
         res
     ) {
 
-        memory = [];
+        memory =
+            [];
 
         const saved =
             saveMemory();
@@ -2197,6 +1749,48 @@ app.post(
                 saved
                     ? "ErencanAI hafızası temizlendi."
                     : "Hafıza temizlenemedi."
+        });
+    }
+);
+
+/* =========================================================
+   SAĞLIK
+========================================================= */
+
+app.get(
+    "/api/health",
+    function (
+        req,
+        res
+    ) {
+
+        const dateInfo =
+            getCurrentDateInfo();
+
+        return res.json({
+
+            ok:
+                true,
+
+            service:
+                "ErencanAI",
+
+            ai:
+                "Groq",
+
+            model:
+                GROQ_MODEL,
+
+            memory:
+                memory.length,
+
+            currentDate:
+                dateInfo.turkey,
+
+            uptime:
+                Math.floor(
+                    process.uptime()
+                )
         });
     }
 );
@@ -2225,36 +1819,6 @@ app.use(
 );
 
 /* =========================================================
-   GENEL HATA
-========================================================= */
-
-app.use(
-    function (
-        error,
-        req,
-        res,
-        next
-    ) {
-
-        console.error(
-            "EXPRESS HATASI:",
-            error
-        );
-
-        return res.status(
-            500
-        ).json({
-
-            ok:
-                false,
-
-            reply:
-                "Sunucuda bir hata oluştu."
-        });
-    }
-);
-
-/* =========================================================
    SUNUCU
 ========================================================= */
 
@@ -2263,8 +1827,8 @@ app.listen(
     "0.0.0.0",
     function () {
 
-        const current =
-            getCurrentDateTime();
+        const dateInfo =
+            getCurrentDateInfo();
 
         console.log(
             "================================="
@@ -2292,7 +1856,7 @@ app.listen(
         );
 
         console.log(
-            "UPLOAD: /api/upload"
+            "HEALTH: /api/health"
         );
 
         console.log(
@@ -2300,51 +1864,26 @@ app.listen(
         );
 
         console.log(
-            "MODEL: " +
+            "MODEL:",
             GROQ_MODEL
         );
 
         console.log(
-            "HAFIZA: " +
+            "HAFIZA:",
             memory.length +
             " mesaj"
         );
 
         console.log(
-            "API KEY: " +
-            (
-                GROQ_API_KEY
-                    ? "BULUNDU"
-                    : "BULUNAMADI"
-            )
+            "API KEY:",
+            GROQ_API_KEY
+                ? "BULUNDU"
+                : "BULUNAMADI"
         );
 
         console.log(
-            "WEB SEARCH: AKTİF"
-        );
-
-        console.log(
-            "DOSYA YÜKLEME: AKTİF"
-        );
-
-        console.log(
-            "MAX DOSYA: 10 MB"
-        );
-
-        console.log(
-            "TARİH: " +
-            current.date
-        );
-
-        console.log(
-            "SAAT: " +
-            current.time
-        );
-
-        console.log(
-            "TIMEOUT: " +
-            REQUEST_TIMEOUT_MS +
-            " ms"
+            "TÜRKİYE TARİHİ:",
+            dateInfo.turkey
         );
 
         console.log(
