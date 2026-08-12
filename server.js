@@ -3844,6 +3844,7 @@ Eski hafıza veya model bilgisi bununla çelişirse
 Güncel bilgi sorularında eski bilgiyi kullanma.`
     });
 }
+console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             console.log(
                 "GROQ İSTEĞİ GÖNDERİLİYOR..."
             );
