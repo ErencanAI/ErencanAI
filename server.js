@@ -2151,21 +2151,22 @@ async function geocodeLocation(
         "&language=tr" +
         "&format=json";
 
-    const response =
-        await fetchWithTimeout(
-            url,
-            {
-                method:
-                    "GET",
+   const response =
+await fetchWithTimeout(
+    url,
+    {
+        method:
+            "GET",
 
-                headers: {
+        headers: {
 
-                    "User-Agent":
-                        "ErencanAI/8.00"
+            "Accept":
+                "application/json"
 
-                }
-            }
-        );
+        }
+    },
+    15000
+);
 
     if (
         !response.ok
