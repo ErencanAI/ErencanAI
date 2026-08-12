@@ -5,6 +5,7 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const multer = require("multer");
 
 const app = express();
 
@@ -36,8 +37,83 @@ const MAX_MEMORY_MESSAGES = 400;
 const CONTEXT_MESSAGES = 24;
 
 const REQUEST_TIMEOUT_MS = 45000;
+
 const MAX_MESSAGE_LENGTH = 12000;
+
 const MAX_REPLY_LENGTH = 30000;
+
+const MAX_FILE_SIZE =
+    10 * 1024 * 1024;
+
+/* =========================================================
+   DOSYA YÜKLEME
+========================================================= */
+
+const UPLOAD_DIR =
+    path.join(__dirname, "uploads");
+
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(
+        UPLOAD_DIR,
+        {
+            recursive: true
+        }
+    );
+}
+
+const storage =
+    multer.diskStorage({
+
+        destination:
+            function (req, file, cb) {
+
+                cb(
+                    null,
+                    UPLOAD_DIR
+                );
+            },
+
+        filename:
+            function (req, file, cb) {
+
+                const safeName =
+                    path
+                        .basename(
+                            file.originalname
+                        )
+                        .replace(
+                            /[^a-zA-Z0-9._-]/g,
+                            "_"
+                        );
+
+                const uniqueName =
+                    Date.now() +
+                    "-" +
+                    Math.random()
+                        .toString(36)
+                        .slice(2, 8) +
+                    "-" +
+                    safeName;
+
+                cb(
+                    null,
+                    uniqueName
+                );
+            }
+    });
+
+const upload =
+    multer({
+
+        storage:
+            storage,
+
+        limits: {
+
+            fileSize:
+                MAX_FILE_SIZE
+        }
+    });
 
 /* =========================================================
    ERENCANAI SİSTEMİ
@@ -59,39 +135,39 @@ TEMEL DAVRANIŞ:
 - Bilmediğin bilgiyi uydurma.
 - Emin olmadığın bilgiyi kesin bilgi gibi sunma.
 - Çelişki varsa belirt.
-- Kullanıcı bir önceki mesajla ilgili konuşuyorsa bağlamı kullan.
-- Hafızadaki bilgileri yalnızca gerekli olduğunda kullan.
+- Önceki konuşmanın bağlamını kullan.
+- Hafızadaki bilgileri gerektiğinde kullan.
 - JSON biçiminde cevap verme.
-- Cevabın başına "AI:", "ErencanAI:" veya teknik etiket koyma.
+- Cevabın başına "AI:" veya "ErencanAI:" yazma.
 - Doğal, anlaşılır ve yardımcı ol.
 - Kullanıcı kısa cevap istiyorsa kısa cevap ver.
 - Kullanıcı detay istiyorsa detaylandır.
-- Kullanıcı sadece uygulanacak adımları istiyorsa gereksiz açıklama yapma.
+- Kullanıcı sadece uygulanacak adımları istiyorsa doğrudan adımları ver.
 
 KONUŞMA KALİTESİ:
 
-- Kullanıcının ne istediğini tahmin etmek yerine mesajın anlamını dikkatlice değerlendir.
-- Aynı soruyu tekrar sormaktan kaçın.
-- Kullanıcı bir hata gönderirse hatayı analiz et.
+- Kullanıcının ne istediğini dikkatlice değerlendir.
+- Gereksiz yere aynı soruyu tekrar sorma.
+- Kullanıcı hata gönderirse hatayı analiz et.
 - Önceki çözüm işe yaramadıysa aynı çözümü körü körüne tekrar etme.
-- Sorunun muhtemel nedenlerini sırala.
 - En güvenli çözümü önce ver.
 - Çalışan kodu gereksiz yere değiştirme.
-- Kullanıcının mevcut projesine uyum sağla.
+- Kullanıcının mevcut proje yapısına uyum sağla.
 
 AKIL YÜRÜTME:
 
 - Problemi mantıksal parçalara ayır.
-- Teknik sorunlarda hata mesajındaki dosya, satır ve hata türünü dikkate al.
+- Teknik sorunlarda hata mesajını dikkatlice incele.
+- Dosya ve satır bilgilerini dikkate al.
 - Kod vermeden önce sözdizimini kontrol et.
 - Parantezleri kontrol et.
 - Süslü parantezleri kontrol et.
 - Tırnakları kontrol et.
 - Değişken isimlerini kontrol et.
-- Fonksiyonların birbirleriyle uyumlu olduğundan emin ol.
-- API isteklerinin doğru biçimde oluşturulduğunu kontrol et.
+- Fonksiyonların birbiriyle uyumlu olduğundan emin ol.
+- API isteklerini kontrol et.
 - Asenkron işlemlerde hata yönetimi kullan.
-- Kullanıcı "olmadı" derse yeni bir teşhis yap.
+- Kullanıcı "olmadı" derse yeni teşhis yap.
 
 KODLAMA UZMANLIĞI:
 
@@ -104,7 +180,6 @@ JavaScript:
 - destructuring
 - spread/rest
 - template literals
-- modules
 - CommonJS
 - async/await
 - Promise
@@ -112,7 +187,6 @@ JavaScript:
 - fetch
 - AbortController
 - try/catch
-- error handling
 - DOM
 - event listener
 - localStorage
@@ -160,10 +234,9 @@ Express.js:
 - status codes
 - route yönetimi
 - error middleware
-- CORS mantığı
 - Render deployment
 - health check
-- API timeout yönetimi
+- timeout yönetimi
 
 HTML:
 
@@ -271,7 +344,6 @@ GitHub:
 - pull
 - file management
 - deployment
-- GitHub bağlantıları
 
 Render:
 
@@ -285,6 +357,17 @@ Render:
 - restart
 - health check
 
+DOSYA SİSTEMİ:
+
+- Kullanıcı dosya yüklediğinde dosyanın adını ve türünü anlayabil.
+- Dosya yükleme işlemlerini güvenli şekilde ele al.
+- Dosya boyutunu kontrol et.
+- Dosya adlarını güvenli hale getir.
+- Yüklenen dosyaların yolunu kullanıcıya gereksiz yere gösterme.
+- Gizli sistem dosyalarını açığa çıkarma.
+- Dosya içeriği gerçekten okunabiliyorsa analiz et.
+- İçeriği okunamayan dosyalarda bunu açıkça belirt.
+
 KODLAMA KURALLARI:
 
 1. Çalışan sistemi gereksiz yere yeniden tasarlama.
@@ -295,15 +378,15 @@ KODLAMA KURALLARI:
 6. Eksik kod bırakma.
 7. Sözdizimi hatası bırakma.
 8. API anahtarını kod içine yazma.
-9. .env içindeki gizli bilgileri asla gösterme.
+9. .env içindeki gizli bilgileri gösterme.
 10. Kullanıcının gerçek API anahtarını tekrar yazma.
-11. Aynı isimde çakışan değişkenler oluşturma.
+11. Aynı isimde çakışan değişken oluşturma.
 12. Gereksiz bağımlılık ekleme.
 13. Mevcut proje yapısını koru.
-14. Bir özelliği düzeltirken diğer özellikleri kontrol et.
-15. Kodun Node.js sürümüyle uyumlu olmasına dikkat et.
-16. Hata durumlarında kullanıcıya anlaşılır mesaj döndür.
-17. Sunucu tarafında ayrıntılı hatayı console'a yazabilir, kullanıcıya gizli bilgiler gönderme.
+14. Yeni özellik eklerken diğer özellikleri kontrol et.
+15. Node.js uyumluluğunu dikkate al.
+16. Hatalarda anlaşılır mesaj döndür.
+17. Gizli bilgileri istemciye gönderme.
 
 HATA AYIKLAMA:
 
@@ -337,7 +420,7 @@ HATA GELDİĞİNDE:
 
 1. Hatanın türünü belirle.
 2. Hatanın kaynağını belirle.
-3. Hatanın nedenini açıkla.
+3. Nedenini açıkla.
 4. En güvenli çözümü ver.
 5. Gerekirse düzeltilmiş kodu eksiksiz ver.
 6. Çözümün mevcut sistemi bozup bozmayacağını kontrol et.
@@ -351,12 +434,13 @@ ERENCANAI PROJESİ:
 - memory.json kalıcı hafıza olarak kullanılır.
 - Frontend index.html, app.js ve style.css dosyalarından oluşur.
 - Mevcut chat sistemi korunmalıdır.
+- Dosya yükleme sistemi desteklenir.
 - Gelecekte ses, görsel, video ve araştırma özellikleri eklenebilir.
 - Yeni özellikler mevcut sistemi bozmadan eklenmelidir.
 
 EMOJİ:
 
-- Konuya uygunsa doğal şekilde emoji kullan.
+- Konuya uygunsa doğal emoji kullan.
 - Her cümlede emoji kullanma.
 - Teknik cevaplarda emoji kullanımını azalt.
 - Başarılı işlem için gerektiğinde ✅
@@ -385,8 +469,15 @@ let memory = [];
 ========================================================= */
 
 function loadMemory() {
+
     try {
-        if (!fs.existsSync(MEMORY_FILE)) {
+
+        if (
+            !fs.existsSync(
+                MEMORY_FILE
+            )
+        ) {
+
             fs.writeFileSync(
                 MEMORY_FILE,
                 "[]",
@@ -402,14 +493,20 @@ function loadMemory() {
                 "utf8"
             );
 
-        if (!content.trim()) {
+        if (
+            !content.trim()
+        ) {
             return [];
         }
 
         const data =
-            JSON.parse(content);
+            JSON.parse(
+                content
+            );
 
-        if (!Array.isArray(data)) {
+        if (
+            !Array.isArray(data)
+        ) {
             return [];
         }
 
@@ -417,12 +514,15 @@ function loadMemory() {
             item =>
                 item &&
                 typeof item === "object" &&
-                (item.role === "user" ||
-                    item.role === "assistant") &&
+                (
+                    item.role === "user" ||
+                    item.role === "assistant"
+                ) &&
                 typeof item.content === "string"
         );
 
     } catch (error) {
+
         console.error(
             "HAFIZA OKUMA HATASI:",
             error.message
@@ -437,7 +537,9 @@ function loadMemory() {
 ========================================================= */
 
 function saveMemory() {
+
     try {
+
         fs.writeFileSync(
             MEMORY_FILE,
             JSON.stringify(
@@ -451,6 +553,7 @@ function saveMemory() {
         return true;
 
     } catch (error) {
+
         console.error(
             "HAFIZA KAYDETME HATASI:",
             error.message
@@ -464,15 +567,24 @@ function saveMemory() {
    HAFIZAYA EKLE
 ========================================================= */
 
-function addMemory(role, content) {
-    const cleanContent =
-        String(content || "").trim();
+function addMemory(
+    role,
+    content
+) {
 
-    if (!cleanContent) {
+    const cleanContent =
+        String(
+            content || ""
+        ).trim();
+
+    if (
+        !cleanContent
+    ) {
         return;
     }
 
     memory.push({
+
         role:
             role === "assistant"
                 ? "assistant"
@@ -489,6 +601,7 @@ function addMemory(role, content) {
         memory.length >
         MAX_MEMORY_MESSAGES
     ) {
+
         memory =
             memory.slice(
                 -MAX_MEMORY_MESSAGES
@@ -503,8 +616,11 @@ function addMemory(role, content) {
 ========================================================= */
 
 function findUserName(text) {
+
     const value =
-        String(text || "").trim();
+        String(
+            text || ""
+        ).trim();
 
     const match =
         value.match(
@@ -523,11 +639,13 @@ function findUserName(text) {
 ========================================================= */
 
 function getLastUserName() {
+
     for (
         let i = memory.length - 1;
         i >= 0;
         i--
     ) {
+
         const item =
             memory[i];
 
@@ -556,31 +674,35 @@ function getLastUserName() {
 ========================================================= */
 
 function cleanReply(text) {
+
     let reply =
-        String(text || "").trim();
+        String(
+            text || ""
+        ).trim();
 
     if (!reply) {
         return "";
     }
 
-    /* JSON cevap geldiyse */
-
     try {
+
         const parsed =
-            JSON.parse(reply);
+            JSON.parse(
+                reply
+            );
 
         if (
             parsed &&
             typeof parsed.reply === "string"
         ) {
+
             reply =
                 parsed.reply.trim();
         }
+
     } catch {
         /* Normal metin */
     }
-
-    /* Markdown code fence temizliği */
 
     reply =
         reply
@@ -594,8 +716,6 @@ function cleanReply(text) {
             )
             .trim();
 
-    /* Gereksiz teknik etiketler */
-
     reply =
         reply.replace(
             /^(?:AI|ErencanAI)\s*:\s*/i,
@@ -606,6 +726,7 @@ function cleanReply(text) {
         reply.length >
         MAX_REPLY_LENGTH
     ) {
+
         reply =
             reply.slice(
                 0,
@@ -626,6 +747,7 @@ async function fetchWithTimeout(
     options,
     timeoutMs
 ) {
+
     const controller =
         new AbortController();
 
@@ -638,6 +760,7 @@ async function fetchWithTimeout(
         );
 
     try {
+
         return await fetch(
             url,
             {
@@ -648,7 +771,10 @@ async function fetchWithTimeout(
         );
 
     } finally {
-        clearTimeout(timeout);
+
+        clearTimeout(
+            timeout
+        );
     }
 }
 
@@ -656,8 +782,12 @@ async function fetchWithTimeout(
    GROQ İSTEĞİ
 ========================================================= */
 
-async function requestGroq(messages) {
+async function requestGroq(
+    messages
+) {
+
     const body = {
+
         model:
             GROQ_MODEL,
 
@@ -677,9 +807,12 @@ async function requestGroq(messages) {
     return fetchWithTimeout(
         GROQ_URL,
         {
-            method: "POST",
+
+            method:
+                "POST",
 
             headers: {
+
                 "Content-Type":
                     "application/json",
 
@@ -689,7 +822,9 @@ async function requestGroq(messages) {
             },
 
             body:
-                JSON.stringify(body)
+                JSON.stringify(
+                    body
+                )
         },
 
         REQUEST_TIMEOUT_MS
@@ -714,7 +849,16 @@ app.use(
 );
 
 app.use(
-    express.static(__dirname)
+    express.static(
+        __dirname
+    )
+);
+
+app.use(
+    "/uploads",
+    express.static(
+        UPLOAD_DIR
+    )
 );
 
 /* =========================================================
@@ -724,6 +868,7 @@ app.use(
 app.get(
     "/",
     function (req, res) {
+
         res.sendFile(
             path.join(
                 __dirname,
@@ -734,18 +879,173 @@ app.get(
 );
 
 /* =========================================================
+   DOSYA YÜKLEME API
+========================================================= */
+
+app.post(
+    "/api/upload",
+
+    upload.single("file"),
+
+    function (req, res) {
+
+        try {
+
+            if (
+                !req.file
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Lütfen bir dosya seç."
+                });
+            }
+
+            console.log(
+                "DOSYA YÜKLENDİ:",
+                req.file.originalname
+            );
+
+            return res.json({
+
+                ok:
+                    true,
+
+                message:
+                    "Dosya başarıyla yüklendi.",
+
+                file: {
+
+                    originalName:
+                        req.file.originalname,
+
+                    fileName:
+                        req.file.filename,
+
+                    size:
+                        req.file.size,
+
+                    mimeType:
+                        req.file.mimetype,
+
+                    url:
+                        "/uploads/" +
+                        encodeURIComponent(
+                            req.file.filename
+                        )
+                }
+            });
+
+        } catch (error) {
+
+            console.error(
+                "DOSYA YÜKLEME HATASI:",
+                error
+            );
+
+            return res.status(
+                500
+            ).json({
+
+                ok:
+                    false,
+
+                reply:
+                    "Dosya yüklenirken bir hata oluştu."
+            });
+        }
+    }
+);
+
+/* =========================================================
+   DOSYA YÜKLEME HATA YAKALAMA
+========================================================= */
+
+app.use(
+    "/api/upload",
+
+    function (
+        error,
+        req,
+        res,
+        next
+    ) {
+
+        console.error(
+            "DOSYA API HATASI:",
+            error
+        );
+
+        if (
+            error instanceof multer.MulterError
+        ) {
+
+            if (
+                error.code ===
+                "LIMIT_FILE_SIZE"
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Dosya çok büyük. En fazla 10 MB yükleyebilirsin."
+                });
+            }
+
+            return res.status(
+                400
+            ).json({
+
+                ok:
+                    false,
+
+                reply:
+                    "Dosya yükleme hatası."
+            });
+        }
+
+        return res.status(
+            500
+        ).json({
+
+            ok:
+                false,
+
+            reply:
+                "Dosya yüklenirken beklenmeyen bir hata oluştu."
+        });
+    }
+);
+
+/* =========================================================
    TEST API
 ========================================================= */
 
 app.get(
     "/api/test",
     function (req, res) {
+
         return res.json({
-            ok: true,
 
-            server: true,
+            ok:
+                true,
 
-            ai: "Groq",
+            server:
+                true,
+
+            ai:
+                "Groq",
 
             model:
                 GROQ_MODEL,
@@ -759,7 +1059,13 @@ app.get(
                 memory.length,
 
             endpoint:
-                "/api/chat"
+                "/api/chat",
+
+            fileUpload:
+                true,
+
+            maxFileSize:
+                "10 MB"
         });
     }
 );
@@ -771,10 +1077,12 @@ app.get(
 app.post(
     "/api/chat",
     async function (req, res) {
+
         const startTime =
             Date.now();
 
         try {
+
             let message =
                 String(
                     req.body &&
@@ -783,40 +1091,51 @@ app.post(
                         : ""
                 ).trim();
 
-            /* Mesaj kontrolü */
-
             if (!message) {
-                return res.status(400).json({
-                    ok: false,
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
 
                     reply:
                         "Lütfen bir mesaj yaz."
                 });
             }
 
-            /* Çok uzun mesaj kontrolü */
-
             if (
                 message.length >
                 MAX_MESSAGE_LENGTH
             ) {
-                return res.status(400).json({
-                    ok: false,
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
 
                     reply:
                         "Mesaj çok uzun. Lütfen daha kısa bir mesaj gönder."
                 });
             }
 
-            /* API key kontrolü */
+            if (
+                !GROQ_API_KEY
+            ) {
 
-            if (!GROQ_API_KEY) {
                 console.error(
                     "GROQ API KEY BULUNAMADI."
                 );
 
-                return res.status(500).json({
-                    ok: false,
+                return res.status(
+                    500
+                ).json({
+
+                    ok:
+                        false,
 
                     reply:
                         "Groq API anahtarı bulunamadı. .env dosyasını kontrol et."
@@ -834,8 +1153,6 @@ app.post(
                 "KULLANICI:",
                 message
             );
-
-            /* Kullanıcı mesajını kaydet */
 
             addMemory(
                 "user",
@@ -860,6 +1177,7 @@ app.post(
                 newName &&
                 !askingName
             ) {
+
                 const reply =
                     "Tamam, adını " +
                     newName +
@@ -871,7 +1189,9 @@ app.post(
                 );
 
                 return res.json({
-                    ok: true,
+
+                    ok:
+                        true,
 
                     reply:
                         reply,
@@ -882,11 +1202,17 @@ app.post(
                 });
             }
 
-            if (askingName) {
+            if (
+                askingName
+            ) {
+
                 const userName =
                     getLastUserName();
 
-                if (userName) {
+                if (
+                    userName
+                ) {
+
                     const reply =
                         "Senin adın " +
                         userName +
@@ -898,7 +1224,9 @@ app.post(
                     );
 
                     return res.json({
-                        ok: true,
+
+                        ok:
+                            true,
 
                         reply:
                             reply,
@@ -920,7 +1248,9 @@ app.post(
                 );
 
             const messages = [
+
                 {
+
                     role:
                         "system",
 
@@ -932,16 +1262,19 @@ app.post(
             for (
                 const item of recentMessages
             ) {
+
                 if (
                     !item ||
                     typeof item.content !==
                         "string" ||
                     !item.content.trim()
                 ) {
+
                     continue;
                 }
 
                 messages.push({
+
                     role:
                         item.role ===
                         "assistant"
@@ -964,12 +1297,14 @@ app.post(
             let response;
 
             try {
+
                 response =
                     await requestGroq(
                         messages
                     );
 
             } catch (error) {
+
                 console.error(
                     "GROQ BAĞLANTI HATASI:",
                     error.message
@@ -979,16 +1314,25 @@ app.post(
                     error.name ===
                     "AbortError"
                 ) {
-                    return res.status(504).json({
-                        ok: false,
+
+                    return res.status(
+                        504
+                    ).json({
+
+                        ok:
+                            false,
 
                         reply:
                             "Groq yanıt vermek için çok uzun süre bekledi. Lütfen tekrar dene."
                     });
                 }
 
-                return res.status(502).json({
-                    ok: false,
+                return res.status(
+                    502
+                ).json({
+
+                    ok:
+                        false,
 
                     reply:
                         "Groq bağlantısı kurulamadı. Sunucu bağlantısını kontrol et."
@@ -996,13 +1340,16 @@ app.post(
             }
 
             /* =================================================
-               GROQ HTTP HATASI
+               GROQ CEVABI
             ================================================= */
 
             const responseText =
                 await response.text();
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
+
                 console.error(
                     "GROQ HTTP HATASI:",
                     response.status
@@ -1020,6 +1367,7 @@ app.post(
                     "Groq API hatası.";
 
                 try {
+
                     const errorData =
                         JSON.parse(
                             responseText
@@ -1030,6 +1378,7 @@ app.post(
                         errorData.error &&
                         errorData.error.message
                     ) {
+
                         errorMessage =
                             errorData
                                 .error
@@ -1044,6 +1393,7 @@ app.post(
                     response.status ===
                     401
                 ) {
+
                     errorMessage =
                         "Groq API anahtarı geçersiz.";
                 }
@@ -1052,12 +1402,17 @@ app.post(
                     response.status ===
                     429
                 ) {
+
                     errorMessage =
                         "Groq kullanım limiti aşıldı. Biraz sonra tekrar dene.";
                 }
 
-                return res.status(502).json({
-                    ok: false,
+                return res.status(
+                    502
+                ).json({
+
+                    ok:
+                        false,
 
                     reply:
                         errorMessage
@@ -1071,26 +1426,25 @@ app.post(
             let data;
 
             try {
+
                 data =
                     JSON.parse(
                         responseText
                     );
 
             } catch (error) {
+
                 console.error(
                     "GROQ JSON PARSE HATASI:",
                     error.message
                 );
 
-                console.error(
-                    responseText.slice(
-                        0,
-                        2000
-                    )
-                );
+                return res.status(
+                    502
+                ).json({
 
-                return res.status(502).json({
-                    ok: false,
+                    ok:
+                        false,
 
                     reply:
                         "Groq geçerli bir JSON cevap göndermedi."
@@ -1110,25 +1464,24 @@ app.post(
                 ) &&
                 data.choices.length > 0
             ) {
+
                 const choice =
                     data.choices[0];
 
                 if (
                     choice &&
-                    choice.message
-                ) {
-                    if (
-                        typeof choice
-                            .message
-                            .content ===
+                    choice.message &&
+                    typeof choice
+                        .message
+                        .content ===
                         "string"
-                    ) {
-                        reply =
-                            choice
-                                .message
-                                .content
-                                .trim();
-                    }
+                ) {
+
+                    reply =
+                        choice
+                            .message
+                            .content
+                            .trim();
                 }
             }
 
@@ -1141,28 +1494,20 @@ app.post(
                     reply
                 );
 
-            /* =================================================
-               BOŞ CEVAP
-            ================================================= */
+            if (
+                !reply
+            ) {
 
-            if (!reply) {
                 console.error(
                     "GROQ BOŞ CEVAP VERDİ."
                 );
 
-                console.error(
-                    JSON.stringify(
-                        data,
-                        null,
-                        2
-                    ).slice(
-                        0,
-                        5000
-                    )
-                );
+                return res.status(
+                    502
+                ).json({
 
-                return res.status(502).json({
-                    ok: false,
+                    ok:
+                        false,
 
                     reply:
                         "ErencanAI boş cevap aldı. Lütfen tekrar dene."
@@ -1170,7 +1515,7 @@ app.post(
             }
 
             /* =================================================
-               ASİSTAN HAFIZASI
+               HAFIZAYA EKLE
             ================================================= */
 
             addMemory(
@@ -1194,19 +1539,17 @@ app.post(
             console.log(
                 "CEVAP SÜRESİ:",
                 elapsed +
-                    " ms"
+                " ms"
             );
 
             console.log(
                 "================================="
             );
 
-            /* =================================================
-               JSON CEVAP
-            ================================================= */
-
             return res.json({
-                ok: true,
+
+                ok:
+                    true,
 
                 reply:
                     reply,
@@ -1216,6 +1559,7 @@ app.post(
             });
 
         } catch (error) {
+
             console.error(
                 "================================="
             );
@@ -1232,8 +1576,12 @@ app.post(
                 "================================="
             );
 
-            return res.status(500).json({
-                ok: false,
+            return res.status(
+                500
+            ).json({
+
+                ok:
+                    false,
 
                 reply:
                     "Sunucuda beklenmeyen bir hata oluştu."
@@ -1249,8 +1597,11 @@ app.post(
 app.get(
     "/api/memory",
     function (req, res) {
+
         return res.json({
-            ok: true,
+
+            ok:
+                true,
 
             count:
                 memory.length,
@@ -1268,12 +1619,14 @@ app.get(
 app.post(
     "/api/clear-memory",
     function (req, res) {
+
         memory = [];
 
         const saved =
             saveMemory();
 
         return res.json({
+
             ok:
                 saved,
 
@@ -1291,8 +1644,13 @@ app.post(
 
 app.use(
     function (req, res) {
-        return res.status(404).json({
-            ok: false,
+
+        return res.status(
+            404
+        ).json({
+
+            ok:
+                false,
 
             error:
                 "Bu ErencanAI API adresi bulunamadı."
@@ -1305,14 +1663,24 @@ app.use(
 ========================================================= */
 
 app.use(
-    function (error, req, res, next) {
+    function (
+        error,
+        req,
+        res,
+        next
+    ) {
+
         console.error(
             "EXPRESS HATASI:",
             error
         );
 
-        return res.status(500).json({
-            ok: false,
+        return res.status(
+            500
+        ).json({
+
+            ok:
+                false,
 
             reply:
                 "Sunucuda bir hata oluştu."
@@ -1328,6 +1696,7 @@ app.listen(
     PORT,
     "0.0.0.0",
     function () {
+
         console.log(
             "================================="
         );
@@ -1351,6 +1720,10 @@ app.listen(
 
         console.log(
             "TEST: /api/test"
+        );
+
+        console.log(
+            "UPLOAD: /api/upload"
         );
 
         console.log(
@@ -1384,8 +1757,11 @@ app.listen(
         );
 
         console.log(
+            "MAX DOSYA: 10 MB"
+        );
+
+        console.log(
             "================================="
         );
     }
 );
-
