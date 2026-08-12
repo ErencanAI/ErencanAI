@@ -31,6 +31,25 @@ const GROQ_MODEL =
     "openai/gpt-oss-20b";
 
 /* =========================================================
+ARAŞTIRMA
+========================================================= */
+
+const SEARCH_URL =
+    "https://html.duckduckgo.com/html/";
+
+const WEATHER_GEOCODING_URL =
+    "https://geocoding-api.open-meteo.com/v1/search";
+
+const WEATHER_URL =
+    "https://api.open-meteo.com/v1/forecast";
+
+const RESEARCH_TIMEOUT =
+    12000;
+
+const MAX_SEARCH_RESULTS =
+    6;
+
+/* =========================================================
 ESKİ HAFIZA
 ========================================================= */
 
@@ -92,7 +111,6 @@ const MAX_FILE_SIZE =
     10 * 1024 * 1024;
 
 const ALLOWED_FILE_EXTENSIONS = [
-
     ".txt",
     ".json",
     ".js",
@@ -108,7 +126,6 @@ const ALLOWED_FILE_EXTENSIONS = [
     ".jpg",
     ".jpeg",
     ".webp"
-
 ];
 
 /* =========================================================
@@ -188,6 +205,7 @@ function getCurrentDateInfo() {
             )
 
     };
+
 }
 
 /* =========================================================
@@ -205,13 +223,11 @@ TEMEL KİMLİK:
 - Kullanıcının kullandığı dili otomatik olarak algıla.
 - Kullanıcı hangi dilde yazıyorsa mümkün olduğunca aynı dilde cevap ver.
 - Kullanıcı dil değiştirirse sen de dili değiştir.
-- Kullanıcı birden fazla dil kullanıyorsa sorunun ağırlıklı olduğu dili kullan.
 - Kullanıcı özellikle başka bir dil isterse o dili kullan.
 - Çeviri istenmediği sürece kullanıcının mesajını gereksiz yere başka dile çevirme.
 - Cevap verirken seçilen dili doğal ve akıcı şekilde kullan.
 - Kelime kelime çeviri gibi yapay ifadeler kullanma.
-- Dilin doğal konuşma kurallarına, dil bilgisine ve yazımına dikkat et.
-- Bir dilde yeterince emin değilsen uydurma; mümkün olduğunca doğru ve anlaşılır ifade kullan.
+- Bir dilde yeterince emin değilsen uydurma.
 
 DESTEKLENEN YAYGIN DİLLER:
 
@@ -293,27 +309,50 @@ DOĞRULUK:
 
 1. Bilmediğin bilgiyi uydurma.
 2. Emin olmadığın bilgiyi kesin gerçek gibi söyleme.
-3. Güncel bilgi gerektiğinde mevcut tarih bilgisini kullan.
-4. Tarihleri birbirine karıştırma.
-5. Geçmiş olayları gelecekteymiş gibi anlatma.
-6. Gelecekteki olayları gerçekleşmiş gibi anlatma.
-7. Bir olayın gerçekleşip gerçekleşmediğini mevcut tarih ile karşılaştır.
-8. Kullanıcı "bugün", "dün", "yarın", "şu an", "bu yıl" gibi ifadeler kullanırsa mevcut tarih bilgisini dikkate al.
-9. Kullanıcı belirli bir tarih sorarsa tarihi açıkça belirt.
-10. Güncel internet bilgisine sahip olmadığın durumda bunu dürüstçe belirt.
+3. Güncel bilgi gerektiğinde araştırma sonuçlarını kullan.
+4. Araştırma sonuçları verilmişse onları öncelikli bilgi kaynağı olarak kullan.
+5. Araştırma sonucunda yeterli bilgi yoksa bunu dürüstçe belirt.
+6. Tarihleri birbirine karıştırma.
+7. Geçmiş olayları gelecekteymiş gibi anlatma.
+8. Gelecekteki olayları gerçekleşmiş gibi anlatma.
+9. "bugün", "dün", "yarın", "şu an", "bu yıl" gibi ifadelerde mevcut tarih bilgisini dikkate al.
+10. Güncel internet bilgisine sahip olmadığın durumda araştırma yapılmadıysa bunu belirt.
 11. İnternetten doğrulanması gereken bilgileri uydurma.
 12. Kullanıcı daha önce konuşulan bir konuyu devam ettiriyorsa bağlamı kullan.
 
-TARİH:
+İNTERNET ARAŞTIRMASI:
 
-Sana her istekte güncel Türkiye tarih ve saat bilgisi ayrıca verilecektir.
+ErencanAI gerektiğinde internetten araştırma yapabilir.
 
-Bu bilgi mevcut zaman bilgisidir.
+Araştırma sonuçları mesajın içinde:
 
-Ancak:
+[İNTERNET ARAŞTIRMASI]
+şeklinde verilebilir.
 
-- Tarih bilgisi internet erişimi değildir.
-- Güncel haber, spor sonucu, fiyat, hava durumu veya başka internet verisi doğrulanmamışsa uydurma.
+Araştırma sonuçları mevcutsa:
+
+- Bilgileri dikkatlice değerlendir.
+- Kaynak başlıklarını dikkate al.
+- Güncel bilgilerde araştırma sonuçlarını öncelikli kullan.
+- Kaynaklarda olmayan bilgileri uydurma.
+- Çelişkili bilgiler varsa bunu belirt.
+- Kullanıcıya gereksiz teknik araştırma ayrıntıları verme.
+- Kaynak bilgisi istenirse kaynakları belirt.
+
+HAVA DURUMU:
+
+Hava durumu bilgisi verildiğinde:
+
+- Konumu dikkate al.
+- Güncel hava verisini kullan.
+- Sıcaklık
+- Yağış
+- Rüzgar
+- Nem
+- Hava durumu açıklaması
+gibi bilgileri kullanabilirsin.
+
+Hava durumu verisi yoksa uydurma.
 
 CEVAP UZUNLUĞU:
 
@@ -532,8 +571,6 @@ DOSYA:
 
 ErencanAI dosya yükleme özelliğine sahiptir.
 
-Kullanıcı tarafından gönderilen dosyalar güvenli şekilde alınmalıdır.
-
 Desteklenen temel dosya türleri:
 
 TXT
@@ -567,7 +604,7 @@ Kod içine gerçek API anahtarı koyma.
 PROJE:
 
 Proje:
-ErencanAI
+ErencanAI 8.00 PRO
 
 Backend:
 Node.js + Express
@@ -588,6 +625,12 @@ POST /api/chat
 
 Dosya API:
 POST /api/upload
+
+Araştırma API:
+POST /api/research
+
+Hava durumu API:
+GET /api/weather
 
 Test:
 GET /api/test
@@ -623,30 +666,6 @@ API anahtarını istemciye gönderme.
 
 Şifreleri ve tokenları cevapta gösterme.
 
-HATA TANIMA:
-
-SyntaxError
-ReferenceError
-TypeError
-MODULE_NOT_FOUND
-ENOENT
-EACCES
-fetch failed
-ECONNREFUSED
-ETIMEDOUT
-AbortError
-Headers Timeout Error
-HTTP 400
-HTTP 401
-HTTP 403
-HTTP 404
-HTTP 429
-HTTP 500
-JSON parse errors
-Express errors
-DOM errors
-CSS errors
-
 SONUÇ:
 
 DOĞRU
@@ -654,7 +673,9 @@ DOĞAL
 HIZLI
 ÇOK DİLLİ
 KULLANICIYA ÖZEL HAFIZALI
-GÜNCEL TARİH BİLGİSİNİ DİKKATE ALAN
+GÜNCEL BİLGİ ARAŞTIRABİLEN
+HAVA DURUMU BİLGİSİ ALABİLEN
+DOSYA YÜKLEYEBİLEN
 ANLAŞILIR
 FAYDALI
 
@@ -1326,6 +1347,1155 @@ function isAllowedFile(
 }
 
 /* =========================================================
+FETCH ZAMAN AŞIMI YARDIMCISI
+========================================================= */
+
+async function fetchWithTimeout(
+    url,
+    options = {},
+    timeout = RESEARCH_TIMEOUT
+) {
+
+    const controller =
+        new AbortController();
+
+    const timer =
+        setTimeout(
+            function () {
+
+                controller.abort();
+
+            },
+            timeout
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    ...options,
+                    signal:
+                        controller.signal
+                }
+            );
+
+        return response;
+
+    } finally {
+
+        clearTimeout(
+            timer
+        );
+    }
+}
+
+/* =========================================================
+HTML TEMİZLE
+========================================================= */
+
+function stripHtml(
+    html
+) {
+
+    return String(
+        html || ""
+    )
+        .replace(
+            /<script[\s\S]*?<\/script>/gi,
+            " "
+        )
+        .replace(
+            /<style[\s\S]*?<\/style>/gi,
+            " "
+        )
+        .replace(
+            /<[^>]*>/g,
+            " "
+        )
+        .replace(
+            /&nbsp;/gi,
+            " "
+        )
+        .replace(
+            /&amp;/gi,
+            "&"
+        )
+        .replace(
+            /&quot;/gi,
+            '"'
+        )
+        .replace(
+            /&#39;/gi,
+            "'"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
+}
+
+/* =========================================================
+URL TEMİZLE
+========================================================= */
+
+function cleanUrl(
+    value
+) {
+
+    try {
+
+        const url =
+            new URL(
+                value
+            );
+
+        if (
+            url.protocol !==
+                "http:" &&
+            url.protocol !==
+                "https:"
+        ) {
+
+            return "";
+        }
+
+        return url.href;
+
+    } catch (error) {
+
+        return "";
+    }
+}
+
+/* =========================================================
+İNTERNET ARAŞTIRMASI GEREKİYOR MU?
+========================================================= */
+
+function shouldResearch(
+    message
+) {
+
+    const text =
+        String(
+            message || ""
+        ).toLowerCase()
+        .trim();
+
+    if (
+        !text
+    ) {
+
+        return false;
+    }
+
+    const researchWords = [
+
+        "araştır",
+        "araştırır mısın",
+        "internetten bak",
+        "internetten araştır",
+        "web'den bak",
+        "webden bak",
+        "internete bak",
+        "kaynak bul",
+        "kaynakları bul",
+        "güncel bilgi",
+        "güncel olarak",
+        "son durum",
+        "son gelişmeler",
+        "en son",
+        "şu an",
+        "şuan",
+        "şimdi",
+        "bugün",
+        "dün",
+        "yarın",
+        "bu hafta",
+        "bu ay",
+        "2026",
+        "haber",
+        "haberler",
+        "son haberler",
+        "latest",
+        "current",
+        "recent",
+        "news",
+        "what is happening",
+        "what's happening"
+
+    ];
+
+    for (
+        const word of researchWords
+    ) {
+
+        if (
+            text.includes(
+                word
+            )
+        ) {
+
+            return true;
+        }
+    }
+
+    const weatherWords = [
+
+        "hava durumu",
+        "hava nasıl",
+        "hava kaç derece",
+        "sıcaklık kaç",
+        "yağmur yağacak mı",
+        "yağmur yağar mı",
+        "kar yağacak mı",
+        "bugün hava",
+        "yarın hava",
+        "rüzgar kaç",
+        "nem kaç",
+        "weather",
+        "temperature",
+        "forecast"
+
+    ];
+
+    for (
+        const word of weatherWords
+    ) {
+
+        if (
+            text.includes(
+                word
+            )
+        ) {
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* =========================================================
+HAVA DURUMU SORUSU MU?
+========================================================= */
+
+function isWeatherQuestion(
+    message
+) {
+
+    const text =
+        String(
+            message || ""
+        ).toLowerCase();
+
+    const words = [
+
+        "hava durumu",
+        "hava nasıl",
+        "hava kaç derece",
+        "sıcaklık kaç",
+        "yağmur yağacak mı",
+        "yağmur yağar mı",
+        "kar yağacak mı",
+        "bugün hava",
+        "yarın hava",
+        "rüzgar kaç",
+        "nem kaç",
+        "weather",
+        "temperature",
+        "forecast"
+
+    ];
+
+    return words.some(
+        word =>
+            text.includes(
+                word
+            )
+    );
+}
+
+/* =========================================================
+HAVA KONUMU BUL
+========================================================= */
+
+function extractWeatherLocation(
+    message
+) {
+
+    const text =
+        String(
+            message || ""
+        ).trim();
+
+    const patterns = [
+
+        /(.+?)\s+(?:hava durumu|hava nasıl|hava kaç derece)/i,
+
+        /(.+?)\s+(?:için hava|içinde hava)/i,
+
+        /(?:hava durumu|hava nasıl|hava kaç derece)\s+(?:olan\s+)?(.+)/i,
+
+        /(?:weather|forecast)\s+(?:in|for)\s+(.+)/i
+
+    ];
+
+    for (
+        const pattern of patterns
+    ) {
+
+        const match =
+            text.match(
+                pattern
+            );
+
+        if (
+            match &&
+            match[1]
+        ) {
+
+            let location =
+                match[1]
+                    .trim()
+                    .replace(
+                        /[?.!,]+$/g,
+                        ""
+                    );
+
+            if (
+                location.length >= 2 &&
+                location.length <= 100
+            ) {
+
+                return location;
+            }
+        }
+    }
+
+    return "";
+}
+
+/* =========================================================
+GENEL ARAMA
+========================================================= */
+
+async function webSearch(
+    query
+) {
+
+    const cleanQuery =
+        String(
+            query || ""
+        ).trim();
+
+    if (
+        !cleanQuery
+    ) {
+
+        return [];
+    }
+
+    const url =
+        SEARCH_URL +
+        "?q=" +
+        encodeURIComponent(
+            cleanQuery
+        );
+
+    const response =
+        await fetchWithTimeout(
+            url,
+            {
+                method:
+                    "GET",
+
+                headers: {
+
+                    "User-Agent":
+                        "Mozilla/5.0 ErencanAI/8.00"
+
+                }
+            }
+        );
+
+    if (
+        !response.ok
+    ) {
+
+        throw new Error(
+            "Web arama HTTP " +
+            response.status
+        );
+    }
+
+    const html =
+        await response.text();
+
+    const results = [];
+
+    const resultPattern =
+        /<a[^>]*class=["'][^"']*result__a[^"']*["'][^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+
+    let match;
+
+    while (
+        (
+            match =
+                resultPattern.exec(
+                    html
+                )
+        ) !== null &&
+        results.length <
+            MAX_SEARCH_RESULTS
+    ) {
+
+        let href =
+            match[1];
+
+        const title =
+            stripHtml(
+                match[2]
+            );
+
+        if (
+            href.includes(
+                "uddg="
+            )
+        ) {
+
+            try {
+
+                const parsed =
+                    new URL(
+                        href,
+                        "https://html.duckduckgo.com"
+                    );
+
+                const realUrl =
+                    parsed.searchParams.get(
+                        "uddg"
+                    );
+
+                if (
+                    realUrl
+                ) {
+
+                    href =
+                        realUrl;
+                }
+
+            } catch (error) {
+
+                // URL parse hatası.
+            }
+        }
+
+        href =
+            cleanUrl(
+                href
+            );
+
+        if (
+            title &&
+            href
+        ) {
+
+            results.push({
+
+                title:
+                    title,
+
+                url:
+                    href
+
+            });
+        }
+    }
+
+    /*
+        Bazı arama sonuçlarında farklı HTML yapısı olabilir.
+        Bu durumda alternatif bağlantı taraması yapılır.
+    */
+
+    if (
+        results.length === 0
+    ) {
+
+        const linkPattern =
+            /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+
+        while (
+            (
+                match =
+                    linkPattern.exec(
+                        html
+                    )
+            ) !== null &&
+            results.length <
+                MAX_SEARCH_RESULTS
+        ) {
+
+            const title =
+                stripHtml(
+                    match[2]
+                );
+
+            let href =
+                match[1];
+
+            if (
+                !title ||
+                title.length < 4
+            ) {
+
+                continue;
+            }
+
+            if (
+                href.includes(
+                    "uddg="
+                )
+            ) {
+
+                try {
+
+                    const parsed =
+                        new URL(
+                            href,
+                            "https://html.duckduckgo.com"
+                        );
+
+                    const realUrl =
+                        parsed.searchParams.get(
+                            "uddg"
+                        );
+
+                    if (
+                        realUrl
+                    ) {
+
+                        href =
+                            realUrl;
+                    }
+
+                } catch (error) {
+
+                    continue;
+                }
+            }
+
+            href =
+                cleanUrl(
+                    href
+                );
+
+            if (
+                href &&
+                !href.includes(
+                    "duckduckgo.com"
+                )
+            ) {
+
+                const alreadyExists =
+                    results.some(
+                        item =>
+                            item.url ===
+                            href
+                    );
+
+                if (
+                    !alreadyExists
+                ) {
+
+                    results.push({
+
+                        title:
+                            title.slice(
+                                0,
+                                300
+                            ),
+
+                        url:
+                            href
+
+                    });
+                }
+            }
+        }
+    }
+
+    return results;
+}
+
+/* =========================================================
+WEB SAYFASI OKUMA
+========================================================= */
+
+async function fetchPageText(
+    url
+) {
+
+    try {
+
+        const response =
+            await fetchWithTimeout(
+                url,
+                {
+                    method:
+                        "GET",
+
+                    headers: {
+
+                        "User-Agent":
+                            "Mozilla/5.0 ErencanAI/8.00",
+
+                        "Accept":
+                            "text/html,application/xhtml+xml"
+                    }
+                },
+                8000
+            );
+
+        if (
+            !response.ok
+        ) {
+
+            return "";
+        }
+
+        const contentType =
+            response.headers.get(
+                "content-type"
+            ) || "";
+
+        if (
+            !contentType.includes(
+                "text/html"
+            )
+        ) {
+
+            return "";
+        }
+
+        const html =
+            await response.text();
+
+        const text =
+            stripHtml(
+                html
+            );
+
+        if (
+            !text
+        ) {
+
+            return "";
+        }
+
+        return text.slice(
+            0,
+            5000
+        );
+
+    } catch (error) {
+
+        console.error(
+            "SAYFA OKUMA HATASI:",
+            error.message
+        );
+
+        return "";
+    }
+}
+
+/* =========================================================
+ARAŞTIRMA SONUCU OLUŞTUR
+========================================================= */
+
+async function researchWeb(
+    query
+) {
+
+    console.log(
+        "İNTERNET ARAŞTIRMASI:",
+        query
+    );
+
+    const results =
+        await webSearch(
+            query
+        );
+
+    if (
+        !results.length
+    ) {
+
+        return {
+
+            ok:
+                false,
+
+            query:
+                query,
+
+            text:
+                "İnternette uygun arama sonucu bulunamadı.",
+
+            sources:
+                []
+
+        };
+    }
+
+    const sourceTexts = [];
+
+    for (
+        const result of results.slice(
+            0,
+            4
+        )
+    ) {
+
+        const pageText =
+            await fetchPageText(
+                result.url
+            );
+
+        sourceTexts.push({
+
+            title:
+                result.title,
+
+            url:
+                result.url,
+
+            text:
+                pageText
+
+        });
+    }
+
+    let combined =
+        "";
+
+    for (
+        const item of sourceTexts
+    ) {
+
+        combined +=
+            "\n\nBAŞLIK: " +
+            item.title +
+            "\nURL: " +
+            item.url;
+
+        if (
+            item.text
+        ) {
+
+            combined +=
+                "\nİÇERİK: " +
+                item.text;
+        }
+    }
+
+    combined =
+        combined.slice(
+            0,
+            18000
+        );
+
+    return {
+
+        ok:
+            true,
+
+        query:
+            query,
+
+        text:
+            combined,
+
+        sources:
+            sourceTexts.map(
+                item => ({
+
+                    title:
+                        item.title,
+
+                    url:
+                        item.url
+
+                })
+            )
+
+    };
+}
+
+/* =========================================================
+HAVA DURUMU ŞEHİR BUL
+========================================================= */
+
+async function geocodeLocation(
+    location
+) {
+
+    const url =
+        WEATHER_GEOCODING_URL +
+        "?name=" +
+        encodeURIComponent(
+            location
+        ) +
+        "&count=1" +
+        "&language=tr" +
+        "&format=json";
+
+    const response =
+        await fetchWithTimeout(
+            url,
+            {
+                method:
+                    "GET",
+
+                headers: {
+
+                    "User-Agent":
+                        "ErencanAI/8.00"
+
+                }
+            }
+        );
+
+    if (
+        !response.ok
+    ) {
+
+        throw new Error(
+            "Konum arama HTTP " +
+            response.status
+        );
+    }
+
+    const data =
+        await response.json();
+
+    if (
+        !data.results ||
+        !data.results.length
+    ) {
+
+        return null;
+    }
+
+    return data.results[0];
+}
+
+/* =========================================================
+HAVA DURUMU AL
+========================================================= */
+
+async function getWeather(
+    location
+) {
+
+    const cleanLocation =
+        String(
+            location || ""
+        ).trim();
+
+    if (
+        !cleanLocation
+    ) {
+
+        return {
+
+            ok:
+                false,
+
+            message:
+                "Hava durumu için şehir veya konum belirtilmedi."
+
+        };
+    }
+
+    console.log(
+        "HAVA DURUMU KONUMU:",
+        cleanLocation
+    );
+
+    const place =
+        await geocodeLocation(
+            cleanLocation
+        );
+
+    if (
+        !place
+    ) {
+
+        return {
+
+            ok:
+                false,
+
+            message:
+                cleanLocation +
+                " için konum bulunamadı."
+
+        };
+    }
+
+    const url =
+        WEATHER_URL +
+        "?latitude=" +
+        encodeURIComponent(
+            place.latitude
+        ) +
+        "&longitude=" +
+        encodeURIComponent(
+            place.longitude
+        ) +
+        "&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,weather_code,wind_speed_10m" +
+        "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code" +
+        "&timezone=Europe%2FIstanbul" +
+        "&forecast_days=3";
+
+    const response =
+        await fetchWithTimeout(
+            url,
+            {
+                method:
+                    "GET",
+
+                headers: {
+
+                    "User-Agent":
+                        "ErencanAI/8.00"
+
+                }
+            }
+        );
+
+    if (
+        !response.ok
+    ) {
+
+        throw new Error(
+            "Hava durumu HTTP " +
+            response.status
+        );
+    }
+
+    const data =
+        await response.json();
+
+    return {
+
+        ok:
+            true,
+
+        location: {
+
+            name:
+                place.name,
+
+            country:
+                place.country,
+
+            latitude:
+                place.latitude,
+
+            longitude:
+                place.longitude
+
+        },
+
+        current:
+            data.current || {},
+
+        daily:
+            data.daily || {},
+
+        timezone:
+            data.timezone || "Europe/Istanbul"
+
+    };
+}
+
+/* =========================================================
+HAVA KODU AÇIKLAMA
+========================================================= */
+
+function weatherCodeText(
+    code
+) {
+
+    const map = {
+
+        0:
+            "Açık",
+
+        1:
+            "Çoğunlukla açık",
+
+        2:
+            "Parçalı bulutlu",
+
+        3:
+            "Kapalı",
+
+        45:
+            "Sisli",
+
+        48:
+            "Kırağılı sis",
+
+        51:
+            "Hafif çiseleme",
+
+        53:
+            "Orta şiddette çiseleme",
+
+        55:
+            "Yoğun çiseleme",
+
+        61:
+            "Hafif yağmur",
+
+        63:
+            "Orta şiddette yağmur",
+
+        65:
+            "Şiddetli yağmur",
+
+        71:
+            "Hafif kar",
+
+        73:
+            "Orta şiddette kar",
+
+        75:
+            "Yoğun kar",
+
+        80:
+            "Hafif sağanak",
+
+        81:
+            "Orta şiddette sağanak",
+
+        82:
+            "Şiddetli sağanak",
+
+        95:
+            "Gök gürültülü fırtına",
+
+        96:
+            "Dolu ihtimalli gök gürültülü fırtına",
+
+        99:
+            "Şiddetli dolu ihtimalli gök gürültülü fırtına"
+
+    };
+
+    return (
+        map[code] ||
+        "Bilinmeyen hava durumu"
+    );
+}
+
+/* =========================================================
+HAVA VERİSİNİ METNE ÇEVİR
+========================================================= */
+
+function formatWeatherForAI(
+    weather
+) {
+
+    if (
+        !weather ||
+        !weather.ok
+    ) {
+
+        return "";
+    }
+
+    const current =
+        weather.current || {};
+
+    const daily =
+        weather.daily || {};
+
+    const location =
+        weather.location || {};
+
+    let text =
+        `
+[GÜNCEL HAVA DURUMU]
+
+Konum:
+${location.name || ""}, ${location.country || ""}
+
+Saat dilimi:
+${weather.timezone || ""}
+
+Şu an:
+${weatherCodeText(current.weather_code)}
+
+Sıcaklık:
+${current.temperature_2m ?? "Bilinmiyor"} °C
+
+Hissedilen:
+${current.apparent_temperature ?? "Bilinmiyor"} °C
+
+Nem:
+${current.relative_humidity_2m ?? "Bilinmiyor"} %
+
+Yağış:
+${current.precipitation ?? "Bilinmiyor"} mm
+
+Yağmur:
+${current.rain ?? "Bilinmiyor"} mm
+
+Rüzgar:
+${current.wind_speed_10m ?? "Bilinmiyor"} km/sa
+
+Günlük tahmin:
+
+`;
+
+    if (
+        Array.isArray(
+            daily.time
+        )
+    ) {
+
+        for (
+            let i = 0;
+            i <
+            Math.min(
+                daily.time.length,
+                3
+            );
+            i++
+        ) {
+
+            text +=
+                `
+${daily.time[i]}:
+Min ${daily.temperature_2m_min?.[i] ?? "?"} °C
+Max ${daily.temperature_2m_max?.[i] ?? "?"} °C
+Yağış ihtimali ${daily.precipitation_probability_max?.[i] ?? "?"} %
+Durum ${weatherCodeText(daily.weather_code?.[i])}
+
+`;
+        }
+    }
+
+    return text.trim();
+}
+
+/* =========================================================
 GROQ İSTEĞİ
 ========================================================= */
 
@@ -1617,6 +2787,12 @@ app.get(
             uploadEndpoint:
                 "/api/upload",
 
+            researchEndpoint:
+                "/api/research",
+
+            weatherEndpoint:
+                "/api/weather",
+
             currentDate:
                 dateInfo.turkey,
 
@@ -1630,9 +2806,188 @@ app.get(
                 true,
 
             fileUpload:
+                true,
+
+            webResearch:
+                true,
+
+            weather:
                 true
 
         });
+
+    }
+);
+
+/* =========================================================
+WEB ARAŞTIRMA API
+========================================================= */
+
+app.post(
+    "/api/research",
+    async function (
+        req,
+        res
+    ) {
+
+        try {
+
+            const query =
+                String(
+                    req.body &&
+                    req.body.query
+                        ? req.body.query
+                        : ""
+                ).trim();
+
+            if (
+                !query
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Araştırılacak konu belirtilmedi."
+
+                });
+            }
+
+            if (
+                query.length >
+                500
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Araştırma sorgusu çok uzun."
+
+                });
+            }
+
+            const result =
+                await researchWeb(
+                    query
+                );
+
+            return res.json(
+                result
+            );
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "ARAŞTIRMA HATASI:",
+                error.message
+            );
+
+            return res.status(
+                500
+            ).json({
+
+                ok:
+                    false,
+
+                reply:
+                    "İnternet araştırması sırasında bir hata oluştu."
+
+            });
+        }
+
+    }
+);
+
+/* =========================================================
+HAVA DURUMU API
+========================================================= */
+
+app.get(
+    "/api/weather",
+    async function (
+        req,
+        res
+    ) {
+
+        try {
+
+            const location =
+                String(
+                    req.query &&
+                    req.query.location
+                        ? req.query.location
+                        : ""
+                ).trim();
+
+            if (
+                !location
+            ) {
+
+                return res.status(
+                    400
+                ).json({
+
+                    ok:
+                        false,
+
+                    reply:
+                        "Şehir veya konum belirtilmedi."
+
+                });
+            }
+
+            const weather =
+                await getWeather(
+                    location
+                );
+
+            if (
+                !weather.ok
+            ) {
+
+                return res.status(
+                    404
+                ).json(
+                    weather
+                );
+            }
+
+            return res.json(
+                weather
+            );
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "HAVA DURUMU HATASI:",
+                error.message
+            );
+
+            return res.status(
+                500
+            ).json({
+
+                ok:
+                    false,
+
+                reply:
+                    "Hava durumu bilgisi alınamadı."
+
+            });
+        }
 
     }
 );
@@ -2125,6 +3480,140 @@ app.post(
                 );
 
             /* -----------------------------------------
+            ARAŞTIRMA
+            ----------------------------------------- */
+
+            let researchContext =
+                "";
+
+            let researchSources =
+                [];
+
+            let researchUsed =
+                false;
+
+            const researchNeeded =
+                shouldResearch(
+                    message
+                );
+
+            if (
+                researchNeeded
+            ) {
+
+                try {
+
+                    /*
+                        Hava durumu özel olarak
+                        Open-Meteo üzerinden alınır.
+                    */
+
+                    if (
+                        isWeatherQuestion(
+                            message
+                        )
+                    ) {
+
+                        let location =
+                            extractWeatherLocation(
+                                message
+                            );
+
+                        /*
+                            Konum yazılmamışsa
+                            Türkiye varsayılır.
+                        */
+
+                        if (
+                            !location
+                        ) {
+
+                            location =
+                                "Konya";
+                        }
+
+                        const weather =
+                            await getWeather(
+                                location
+                            );
+
+                        if (
+                            weather &&
+                            weather.ok
+                        ) {
+
+                            researchContext =
+                                formatWeatherForAI(
+                                    weather
+                                );
+
+                            researchUsed =
+                                true;
+
+                            console.log(
+                                "HAVA DURUMU ARAŞTIRMASI AKTİF"
+                            );
+
+                        } else {
+
+                            console.log(
+                                "HAVA DURUMU BULUNAMADI"
+                            );
+                        }
+
+                    } else {
+
+                        const research =
+                            await researchWeb(
+                                message
+                            );
+
+                        if (
+                            research &&
+                            research.ok
+                        ) {
+
+                            researchContext =
+                                `
+[İNTERNET ARAŞTIRMASI]
+
+Arama:
+${research.query}
+
+Sonuçlar:
+${research.text}
+`.trim();
+
+                            researchSources =
+                                research.sources ||
+                                [];
+
+                            researchUsed =
+                                true;
+
+                            console.log(
+                                "İNTERNET ARAŞTIRMASI AKTİF"
+                            );
+                        }
+                    }
+
+                } catch (
+                    researchError
+                ) {
+
+                    console.error(
+                        "ARAŞTIRMA HATASI:",
+                        researchError.message
+                    );
+
+                    /*
+                        Araştırma başarısız olursa
+                        normal AI cevabı yine çalışır.
+                    */
+                }
+            }
+
+            /* -----------------------------------------
             GROQ MESAJLARI
             ----------------------------------------- */
 
@@ -2188,6 +3677,55 @@ kullanabilirsin.
 
             ];
 
+            /* -----------------------------------------
+            ARAŞTIRMA SONUÇLARINI AI'A VER
+            ----------------------------------------- */
+
+            if (
+                researchContext
+            ) {
+
+                messages.push({
+
+                    role:
+                        "system",
+
+                    content:
+                        researchContext
+
+                });
+
+                messages.push({
+
+                    role:
+                        "system",
+
+                    content:
+                        `
+ARAŞTIRMA KURALI:
+
+Yukarıdaki araştırma bilgileri güncel bilgi
+gereken soruya yardımcı olmak için alınmıştır.
+
+Cevabını bu bilgilerle oluştur.
+
+Araştırma sonucunda bulunmayan bilgileri uydurma.
+
+Kullanıcı kaynak isterse kaynakları belirt.
+
+Gereksiz yere "internette araştırdım" deme.
+
+Hava durumu verisi varsa mevcut hava verisini
+kullan.
+`.trim()
+
+                });
+            }
+
+            /* -----------------------------------------
+            GEÇMİŞ MESAJLAR
+            ----------------------------------------- */
+
             for (
                 const item of
                 recentMessages
@@ -2223,6 +3761,13 @@ kullanabilirsin.
                 "KULLANICI HAFIZASI:",
                 recentMessages.length +
                 " mesaj"
+            );
+
+            console.log(
+                "ARAŞTIRMA:",
+                researchUsed
+                    ? "AKTİF"
+                    : "GEREKMİYOR"
             );
 
             console.log(
@@ -2301,6 +3846,139 @@ kullanabilirsin.
             }
 
             /* -----------------------------------------
+            BİLMİYORSA OTOMATİK ARAŞTIR
+            ----------------------------------------- */
+
+            const uncertainAnswer =
+                /bilmiyorum|emin değilim|emin değilim|kesin olarak bilmiyorum|yeterli bilgim yok|doğrulayamıyorum|bilgi sahibi değilim|bunu bilmiyorum/i.test(
+                    reply
+                );
+
+            if (
+                uncertainAnswer &&
+                !researchUsed
+            ) {
+
+                console.log(
+                    "AI BİLGİSİ YETERSİZ."
+                );
+
+                console.log(
+                    "OTOMATİK İKİNCİ ARAŞTIRMA BAŞLATILIYOR..."
+                );
+
+                try {
+
+                    const secondResearch =
+                        await researchWeb(
+                            message
+                        );
+
+                    if (
+                        secondResearch &&
+                        secondResearch.ok
+                    ) {
+
+                        const secondMessages =
+                            [
+                                ...messages,
+
+                                {
+
+                                    role:
+                                        "system",
+
+                                    content:
+                                        `
+İLK CEVABINDA YETERLİ BİLGİ OLMADI.
+
+Şimdi internet araştırması sonucu aşağıdadır:
+
+${secondResearch.text}
+
+Kullanıcının sorusunu araştırma
+sonuçlarına göre yeniden cevapla.
+
+Araştırma sonucunda bulunmayan
+bilgileri uydurma.
+
+Kısa, doğal ve doğru cevap ver.
+`.trim()
+
+                                }
+                            ];
+
+                        const secondData =
+                            await requestGroq(
+                                secondMessages
+                            );
+
+                        let secondReply =
+                            "";
+
+                        if (
+                            secondData &&
+                            Array.isArray(
+                                secondData.choices
+                            ) &&
+                            secondData.choices.length
+                        ) {
+
+                            const secondChoice =
+                                secondData.choices[0];
+
+                            if (
+                                secondChoice &&
+                                secondChoice.message &&
+                                typeof secondChoice.message.content ===
+                                "string"
+                            ) {
+
+                                secondReply =
+                                    secondChoice
+                                        .message
+                                        .content
+                                        .trim();
+                            }
+                        }
+
+                        secondReply =
+                            cleanReply(
+                                secondReply
+                            );
+
+                        if (
+                            secondReply
+                        ) {
+
+                            reply =
+                                secondReply;
+
+                            researchUsed =
+                                true;
+
+                            researchSources =
+                                secondResearch.sources ||
+                                [];
+
+                            console.log(
+                                "İKİNCİ ARAŞTIRMA SONRASI CEVAP OLUŞTURULDU."
+                            );
+                        }
+                    }
+
+                } catch (
+                    secondResearchError
+                ) {
+
+                    console.error(
+                        "İKİNCİ ARAŞTIRMA HATASI:",
+                        secondResearchError.message
+                    );
+                }
+            }
+
+            /* -----------------------------------------
             KULLANICI HAFIZASINA AI CEVABI
             ----------------------------------------- */
 
@@ -2372,7 +4050,13 @@ kullanabilirsin.
                     true,
 
                 userId:
-                    userId
+                    userId,
+
+                researchUsed:
+                    researchUsed,
+
+                sources:
+                    researchSources
 
             });
 
@@ -2677,6 +4361,12 @@ app.get(
                 true,
 
             fileUpload:
+                true,
+
+            webResearch:
+                true,
+
+            weather:
                 true
 
         });
@@ -2788,6 +4478,14 @@ app.listen(
         );
 
         console.log(
+            "RESEARCH: /api/research"
+        );
+
+        console.log(
+            "WEATHER: /api/weather"
+        );
+
+        console.log(
             "TEST: /api/test"
         );
 
@@ -2846,6 +4544,21 @@ app.listen(
         console.log(
             "MAKSİMUM DOSYA:",
             "10 MB"
+        );
+
+        console.log(
+            "İNTERNET ARAŞTIRMASI:",
+            "AKTİF"
+        );
+
+        console.log(
+            "HAVA DURUMU:",
+            "AKTİF"
+        );
+
+        console.log(
+            "OTOMATİK BİLMİYORSA ARAŞTIR:",
+            "AKTİF"
         );
 
         console.log(
