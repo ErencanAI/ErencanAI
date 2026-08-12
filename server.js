@@ -2050,9 +2050,15 @@ async function researchWeb(
     }
 
     const sourceTexts = [];
-
+const trustedResults =
+    results.filter(
+        result =>
+            !/wikipedia\.org/i.test(
+                result.url
+            )
+    );
     for (
-        const result of results.slice(
+        const result of trustedResults.slice(
             0,
             4
         )
