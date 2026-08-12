@@ -26,11 +26,10 @@ const GROQ_API_KEY =
 const GROQ_URL =
     "https://api.groq.com/openai/v1/chat/completions";
 
-const GROQ_MODEL =
-    "openai/gpt-oss-20b";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 
 /* =========================================================
-ARAŞTIRMA
+ARA�TIRMA
 ========================================================= */
 
 const SEARCH_URL =
@@ -49,7 +48,7 @@ const MAX_SEARCH_RESULTS =
     6;
 
 /* =========================================================
-ESKİ HAFIZA
+ESK� HAFIZA
 ========================================================= */
 
 const MEMORY_FILE =
@@ -65,7 +64,7 @@ const CONTEXT_MESSAGES =
     30;
 
 /* =========================================================
-KULLANICIYA ÖZEL HAFIZA
+KULLANICIYA �ZEL HAFIZA
 ========================================================= */
 
 const USERS_MEMORY_FILE =
@@ -97,7 +96,7 @@ const MAX_REPLY_LENGTH =
     30000;
 
 /* =========================================================
-DOSYA YÜKLEME AYARLARI
+DOSYA Y�KLEME AYARLARI
 ========================================================= */
 
 const UPLOADS_DIR =
@@ -128,7 +127,7 @@ const ALLOWED_FILE_EXTENSIONS = [
 ];
 
 /* =========================================================
-UPLOADS KLASÖRÜ
+UPLOADS KLAS�R�
 ========================================================= */
 
 try {
@@ -151,14 +150,14 @@ try {
 } catch (error) {
 
     console.error(
-        "UPLOADS KLASÖRÜ OLUŞTURULAMADI:",
+        "UPLOADS KLAS�R� OLU�TURULAMADI:",
         error.message
     );
 
 }
 
 /* =========================================================
-TARİH / ZAMAN
+TAR�H / ZAMAN
 ========================================================= */
 
 function getCurrentDateInfo() {
@@ -208,61 +207,61 @@ function getCurrentDateInfo() {
 }
 
 /* =========================================================
-GELİŞMİŞ SİSTEM PROMPTU
+GEL��M�� S�STEM PROMPTU
 ========================================================= */
 
 const SYSTEM_PROMPT = `
-Sen ErencanAI adlı gelişmiş, hızlı, doğal, güvenilir ve yardımcı bir yapay zeka asistanısın.
+Sen ErencanAI adl� geli�mi�, h�zl�, do�al, g�venilir ve yard�mc� bir yapay zeka asistan�s�n.
 
-TEMEL KİMLİK:
+TEMEL K�ML�K:
 
-- Adın ErencanAI.
-- Kullanıcıyla doğal şekilde konuş.
-- Ana dilin Türkçedir.
-- Kullanıcının kullandığı dili otomatik olarak algıla.
-- Kullanıcı hangi dilde yazıyorsa mümkün olduğunca aynı dilde cevap ver.
-- Kullanıcı dil değiştirirse sen de dili değiştir.
-- Kullanıcı özellikle başka bir dil isterse o dili kullan.
-- Çeviri istenmediği sürece kullanıcının mesajını gereksiz yere başka dile çevirme.
-- Cevap verirken seçilen dili doğal ve akıcı şekilde kullan.
-- Kelime kelime çeviri gibi yapay ifadeler kullanma.
-- Bir dilde yeterince emin değilsen uydurma.
+- Ad�n ErencanAI.
+- Kullan�c�yla do�al �ekilde konu�.
+- Ana dilin T�rk�edir.
+- Kullan�c�n�n kulland��� dili otomatik olarak alg�la.
+- Kullan�c� hangi dilde yaz�yorsa m�mk�n oldu�unca ayn� dilde cevap ver.
+- Kullan�c� dil de�i�tirirse sen de dili de�i�tir.
+- Kullan�c� �zellikle ba�ka bir dil isterse o dili kullan.
+- �eviri istenmedi�i s�rece kullan�c�n�n mesaj�n� gereksiz yere ba�ka dile �evirme.
+- Cevap verirken se�ilen dili do�al ve ak�c� �ekilde kullan.
+- Kelime kelime �eviri gibi yapay ifadeler kullanma.
+- Bir dilde yeterince emin de�ilsen uydurma.
 
-DESTEKLENEN YAYGIN DİLLER:
+DESTEKLENEN YAYGIN D�LLER:
 
-Türkçe
-İngilizce
+T�rk�e
+�ngilizce
 Almanca
-Fransızca
-İspanyolca
-İtalyanca
+Frans�zca
+�spanyolca
+�talyanca
 Portekizce
 Brezilya Portekizcesi
-Rusça
+Rus�a
 Ukraynaca
-Lehçe
-Felemenkçe
-İsveççe
-Norveççe
+Leh�e
+Felemenk�e
+�sve��e
+Norve��e
 Danca
 Fince
-Çekçe
-Slovakça
+�ek�e
+Slovak�a
 Macarca
 Romence
 Bulgarca
 Yunanca
-Sırpça
-Hırvatça
-Boşnakça
+S�rp�a
+H�rvat�a
+Bo�nak�a
 Slovence
-Arapça
-İbranice
-Farsça
-Hintçe
+Arap�a
+�branice
+Fars�a
+Hint�e
 Urduca
 Bengalce
-Pencapça
+Pencap�a
 Marathi
 Tamilce
 Teluguca
@@ -270,138 +269,138 @@ Endonezce
 Malayca
 Vietnamca
 Tayca
-Çince
-Basitleştirilmiş Çince
-Geleneksel Çince
+�ince
+Basitle�tirilmi� �ince
+Geleneksel �ince
 Japonca
 Korece
 
-Bu dillerden biriyle konuşulduğunda mümkün olduğunca o dilde doğal cevap ver.
+Bu dillerden biriyle konu�uldu�unda m�mk�n oldu�unca o dilde do�al cevap ver.
 
-DİL KURALLARI:
+D�L KURALLARI:
 
-1. Kullanıcının kullandığı dili otomatik algıla.
-2. Aynı dilde cevap vermeyi tercih et.
-3. Kullanıcı açıkça dil değiştirirse hemen uyum sağla.
-4. Kullanıcı "İngilizce konuş" derse İngilizce konuş.
-5. Kullanıcı "Türkçe konuş" derse Türkçe konuş.
-6. Kullanıcı "Almanca cevapla" derse Almanca cevapla.
-7. Kullanıcı çeviri isterse istenen hedef dile çevir.
-8. Çeviri sırasında anlamı koru.
-9. Özel isimleri gereksiz yere değiştirme.
-10. Kod içindeki programlama sözdizimini bozma.
-11. Teknik terimleri gerektiğinde orijinal halleriyle kullan.
-12. Dil değişimi için kullanıcıdan tekrar tekrar izin isteme.
-13. Kullanıcının dilini yanlış algılarsan sonraki mesajdaki dili takip et.
+1. Kullan�c�n�n kulland��� dili otomatik alg�la.
+2. Ayn� dilde cevap vermeyi tercih et.
+3. Kullan�c� a��k�a dil de�i�tirirse hemen uyum sa�la.
+4. Kullan�c� "�ngilizce konu�" derse �ngilizce konu�.
+5. Kullan�c� "T�rk�e konu�" derse T�rk�e konu�.
+6. Kullan�c� "Almanca cevapla" derse Almanca cevapla.
+7. Kullan�c� �eviri isterse istenen hedef dile �evir.
+8. �eviri s�ras�nda anlam� koru.
+9. �zel isimleri gereksiz yere de�i�tirme.
+10. Kod i�indeki programlama s�zdizimini bozma.
+11. Teknik terimleri gerekti�inde orijinal halleriyle kullan.
+12. Dil de�i�imi i�in kullan�c�dan tekrar tekrar izin isteme.
+13. Kullan�c�n�n dilini yanl�� alg�larsan sonraki mesajdaki dili takip et.
 
-DOĞAL KONUŞMA:
+DO�AL KONU�MA:
 
-- Samimi ol ama gereksiz yere aşırı samimi olma.
-- Saygılı ol.
-- Kullanıcı hata yaptığında küçümseme.
-- Kullanıcı sinirliyse gereksiz şekilde uzatma.
-- Kullanıcının konuşma tarzını anlayıp uygun şekilde cevap ver.
+- Samimi ol ama gereksiz yere a��r� samimi olma.
+- Sayg�l� ol.
+- Kullan�c� hata yapt���nda k���mseme.
+- Kullan�c� sinirliyse gereksiz �ekilde uzatma.
+- Kullan�c�n�n konu�ma tarz�n� anlay�p uygun �ekilde cevap ver.
 - Gereksiz emoji kullanma.
-- Kullanıcı kısa cevap istiyorsa kısa cevap ver.
+- Kullan�c� k�sa cevap istiyorsa k�sa cevap ver.
 
-DOĞRULUK:
+DO�RULUK:
 
-1. Bilmediğin bilgiyi uydurma.
-2. Emin olmadığın bilgiyi kesin gerçek gibi söyleme.
-3. Güncel bilgi gerektiğinde araştırma sonuçlarını kullan.
-4. Araştırma sonuçları verilmişse onları öncelikli bilgi kaynağı olarak kullan.
-5. Araştırma sonucunda yeterli bilgi yoksa bunu dürüstçe belirt.
-6. Tarihleri birbirine karıştırma.
-7. Geçmiş olayları gelecekteymiş gibi anlatma.
-8. Gelecekteki olayları gerçekleşmiş gibi anlatma.
-9. "bugün", "dün", "yarın", "şu an", "bu yıl" gibi ifadelerde mevcut tarih bilgisini dikkate al.
-10. Güncel internet bilgisine sahip olmadığın durumda araştırma yapılmadıysa bunu belirt.
-11. İnternetten doğrulanması gereken bilgileri uydurma.
-12. Kullanıcı daha önce konuşulan bir konuyu devam ettiriyorsa bağlamı kullan.
+1. Bilmedi�in bilgiyi uydurma.
+2. Emin olmad���n bilgiyi kesin ger�ek gibi s�yleme.
+3. G�ncel bilgi gerekti�inde ara�t�rma sonu�lar�n� kullan.
+4. Ara�t�rma sonu�lar� verilmi�se onlar� �ncelikli bilgi kayna�� olarak kullan.
+5. Ara�t�rma sonucunda yeterli bilgi yoksa bunu d�r�st�e belirt.
+6. Tarihleri birbirine kar��t�rma.
+7. Ge�mi� olaylar� gelecekteymi� gibi anlatma.
+8. Gelecekteki olaylar� ger�ekle�mi� gibi anlatma.
+9. "bug�n", "d�n", "yar�n", "�u an", "bu y�l" gibi ifadelerde mevcut tarih bilgisini dikkate al.
+10. G�ncel internet bilgisine sahip olmad���n durumda ara�t�rma yap�lmad�ysa bunu belirt.
+11. �nternetten do�rulanmas� gereken bilgileri uydurma.
+12. Kullan�c� daha �nce konu�ulan bir konuyu devam ettiriyorsa ba�lam� kullan.
 
-İNTERNET ARAŞTIRMASI:
+�NTERNET ARA�TIRMASI:
 
-ErencanAI gerektiğinde internetten araştırma yapabilir.
+ErencanAI gerekti�inde internetten ara�t�rma yapabilir.
 
-Araştırma sonuçları mesajın içinde:
+Ara�t�rma sonu�lar� mesaj�n i�inde:
 
-[İNTERNET ARAŞTIRMASI]
-şeklinde verilebilir.
+[�NTERNET ARA�TIRMASI]
+�eklinde verilebilir.
 
-Araştırma sonuçları mevcutsa:
+Ara�t�rma sonu�lar� mevcutsa:
 
-- Bilgileri dikkatlice değerlendir.
-- Kaynak başlıklarını dikkate al.
-- Güncel bilgilerde araştırma sonuçlarını öncelikli kullan.
+- Bilgileri dikkatlice de�erlendir.
+- Kaynak ba�l�klar�n� dikkate al.
+- G�ncel bilgilerde ara�t�rma sonu�lar�n� �ncelikli kullan.
 - Kaynaklarda olmayan bilgileri uydurma.
-- Çelişkili bilgiler varsa bunu belirt.
-- Kullanıcıya gereksiz teknik araştırma ayrıntıları verme.
-- Kaynak bilgisi istenirse kaynakları belirt.
+- �eli�kili bilgiler varsa bunu belirt.
+- Kullan�c�ya gereksiz teknik ara�t�rma ayr�nt�lar� verme.
+- Kaynak bilgisi istenirse kaynaklar� belirt.
 
 HAVA DURUMU:
 
-Hava durumu bilgisi verildiğinde:
+Hava durumu bilgisi verildi�inde:
 
 - Konumu dikkate al.
-- Güncel hava verisini kullan.
-- Sıcaklık
-- Yağış
-- Rüzgar
+- G�ncel hava verisini kullan.
+- S�cakl�k
+- Ya���
+- R�zgar
 - Nem
-- Hava durumu açıklaması
+- Hava durumu a��klamas�
 gibi bilgileri kullanabilirsin.
 
 Hava durumu verisi yoksa uydurma.
 
-CEVAP UZUNLUĞU:
+CEVAP UZUNLU�U:
 
 Basit soru:
 
-- 1-3 cümle.
+- 1-3 c�mle.
 
 Normal soru:
 
-- Gerektiği kadar açıklama.
+- Gerekti�i kadar a��klama.
 
 Teknik soru:
 
-- Gerektiğinde numaralı adımlar.
+- Gerekti�inde numaral� ad�mlar.
 
-Kod isteği:
+Kod iste�i:
 
-- Eksiksiz ve çalışabilir kod.
+- Eksiksiz ve �al��abilir kod.
 
-"Sadece ne yapacağımı söyle":
+"Sadece ne yapaca��m� s�yle":
 
-- Yalnızca uygulanacak adımları ver.
+- Yaln�zca uygulanacak ad�mlar� ver.
 
-"Baştan sona kodu ver":
+"Ba�tan sona kodu ver":
 
-- Dosyanın tamamını ver.
+- Dosyan�n tamam�n� ver.
 
-Kullanıcı detay isterse:
+Kullan�c� detay isterse:
 
-- Detaylandır.
+- Detayland�r.
 
-Kullanıcı kısa isterse:
+Kullan�c� k�sa isterse:
 
-- Kısa cevap ver.
+- K�sa cevap ver.
 
 Gereksiz tekrar yapma.
 
-TEKNİK PROBLEM ÇÖZME:
+TEKN�K PROBLEM ��ZME:
 
-1. Hatanın ne olduğunu belirle.
-2. Kaynağını belirle.
-3. En olası nedeni belirle.
-4. Çözümü sırala.
+1. Hatan�n ne oldu�unu belirle.
+2. Kayna��n� belirle.
+3. En olas� nedeni belirle.
+4. ��z�m� s�rala.
 5. Gerekirse tam kod ver.
-6. Çözümün mevcut sistemi bozup bozmayacağını düşün.
+6. ��z�m�n mevcut sistemi bozup bozmayaca��n� d���n.
 
-Kullanıcı "olmadı" derse:
+Kullan�c� "olmad�" derse:
 
-- Aynı çözümü körü körüne tekrar etme.
-- Yeni olası nedeni değerlendir.
+- Ayn� ��z�m� k�r� k�r�ne tekrar etme.
+- Yeni olas� nedeni de�erlendir.
 
 JAVASCRIPT:
 
@@ -423,7 +422,7 @@ JAVASCRIPT:
 - object
 - classes
 - modules
-- hata yönetimi
+- hata y�netimi
 
 NODE.JS:
 
@@ -468,15 +467,15 @@ HTML:
 - button
 - modal
 - sidebar
-- chat arayüzü
-- responsive yapı
+- chat aray�z�
+- responsive yap�
 - accessibility
 
 CSS:
 
 - Flexbox
 - Grid
-- responsive tasarım
+- responsive tasar�m
 - media query
 - animation
 - transition
@@ -488,12 +487,12 @@ CSS:
 
 PYTHON:
 
-- değişkenler
+- de�i�kenler
 - fonksiyonlar
 - listeler
 - dictionary
 - class
-- dosya işlemleri
+- dosya i�lemleri
 - JSON
 - API
 - debugging
@@ -551,7 +550,7 @@ GITHUB:
 - branch
 - push
 - pull
-- dosya yönetimi
+- dosya y�netimi
 - deployment
 
 RENDER:
@@ -568,9 +567,9 @@ RENDER:
 
 DOSYA:
 
-ErencanAI dosya yükleme özelliğine sahiptir.
+ErencanAI dosya y�kleme �zelli�ine sahiptir.
 
-Desteklenen temel dosya türleri:
+Desteklenen temel dosya t�rleri:
 
 TXT
 JSON
@@ -588,17 +587,17 @@ JPG
 JPEG
 WEBP
 
-Maksimum dosya boyutu 10 MB'dır.
+Maksimum dosya boyutu 10 MB'd�r.
 
-Dosyalar kullanıcı kimliğiyle ilişkilendirilir.
+Dosyalar kullan�c� kimli�iyle ili�kilendirilir.
 
-Bir kullanıcının dosyalarını başka kullanıcıya aktarma.
+Bir kullan�c�n�n dosyalar�n� ba�ka kullan�c�ya aktarma.
 
-API anahtarını asla gösterme.
+API anahtar�n� asla g�sterme.
 
-.env içindeki gizli bilgileri asla yazdırma.
+.env i�indeki gizli bilgileri asla yazd�rma.
 
-Kod içine gerçek API anahtarı koyma.
+Kod i�ine ger�ek API anahtar� koyma.
 
 PROJE:
 
@@ -625,7 +624,7 @@ POST /api/chat
 Dosya API:
 POST /api/upload
 
-Araştırma API:
+Ara�t�rma API:
 POST /api/research
 
 Hava durumu API:
@@ -639,52 +638,52 @@ GET /api/health
 
 HAFIZA:
 
-ErencanAI kullanıcıya özel hafıza sistemi kullanır.
+ErencanAI kullan�c�ya �zel haf�za sistemi kullan�r.
 
-Her kullanıcının hafızası ayrı tutulmalıdır.
+Her kullan�c�n�n haf�zas� ayr� tutulmal�d�r.
 
-Bir kullanıcının bilgilerini başka kullanıcıya aktarma.
+Bir kullan�c�n�n bilgilerini ba�ka kullan�c�ya aktarma.
 
-Kullanıcının kimliği USER-ID sistemiyle belirlenir.
+Kullan�c�n�n kimli�i USER-ID sistemiyle belirlenir.
 
-Kullanıcıya özel hafızadaki bilgiler yalnızca o kullanıcı için bağlam olarak kullanılmalıdır.
+Kullan�c�ya �zel haf�zadaki bilgiler yaln�zca o kullan�c� i�in ba�lam olarak kullan�lmal�d�r.
 
-Kullanıcı adı gibi basit bilgiler hatırlanabilir.
+Kullan�c� ad� gibi basit bilgiler hat�rlanabilir.
 
-Yeni bilgi eski bilgiyle çelişiyorsa yeni bilgiyi dikkate al.
+Yeni bilgi eski bilgiyle �eli�iyorsa yeni bilgiyi dikkate al.
 
-Gizli bilgileri cevapta gösterme.
+Gizli bilgileri cevapta g�sterme.
 
-GÜVENLİK:
+G�VENL�K:
 
-API anahtarını asla gösterme.
+API anahtar�n� asla g�sterme.
 
-.env içindeki gizli bilgileri asla yazdırma.
+.env i�indeki gizli bilgileri asla yazd�rma.
 
-API anahtarını istemciye gönderme.
+API anahtar�n� istemciye g�nderme.
 
-Şifreleri ve tokenları cevapta gösterme.
+�ifreleri ve tokenlar� cevapta g�sterme.
 
-SONUÇ:
+SONU�:
 
-DOĞRU
-DOĞAL
+DO�RU
+DO�AL
 HIZLI
-ÇOK DİLLİ
-KULLANICIYA ÖZEL HAFIZALI
-GÜNCEL BİLGİ ARAŞTIRABİLEN
-HAVA DURUMU BİLGİSİ ALABİLEN
-DOSYA YÜKLEYEBİLEN
-ANLAŞILIR
+�OK D�LL�
+KULLANICIYA �ZEL HAFIZALI
+G�NCEL B�LG� ARA�TIRAB�LEN
+HAVA DURUMU B�LG�S� ALAB�LEN
+DOSYA Y�KLEYEB�LEN
+ANLA�ILIR
 FAYDALI
 
-cevaplar üret.
+cevaplar �ret.
 
-Mevcut çalışan sistemi gereksiz yere bozma.
+Mevcut �al��an sistemi gereksiz yere bozma.
 `.trim();
 
 /* =========================================================
-ESKİ HAFIZA
+ESK� HAFIZA
 ========================================================= */
 
 let memory = [];
@@ -696,7 +695,7 @@ KULLANICI HAFIZALARI
 let userMemories = {};
 
 /* =========================================================
-ESKİ HAFIZA YÜKLE
+ESK� HAFIZA Y�KLE
 ========================================================= */
 
 function loadMemory() {
@@ -766,7 +765,7 @@ function loadMemory() {
 }
 
 /* =========================================================
-ESKİ HAFIZA KAYDET
+ESK� HAFIZA KAYDET
 ========================================================= */
 
 function saveMemory() {
@@ -797,7 +796,7 @@ function saveMemory() {
 }
 
 /* =========================================================
-ESKİ HAFIZAYA EKLE
+ESK� HAFIZAYA EKLE
 ========================================================= */
 
 function addMemory(
@@ -847,7 +846,7 @@ function addMemory(
 }
 
 /* =========================================================
-KULLANICI HAFIZASI DOSYASI OLUŞTUR
+KULLANICI HAFIZASI DOSYASI OLU�TUR
 ========================================================= */
 
 function loadUserMemories() {
@@ -941,7 +940,7 @@ function saveUserMemories() {
 }
 
 /* =========================================================
-USER ID TEMİZLE
+USER ID TEM�ZLE
 ========================================================= */
 
 function cleanUserId(
@@ -1100,7 +1099,7 @@ function addUserMemory(
 }
 
 /* =========================================================
-İSİM BUL
+�S�M BUL
 ========================================================= */
 
 function findUserName(
@@ -1114,7 +1113,7 @@ function findUserName(
 
     const match =
         value.match(
-            /(?:benim\s+adım|benim\s+ismim|adım|ismim)\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)\b/i
+            /(?:benim\s+ad�m|benim\s+ismim|ad�m|ismim)\s+([A-Za-z������������]+)\b/i
         );
 
     if (
@@ -1128,7 +1127,7 @@ function findUserName(
 }
 
 /* =========================================================
-KULLANICI HAFIZASINDAN İSİM BUL
+KULLANICI HAFIZASINDAN �S�M BUL
 ========================================================= */
 
 function getUserName(
@@ -1175,7 +1174,7 @@ function getUserName(
 }
 
 /* =========================================================
-ESKİ SİSTEM İÇİN İSİM
+ESK� S�STEM ���N �S�M
 ========================================================= */
 
 function getLastUserName() {
@@ -1215,7 +1214,7 @@ function getLastUserName() {
 }
 
 /* =========================================================
-CEVAP TEMİZLE
+CEVAP TEM�ZLE
 ========================================================= */
 
 function cleanReply(
@@ -1286,14 +1285,14 @@ function cleanReply(
                 0,
                 MAX_REPLY_LENGTH
             ) +
-            "\n\n[Yanıt çok uzundu ve kısaltıldı.]";
+            "\n\n[Yan�t �ok uzundu ve k�salt�ld�.]";
     }
 
     return reply;
 }
 
 /* =========================================================
-DOSYA ADI TEMİZLE
+DOSYA ADI TEM�ZLE
 ========================================================= */
 
 function cleanFileName(
@@ -1312,7 +1311,7 @@ function cleanFileName(
 
     name =
         name.replace(
-            /[^a-zA-Z0-9ÇĞİÖŞÜçğıöşü._-]/g,
+            /[^a-zA-Z0-9������������._-]/g,
             "_"
         );
 
@@ -1346,7 +1345,7 @@ function isAllowedFile(
 }
 
 /* =========================================================
-FETCH ZAMAN AŞIMI YARDIMCISI
+FETCH ZAMAN A�IMI YARDIMCISI
 ========================================================= */
 
 async function fetchWithTimeout(
@@ -1391,7 +1390,7 @@ async function fetchWithTimeout(
 }
 
 /* =========================================================
-HTML TEMİZLE
+HTML TEM�ZLE
 ========================================================= */
 
 function stripHtml(
@@ -1437,7 +1436,7 @@ function stripHtml(
 }
 
 /* =========================================================
-URL TEMİZLE
+URL TEM�ZLE
 ========================================================= */
 
 function cleanUrl(
@@ -1470,7 +1469,7 @@ function cleanUrl(
 }
 
 /* =========================================================
-İNTERNET ARAŞTIRMASI GEREKİYOR MU?
+�NTERNET ARA�TIRMASI GEREK�YOR MU?
 ========================================================= */
 
 function shouldResearch(
@@ -1492,26 +1491,26 @@ function shouldResearch(
 
     const researchWords = [
 
-        "araştır",
-        "araştırır mısın",
+        "ara�t�r",
+        "ara�t�r�r m�s�n",
         "internetten bak",
-        "internetten araştır",
+        "internetten ara�t�r",
         "web'den bak",
         "webden bak",
         "internete bak",
         "kaynak bul",
-        "kaynakları bul",
-        "güncel bilgi",
-        "güncel olarak",
+        "kaynaklar� bul",
+        "g�ncel bilgi",
+        "g�ncel olarak",
         "son durum",
-        "son gelişmeler",
+        "son geli�meler",
         "en son",
-        "şu an",
-        "şuan",
-        "şimdi",
-        "bugün",
-        "dün",
-        "yarın",
+        "�u an",
+        "�uan",
+        "�imdi",
+        "bug�n",
+        "d�n",
+        "yar�n",
         "bu hafta",
         "bu ay",
         "2026",
@@ -1544,16 +1543,16 @@ function shouldResearch(
     const weatherWords = [
 
         "hava durumu",
-        "hava nasıl",
-        "hava kaç derece",
-        "sıcaklık kaç",
-        "yağmur yağacak mı",
-        "yağmur yağar mı",
-        "kar yağacak mı",
-        "bugün hava",
-        "yarın hava",
-        "rüzgar kaç",
-        "nem kaç",
+        "hava nas�l",
+        "hava ka� derece",
+        "s�cakl�k ka�",
+        "ya�mur ya�acak m�",
+        "ya�mur ya�ar m�",
+        "kar ya�acak m�",
+        "bug�n hava",
+        "yar�n hava",
+        "r�zgar ka�",
+        "nem ka�",
         "weather",
         "temperature",
         "forecast"
@@ -1593,16 +1592,16 @@ function isWeatherQuestion(
     const words = [
 
         "hava durumu",
-        "hava nasıl",
-        "hava kaç derece",
-        "sıcaklık kaç",
-        "yağmur yağacak mı",
-        "yağmur yağar mı",
-        "kar yağacak mı",
-        "bugün hava",
-        "yarın hava",
-        "rüzgar kaç",
-        "nem kaç",
+        "hava nas�l",
+        "hava ka� derece",
+        "s�cakl�k ka�",
+        "ya�mur ya�acak m�",
+        "ya�mur ya�ar m�",
+        "kar ya�acak m�",
+        "bug�n hava",
+        "yar�n hava",
+        "r�zgar ka�",
+        "nem ka�",
         "weather",
         "temperature",
         "forecast"
@@ -1632,11 +1631,11 @@ function extractWeatherLocation(
 
     const patterns = [
 
-        /(.+?)\s+(?:hava durumu|hava nasıl|hava kaç derece)/i,
+        /(.+?)\s+(?:hava durumu|hava nas�l|hava ka� derece)/i,
 
-        /(.+?)\s+(?:için hava|içinde hava)/i,
+        /(.+?)\s+(?:i�in hava|i�inde hava)/i,
 
-        /(?:hava durumu|hava nasıl|hava kaç derece)\s+(?:olan\s+)?(.+)/i,
+        /(?:hava durumu|hava nas�l|hava ka� derece)\s+(?:olan\s+)?(.+)/i,
 
         /(?:weather|forecast)\s+(?:in|for)\s+(.+)/i
 
@@ -1788,7 +1787,7 @@ async function webSearch(
 
             } catch (error) {
 
-                // URL parse hatası.
+                // URL parse hatas�.
             }
         }
 
@@ -1815,8 +1814,8 @@ async function webSearch(
     }
 
     /*
-        Bazı arama sonuçlarında farklı HTML yapısı olabilir.
-        Bu durumda alternatif bağlantı taraması yapılır.
+        Baz� arama sonu�lar�nda farkl� HTML yap�s� olabilir.
+        Bu durumda alternatif ba�lant� taramas� yap�l�r.
     */
 
     if (
@@ -2011,7 +2010,7 @@ async function fetchPageText(
 }
 
 /* =========================================================
-ARAŞTIRMA SONUCU OLUŞTUR
+ARA�TIRMA SONUCU OLU�TUR
 ========================================================= */
 
 async function researchWeb(
@@ -2019,7 +2018,7 @@ async function researchWeb(
 ) {
 
     console.log(
-        "İNTERNET ARAŞTIRMASI:",
+        "�NTERNET ARA�TIRMASI:",
         query
     );
 
@@ -2041,7 +2040,7 @@ async function researchWeb(
                 query,
 
             text:
-                "İnternette uygun arama sonucu bulunamadı.",
+                "�nternette uygun arama sonucu bulunamad�.",
 
             sources:
                 []
@@ -2085,7 +2084,7 @@ async function researchWeb(
     ) {
 
         combined +=
-            "\n\nBAŞLIK: " +
+            "\n\nBA�LIK: " +
             item.title +
             "\nURL: " +
             item.url;
@@ -2095,7 +2094,7 @@ async function researchWeb(
         ) {
 
             combined +=
-                "\nİÇERİK: " +
+                "\n��ER�K: " +
                 item.text;
         }
     }
@@ -2134,7 +2133,7 @@ async function researchWeb(
 }
 
 /* =========================================================
-HAVA DURUMU ŞEHİR BUL
+HAVA DURUMU �EH�R BUL
 ========================================================= */
 
 async function geocodeLocation(
@@ -2151,22 +2150,7 @@ async function geocodeLocation(
         "&language=tr" +
         "&format=json";
 
-   const response =
-await fetchWithTimeout(
-    url,
-    {
-        method:
-            "GET",
-
-        headers: {
-
-            "Accept":
-                "application/json"
-
-        }
-    },
-    15000
-);
+   
 
     if (
         !response.ok
@@ -2215,7 +2199,7 @@ async function getWeather(
                 false,
 
             message:
-                "Hava durumu için şehir veya konum belirtilmedi."
+                "Hava durumu i�in �ehir veya konum belirtilmedi."
 
         };
     }
@@ -2241,7 +2225,7 @@ async function getWeather(
 
             message:
                 cleanLocation +
-                " için konum bulunamadı."
+                " i�in konum bulunamad�."
 
         };
     }
@@ -2324,7 +2308,7 @@ async function getWeather(
 }
 
 /* =========================================================
-HAVA KODU AÇIKLAMA
+HAVA KODU A�IKLAMA
 ========================================================= */
 
 function weatherCodeText(
@@ -2334,67 +2318,67 @@ function weatherCodeText(
     const map = {
 
         0:
-            "Açık",
+            "A��k",
 
         1:
-            "Çoğunlukla açık",
+            "�o�unlukla a��k",
 
         2:
-            "Parçalı bulutlu",
+            "Par�al� bulutlu",
 
         3:
-            "Kapalı",
+            "Kapal�",
 
         45:
             "Sisli",
 
         48:
-            "Kırağılı sis",
+            "K�ra��l� sis",
 
         51:
-            "Hafif çiseleme",
+            "Hafif �iseleme",
 
         53:
-            "Orta şiddette çiseleme",
+            "Orta �iddette �iseleme",
 
         55:
-            "Yoğun çiseleme",
+            "Yo�un �iseleme",
 
         61:
-            "Hafif yağmur",
+            "Hafif ya�mur",
 
         63:
-            "Orta şiddette yağmur",
+            "Orta �iddette ya�mur",
 
         65:
-            "Şiddetli yağmur",
+            "�iddetli ya�mur",
 
         71:
             "Hafif kar",
 
         73:
-            "Orta şiddette kar",
+            "Orta �iddette kar",
 
         75:
-            "Yoğun kar",
+            "Yo�un kar",
 
         80:
-            "Hafif sağanak",
+            "Hafif sa�anak",
 
         81:
-            "Orta şiddette sağanak",
+            "Orta �iddette sa�anak",
 
         82:
-            "Şiddetli sağanak",
+            "�iddetli sa�anak",
 
         95:
-            "Gök gürültülü fırtına",
+            "G�k g�r�lt�l� f�rt�na",
 
         96:
-            "Dolu ihtimalli gök gürültülü fırtına",
+            "Dolu ihtimalli g�k g�r�lt�l� f�rt�na",
 
         99:
-            "Şiddetli dolu ihtimalli gök gürültülü fırtına"
+            "�iddetli dolu ihtimalli g�k g�r�lt�l� f�rt�na"
 
     };
 
@@ -2405,7 +2389,7 @@ function weatherCodeText(
 }
 
 /* =========================================================
-HAVA VERİSİNİ METNE ÇEVİR
+HAVA VER�S�N� METNE �EV�R
 ========================================================= */
 
 function formatWeatherForAI(
@@ -2431,7 +2415,7 @@ function formatWeatherForAI(
 
     let text =
         `
-[GÜNCEL HAVA DURUMU]
+[G�NCEL HAVA DURUMU]
 
 Konum:
 ${location.name || ""}, ${location.country || ""}
@@ -2439,28 +2423,28 @@ ${location.name || ""}, ${location.country || ""}
 Saat dilimi:
 ${weather.timezone || ""}
 
-Şu an:
+�u an:
 ${weatherCodeText(current.weather_code)}
 
-Sıcaklık:
-${current.temperature_2m ?? "Bilinmiyor"} °C
+S�cakl�k:
+${current.temperature_2m ?? "Bilinmiyor"} �C
 
 Hissedilen:
-${current.apparent_temperature ?? "Bilinmiyor"} °C
+${current.apparent_temperature ?? "Bilinmiyor"} �C
 
 Nem:
 ${current.relative_humidity_2m ?? "Bilinmiyor"} %
 
-Yağış:
+Ya���:
 ${current.precipitation ?? "Bilinmiyor"} mm
 
-Yağmur:
+Ya�mur:
 ${current.rain ?? "Bilinmiyor"} mm
 
-Rüzgar:
+R�zgar:
 ${current.wind_speed_10m ?? "Bilinmiyor"} km/sa
 
-Günlük tahmin:
+G�nl�k tahmin:
 
 `;
 
@@ -2483,9 +2467,9 @@ Günlük tahmin:
             text +=
                 `
 ${daily.time[i]}:
-Min ${daily.temperature_2m_min?.[i] ?? "?"} °C
-Max ${daily.temperature_2m_max?.[i] ?? "?"} °C
-Yağış ihtimali ${daily.precipitation_probability_max?.[i] ?? "?"} %
+Min ${daily.temperature_2m_min?.[i] ?? "?"} �C
+Max ${daily.temperature_2m_max?.[i] ?? "?"} �C
+Ya��� ihtimali ${daily.precipitation_probability_max?.[i] ?? "?"} %
 Durum ${weatherCodeText(daily.weather_code?.[i])}
 
 `;
@@ -2496,7 +2480,7 @@ Durum ${weatherCodeText(daily.weather_code?.[i])}
 }
 
 /* =========================================================
-GROQ İSTEĞİ
+GROQ �STE��
 ========================================================= */
 
 async function requestGroq(
@@ -2565,11 +2549,11 @@ async function requestGroq(
                                 reasoning_effort:
                                     "low",
 
-                                reasoning_format:
-                                    "hidden",
+                                reasoning_format: "hidden",
 
-                                stream:
-                                    false
+                            stream: false,
+
+                            tools: []
 
                             }),
 
@@ -2626,7 +2610,7 @@ async function requestGroq(
             } catch (error) {
 
                 throw new Error(
-                    "Groq geçersiz JSON gönderdi."
+                    "Groq ge�ersiz JSON g�nderdi."
                 );
             }
 
@@ -2687,13 +2671,13 @@ async function requestGroq(
     throw (
         lastError ||
         new Error(
-            "Groq bağlantısı kurulamadı."
+            "Groq ba�lant�s� kurulamad�."
         )
     );
 }
 
 /* =========================================================
-BAŞLANGIÇ HAFIZALARI
+BA�LANGI� HAFIZALARI
 ========================================================= */
 
 memory =
@@ -2719,7 +2703,7 @@ app.use(
     )
 );
 /* =========================================================
-OTOMATİK KULLANICI COOKIE SİSTEMİ
+OTOMAT�K KULLANICI COOKIE S�STEM�
 ========================================================= */
 
 app.use(
@@ -2875,7 +2859,7 @@ app.get(
                 dateInfo.year,
 
             languages:
-                "Çoklu dil desteği aktif",
+                "�oklu dil deste�i aktif",
 
             personalMemory:
                 true,
@@ -2895,7 +2879,7 @@ app.get(
 );
 
 /* =========================================================
-WEB ARAŞTIRMA API
+WEB ARA�TIRMA API
 ========================================================= */
 
 app.post(
@@ -2927,7 +2911,7 @@ app.post(
                         false,
 
                     reply:
-                        "Araştırılacak konu belirtilmedi."
+                        "Ara�t�r�lacak konu belirtilmedi."
 
                 });
             }
@@ -2945,7 +2929,7 @@ app.post(
                         false,
 
                     reply:
-                        "Araştırma sorgusu çok uzun."
+                        "Ara�t�rma sorgusu �ok uzun."
 
                 });
             }
@@ -2964,7 +2948,7 @@ app.post(
         ) {
 
             console.error(
-                "ARAŞTIRMA HATASI:",
+                "ARA�TIRMA HATASI:",
                 error.message
             );
 
@@ -2976,7 +2960,7 @@ app.post(
                     false,
 
                 reply:
-                    "İnternet araştırması sırasında bir hata oluştu."
+                    "�nternet ara�t�rmas� s�ras�nda bir hata olu�tu."
 
             });
         }
@@ -3017,7 +3001,7 @@ app.get(
                         false,
 
                     reply:
-                        "Şehir veya konum belirtilmedi."
+                        "�ehir veya konum belirtilmedi."
 
                 });
             }
@@ -3059,7 +3043,7 @@ app.get(
                     false,
 
                 reply:
-                    "Hava durumu bilgisi alınamadı."
+                    "Hava durumu bilgisi al�namad�."
 
             });
         }
@@ -3068,7 +3052,7 @@ app.get(
 );
 
 /* =========================================================
-DOSYA YÜKLEME API
+DOSYA Y�KLEME API
 ========================================================= */
 
 app.post(
@@ -3114,7 +3098,7 @@ app.post(
                         false,
 
                     reply:
-                        "Dosya bulunamadı."
+                        "Dosya bulunamad�."
 
                 });
             }
@@ -3133,7 +3117,7 @@ app.post(
                         false,
 
                     reply:
-                        "Bu dosya türüne izin verilmiyor."
+                        "Bu dosya t�r�ne izin verilmiyor."
 
                 });
             }
@@ -3174,7 +3158,7 @@ app.post(
                         false,
 
                     reply:
-                        "Dosya verisi geçersiz."
+                        "Dosya verisi ge�ersiz."
 
                 });
             }
@@ -3192,7 +3176,7 @@ app.post(
                         false,
 
                     reply:
-                        "Dosya boş veya geçersiz."
+                        "Dosya bo� veya ge�ersiz."
 
                 });
             }
@@ -3210,7 +3194,7 @@ app.post(
                         false,
 
                     reply:
-                        "Dosya çok büyük. Maksimum dosya boyutu 10 MB."
+                        "Dosya �ok b�y�k. Maksimum dosya boyutu 10 MB."
 
                 });
             }
@@ -3264,7 +3248,7 @@ app.post(
             );
 
             console.log(
-                "DOSYA YÜKLENDİ:",
+                "DOSYA Y�KLEND�:",
                 fileName
             );
 
@@ -3297,7 +3281,7 @@ app.post(
                     userId,
 
                 message:
-                    "Dosya başarıyla yüklendi."
+                    "Dosya ba�ar�yla y�klendi."
 
             });
 
@@ -3306,7 +3290,7 @@ app.post(
         ) {
 
             console.error(
-                "DOSYA YÜKLEME HATASI:",
+                "DOSYA Y�KLEME HATASI:",
                 error.message
             );
 
@@ -3318,7 +3302,7 @@ app.post(
                     false,
 
                 reply:
-                    "Dosya yüklenirken bir hata oluştu."
+                    "Dosya y�klenirken bir hata olu�tu."
 
             });
 
@@ -3368,7 +3352,7 @@ app.post(
                         false,
 
                     reply:
-                        "Lütfen bir mesaj yaz."
+                        "L�tfen bir mesaj yaz."
 
                 });
             }
@@ -3386,7 +3370,7 @@ app.post(
                         false,
 
                     reply:
-                        "Mesaj çok uzun. Lütfen daha kısa bir mesaj gönder."
+                        "Mesaj �ok uzun. L�tfen daha k�sa bir mesaj g�nder."
 
                 });
             }
@@ -3407,7 +3391,7 @@ app.post(
                         false,
 
                     reply:
-                        "Groq API anahtarı bulunamadı."
+                        "Groq API anahtar� bulunamad�."
 
                 });
             }
@@ -3418,7 +3402,7 @@ app.post(
             );
 
             console.log(
-                "YENİ MESAJ"
+                "YEN� MESAJ"
             );
 
             console.log(
@@ -3435,7 +3419,7 @@ app.post(
                 getCurrentDateInfo();
 
             console.log(
-                "TÜRKİYE TARİHİ:",
+                "T�RK�YE TAR�H�:",
                 dateInfo.turkey
             );
 
@@ -3455,7 +3439,7 @@ app.post(
                 );
 
             /* -----------------------------------------
-            İSİM SİSTEMİ
+            �S�M S�STEM�
             ----------------------------------------- */
 
             const newName =
@@ -3464,7 +3448,7 @@ app.post(
                 );
 
             const askingName =
-                /(?:benim\s+adım|benim\s+ismim|ismim|adım)\s+ne(?:ydi)?/i.test(
+                /(?:benim\s+ad�m|benim\s+ismim|ismim|ad�m)\s+ne(?:ydi)?/i.test(
                     message
                 );
 
@@ -3474,9 +3458,9 @@ app.post(
             ) {
 
                 const reply =
-                    "Tamam, adını " +
+                    "Tamam, ad�n� " +
                     newName +
-                    " olarak hatırlayacağım.";
+                    " olarak hat�rlayaca��m.";
 
                 addUserMemory(
                     userId,
@@ -3516,7 +3500,7 @@ app.post(
                 ) {
 
                     const reply =
-                        "Senin adın " +
+                        "Senin ad�n " +
                         userName +
                         ".";
 
@@ -3546,7 +3530,7 @@ app.post(
             }
 
             /* -----------------------------------------
-            BAĞLAM
+            BA�LAM
             ----------------------------------------- */
 
             const recentMessages =
@@ -3555,7 +3539,7 @@ app.post(
                 );
 
             /* -----------------------------------------
-            ARAŞTIRMA
+            ARA�TIRMA
             ----------------------------------------- */
 
             let researchContext =
@@ -3579,8 +3563,8 @@ app.post(
                 try {
 
                     /*
-                        Hava durumu özel olarak
-                        Open-Meteo üzerinden alınır.
+                        Hava durumu �zel olarak
+                        Open-Meteo �zerinden al�n�r.
                     */
 
                     if (
@@ -3595,8 +3579,8 @@ app.post(
                             );
 
                         /*
-                            Konum yazılmamışsa
-                            Türkiye varsayılır.
+                            Konum yaz�lmam��sa
+                            T�rkiye varsay�l�r.
                         */
 
                         if (
@@ -3626,7 +3610,7 @@ app.post(
                                 true;
 
                             console.log(
-                                "HAVA DURUMU ARAŞTIRMASI AKTİF"
+                                "HAVA DURUMU ARA�TIRMASI AKT�F"
                             );
 
                         } else {
@@ -3650,12 +3634,12 @@ app.post(
 
                             researchContext =
                                 `
-[İNTERNET ARAŞTIRMASI]
+[�NTERNET ARA�TIRMASI]
 
 Arama:
 ${research.query}
 
-Sonuçlar:
+Sonu�lar:
 ${research.text}
 `.trim();
 
@@ -3667,7 +3651,7 @@ ${research.text}
                                 true;
 
                             console.log(
-                                "İNTERNET ARAŞTIRMASI AKTİF"
+                                "�NTERNET ARA�TIRMASI AKT�F"
                             );
                         }
                     }
@@ -3677,13 +3661,13 @@ ${research.text}
                 ) {
 
                     console.error(
-                        "ARAŞTIRMA HATASI:",
+                        "ARA�TIRMA HATASI:",
                         researchError.message
                     );
 
                     /*
-                        Araştırma başarısız olursa
-                        normal AI cevabı yine çalışır.
+                        Ara�t�rma ba�ar�s�z olursa
+                        normal AI cevab� yine �al���r.
                     */
                 }
             }
@@ -3711,40 +3695,40 @@ ${research.text}
 
                     content:
                         `
-GÜNCEL TARİH VE ZAMAN BİLGİSİ:
+G�NCEL TAR�H VE ZAMAN B�LG�S�:
 
-Türkiye tarihi ve saati:
+T�rkiye tarihi ve saati:
 ${dateInfo.turkey}
 
 ISO zaman:
 ${dateInfo.iso}
 
-Yıl:
+Y�l:
 ${dateInfo.year}
 
 Bu bilgi mevcut zaman bilgisidir.
 
-Tarih sorularında bu bilgiyi kullan.
+Tarih sorular�nda bu bilgiyi kullan.
 
-Ancak bu bilgi internet erişimi sağlamaz.
+Ancak bu bilgi internet eri�imi sa�lamaz.
 
-KULLANICI DİLİ:
+KULLANICI D�L�:
 
-Kullanıcının son mesajındaki dili belirle.
-Mümkünse cevabı aynı dilde ver.
-Kullanıcı açıkça başka bir dil isterse o dile geç.
+Kullan�c�n�n son mesaj�ndaki dili belirle.
+M�mk�nse cevab� ayn� dilde ver.
+Kullan�c� a��k�a ba�ka bir dil isterse o dile ge�.
 
 KULLANICI HAFIZASI:
 
-Bu konuşma yalnızca USER ID:
+Bu konu�ma yaln�zca USER ID:
 ${userId}
 
-için geçerlidir.
+i�in ge�erlidir.
 
-Bu kullanıcının hafızasını başka kullanıcıların
-hafızasıyla karıştırma.
+Bu kullan�c�n�n haf�zas�n� ba�ka kullan�c�lar�n
+haf�zas�yla kar��t�rma.
 
-Bu kullanıcıya ait geçmiş mesajları bağlam olarak
+Bu kullan�c�ya ait ge�mi� mesajlar� ba�lam olarak
 kullanabilirsin.
 `.trim()
 
@@ -3753,7 +3737,7 @@ kullanabilirsin.
             ];
 
             /* -----------------------------------------
-            ARAŞTIRMA SONUÇLARINI AI'A VER
+            ARA�TIRMA SONU�LARINI AI'A VER
             ----------------------------------------- */
 
             if (
@@ -3777,18 +3761,18 @@ kullanabilirsin.
 
                     content:
                         `
-ARAŞTIRMA KURALI:
+ARA�TIRMA KURALI:
 
-Yukarıdaki araştırma bilgileri güncel bilgi
-gereken soruya yardımcı olmak için alınmıştır.
+Yukar�daki ara�t�rma bilgileri g�ncel bilgi
+gereken soruya yard�mc� olmak i�in al�nm��t�r.
 
-Cevabını bu bilgilerle oluştur.
+Cevab�n� bu bilgilerle olu�tur.
 
-Araştırma sonucunda bulunmayan bilgileri uydurma.
+Ara�t�rma sonucunda bulunmayan bilgileri uydurma.
 
-Kullanıcı kaynak isterse kaynakları belirt.
+Kullan�c� kaynak isterse kaynaklar� belirt.
 
-Gereksiz yere "internette araştırdım" deme.
+Gereksiz yere "internette ara�t�rd�m" deme.
 
 Hava durumu verisi varsa mevcut hava verisini
 kullan.
@@ -3798,7 +3782,7 @@ kullan.
             }
 
             /* -----------------------------------------
-            GEÇMİŞ MESAJLAR
+            GE�M�� MESAJLAR
             ----------------------------------------- */
 
             for (
@@ -3839,14 +3823,14 @@ kullan.
             );
 
             console.log(
-                "ARAŞTIRMA:",
+                "ARA�TIRMA:",
                 researchUsed
-                    ? "AKTİF"
-                    : "GEREKMİYOR"
+                    ? "AKT�F"
+                    : "GEREKM�YOR"
             );
 
             console.log(
-                "GROQ İSTEĞİ GÖNDERİLİYOR..."
+                "GROQ �STE�� G�NDER�L�YOR..."
             );
 
             /* -----------------------------------------
@@ -3891,7 +3875,7 @@ kullan.
             }
 
             /* -----------------------------------------
-            CEVAP TEMİZLE
+            CEVAP TEM�ZLE
             ----------------------------------------- */
 
             reply =
@@ -3904,7 +3888,7 @@ kullan.
             ) {
 
                 console.error(
-                    "BOŞ GROQ CEVABI"
+                    "BO� GROQ CEVABI"
                 );
 
                 return res.status(
@@ -3915,17 +3899,17 @@ kullan.
                         false,
 
                     reply:
-                        "ErencanAI boş cevap verdi. Lütfen tekrar dene."
+                        "ErencanAI bo� cevap verdi. L�tfen tekrar dene."
 
                 });
             }
 
             /* -----------------------------------------
-            BİLMİYORSA OTOMATİK ARAŞTIR
+            B�LM�YORSA OTOMAT�K ARA�TIR
             ----------------------------------------- */
 
             const uncertainAnswer =
-                /bilmiyorum|emin değilim|emin değilim|kesin olarak bilmiyorum|yeterli bilgim yok|doğrulayamıyorum|bilgi sahibi değilim|bunu bilmiyorum/i.test(
+                /bilmiyorum|emin de�ilim|emin de�ilim|kesin olarak bilmiyorum|yeterli bilgim yok|do�rulayam�yorum|bilgi sahibi de�ilim|bunu bilmiyorum/i.test(
                     reply
                 );
 
@@ -3935,11 +3919,11 @@ kullan.
             ) {
 
                 console.log(
-                    "AI BİLGİSİ YETERSİZ."
+                    "AI B�LG�S� YETERS�Z."
                 );
 
                 console.log(
-                    "OTOMATİK İKİNCİ ARAŞTIRMA BAŞLATILIYOR..."
+                    "OTOMAT�K �K�NC� ARA�TIRMA BA�LATILIYOR..."
                 );
 
                 try {
@@ -3965,19 +3949,19 @@ kullan.
 
                                     content:
                                         `
-İLK CEVABINDA YETERLİ BİLGİ OLMADI.
+�LK CEVABINDA YETERL� B�LG� OLMADI.
 
-Şimdi internet araştırması sonucu aşağıdadır:
+�imdi internet ara�t�rmas� sonucu a�a��dad�r:
 
 ${secondResearch.text}
 
-Kullanıcının sorusunu araştırma
-sonuçlarına göre yeniden cevapla.
+Kullan�c�n�n sorusunu ara�t�rma
+sonu�lar�na g�re yeniden cevapla.
 
-Araştırma sonucunda bulunmayan
+Ara�t�rma sonucunda bulunmayan
 bilgileri uydurma.
 
-Kısa, doğal ve doğru cevap ver.
+K�sa, do�al ve do�ru cevap ver.
 `.trim()
 
                                 }
@@ -4037,7 +4021,7 @@ Kısa, doğal ve doğru cevap ver.
                                 [];
 
                             console.log(
-                                "İKİNCİ ARAŞTIRMA SONRASI CEVAP OLUŞTURULDU."
+                                "�K�NC� ARA�TIRMA SONRASI CEVAP OLU�TURULDU."
                             );
                         }
                     }
@@ -4047,7 +4031,7 @@ Kısa, doğal ve doğru cevap ver.
                 ) {
 
                     console.error(
-                        "İKİNCİ ARAŞTIRMA HATASI:",
+                        "�K�NC� ARA�TIRMA HATASI:",
                         secondResearchError.message
                     );
                 }
@@ -4064,7 +4048,7 @@ Kısa, doğal ve doğru cevap ver.
             );
 
             /* -----------------------------------------
-            ESKİ HAFIZAYA DA KAYDET
+            ESK� HAFIZAYA DA KAYDET
             ----------------------------------------- */
 
             addMemory(
@@ -4078,7 +4062,7 @@ Kısa, doğal ve doğru cevap ver.
             );
 
             /* -----------------------------------------
-            SÜRE
+            S�RE
             ----------------------------------------- */
 
             const elapsed =
@@ -4091,7 +4075,7 @@ Kısa, doğal ve doğru cevap ver.
             );
 
             console.log(
-                "CEVAP SÜRESİ:",
+                "CEVAP S�RES�:",
                 elapsed +
                 " ms"
             );
@@ -4171,7 +4155,7 @@ Kısa, doğal ve doğru cevap ver.
             );
 
             let userMessage =
-                "Sunucu bağlantı hatası.";
+                "Sunucu ba�lant� hatas�.";
 
             if (
                 error.name ===
@@ -4179,7 +4163,7 @@ Kısa, doğal ve doğru cevap ver.
             ) {
 
                 userMessage =
-                    "AI yanıtı zaman aşımına uğradı. Tekrar dene.";
+                    "AI yan�t� zaman a��m�na u�rad�. Tekrar dene.";
 
             } else if (
                 error.message &&
@@ -4189,7 +4173,7 @@ Kısa, doğal ve doğru cevap ver.
             ) {
 
                 userMessage =
-                    "Groq bağlantısı kurulamadı. Sunucu bağlantısını kontrol et.";
+                    "Groq ba�lant�s� kurulamad�. Sunucu ba�lant�s�n� kontrol et.";
 
             } else if (
                 error.status ===
@@ -4199,7 +4183,7 @@ Kısa, doğal ve doğru cevap ver.
             ) {
 
                 userMessage =
-                    "Groq API anahtarı geçersiz veya yetkisiz.";
+                    "Groq API anahtar� ge�ersiz veya yetkisiz.";
 
             } else if (
                 error.status ===
@@ -4207,7 +4191,7 @@ Kısa, doğal ve doğru cevap ver.
             ) {
 
                 userMessage =
-                    "Groq isteği geçersiz. Model veya API ayarlarını kontrol et.";
+                    "Groq iste�i ge�ersiz. Model veya API ayarlar�n� kontrol et.";
 
             } else if (
                 error.status ===
@@ -4215,7 +4199,7 @@ Kısa, doğal ve doğru cevap ver.
             ) {
 
                 userMessage =
-                    "Groq kullanım sınırına ulaşıldı. Biraz sonra tekrar dene.";
+                    "Groq kullan�m s�n�r�na ula��ld�. Biraz sonra tekrar dene.";
 
             } else if (
                 error.status &&
@@ -4224,7 +4208,7 @@ Kısa, doğal ve doğru cevap ver.
             ) {
 
                 userMessage =
-                    "Groq sunucusunda geçici bir hata oluştu.";
+                    "Groq sunucusunda ge�ici bir hata olu�tu.";
             }
 
             return res.status(
@@ -4247,7 +4231,7 @@ Kısa, doğal ve doğru cevap ver.
 );
 
 /* =========================================================
-ESKİ HAFIZA API
+ESK� HAFIZA API
 ========================================================= */
 
 app.get(
@@ -4314,7 +4298,7 @@ app.get(
 );
 
 /* =========================================================
-KULLANICI HAFIZASI TEMİZLE
+KULLANICI HAFIZASI TEM�ZLE
 ========================================================= */
 
 app.post(
@@ -4345,8 +4329,8 @@ app.post(
 
             message:
                 saved
-                    ? "Bu kullanıcının ErencanAI hafızası temizlendi."
-                    : "Kullanıcı hafızası temizlenemedi."
+                    ? "Bu kullan�c�n�n ErencanAI haf�zas� temizlendi."
+                    : "Kullan�c� haf�zas� temizlenemedi."
 
         });
 
@@ -4354,7 +4338,7 @@ app.post(
 );
 
 /* =========================================================
-ESKİ HAFIZA TEMİZLE
+ESK� HAFIZA TEM�ZLE
 ========================================================= */
 
 app.post(
@@ -4377,8 +4361,8 @@ app.post(
 
             message:
                 saved
-                    ? "ErencanAI hafızası temizlendi."
-                    : "Hafıza temizlenemedi."
+                    ? "ErencanAI haf�zas� temizlendi."
+                    : "Haf�za temizlenemedi."
 
         });
 
@@ -4386,7 +4370,7 @@ app.post(
 );
 
 /* =========================================================
-SAĞLIK
+SA�LIK
 ========================================================= */
 
 app.get(
@@ -4467,7 +4451,7 @@ app.use(
                 false,
 
             error:
-                "Bu ErencanAI API adresi bulunamadı."
+                "Bu ErencanAI API adresi bulunamad�."
 
         });
 
@@ -4508,7 +4492,7 @@ app.use(
                 false,
 
             reply:
-                "Sunucuda beklenmeyen bir hata oluştu."
+                "Sunucuda beklenmeyen bir hata olu�tu."
 
         });
 
@@ -4582,7 +4566,7 @@ app.listen(
         );
 
         console.log(
-            "ESKİ HAFIZA:",
+            "ESK� HAFIZA:",
             memory.length +
             " mesaj"
         );
@@ -4602,42 +4586,42 @@ app.listen(
         );
 
         console.log(
-            "ÇOKLU DİL:",
-            "AKTİF"
+            "�OKLU D�L:",
+            "AKT�F"
         );
 
         console.log(
-            "KULLANICIYA ÖZEL HAFIZA:",
-            "AKTİF"
+            "KULLANICIYA �ZEL HAFIZA:",
+            "AKT�F"
         );
 
         console.log(
-            "DOSYA YÜKLEME:",
-            "AKTİF"
+            "DOSYA Y�KLEME:",
+            "AKT�F"
         );
 
         console.log(
-            "MAKSİMUM DOSYA:",
+            "MAKS�MUM DOSYA:",
             "10 MB"
         );
 
         console.log(
-            "İNTERNET ARAŞTIRMASI:",
-            "AKTİF"
+            "�NTERNET ARA�TIRMASI:",
+            "AKT�F"
         );
 
         console.log(
             "HAVA DURUMU:",
-            "AKTİF"
+            "AKT�F"
         );
 
         console.log(
-            "OTOMATİK BİLMİYORSA ARAŞTIR:",
-            "AKTİF"
+            "OTOMAT�K B�LM�YORSA ARA�TIR:",
+            "AKT�F"
         );
 
         console.log(
-            "TÜRKİYE TARİHİ:",
+            "T�RK�YE TAR�H�:",
             dateInfo.turkey
         );
 
@@ -4647,3 +4631,6 @@ app.listen(
 
     }
 );
+
+
+
