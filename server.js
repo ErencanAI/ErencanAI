@@ -2693,7 +2693,14 @@ async function requestGroq(
                 " HATASI:",
                 error.message
             );
+if (
+    error.status === 429
+) {
 
+    throw new Error(
+        "Groq kullanım sınırına ulaşıldı. Lütfen biraz sonra tekrar dene."
+    );
+}
             if (
                 error.status === 401 ||
                 error.status === 403
@@ -3675,7 +3682,7 @@ ${String(
     research.text || ""
 ).slice(
     0,
-    5000
+    2000
 )}
 `.trim();
 
