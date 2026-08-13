@@ -90,7 +90,7 @@ const REQUEST_TIMEOUT =
     30000;
 
 const MAX_RETRIES =
-    2;
+    0;
 
 const MAX_MESSAGE_LENGTH =
     12000;
@@ -3858,54 +3858,82 @@ app.post(
                 shouldResearch(
                     message
                 );
+               if (
+    researchNeeded
+) {
+
+    try {
+
+        /*
+            Hava durumu özel olarak
+            Open-Meteo üzerinden alınır.
+        */
+
+        if (
+            isWeatherQuestion(
+                message
+            )
+        ) {
+
+            let location =
+                extractWeatherLocation(
+                    message
+                );
 
             if (
-                researchNeeded
+                !location
             ) {
 
-                try {
+                location =
+                    "Konya";
+            }
 
-                    /*
-                        Hava durumu özel olarak
-                        Open-Meteo üzerinden alınır.
-                    */
+            const weather =
+                await getWeather(
+                    location
+                );
 
-                    if (
-                        isWeatherQuestion(
-                            message
-                        )
-                    ) {
+            if (
+                weather &&
+                weather.ok
+            ) {
 
-                        let location =
-                            extractWeatherLocation(
-                                message
-                            );
+                researchContext =
+                    `
+[İNTERNET ARAŞTIRMASI]
 
-                        /*
-                            Konum yazılmamışsa
-                            Türkiye varsayılır.
-                        */
+Hava durumu:
+${JSON.stringify(
+    weather
+)}
+`.trim();
 
-                        if (
-                            !location
-                        ) {
+                researchUsed =
+                    true;
 
-                            location =
-                                "Konya";
-                        }
+                console.log(
+                    "HAVA DURUMU ARAŞTIRMASI AKTİF"
+                );
+            }
 
-                        const weather =
-                            await getWeather(
-                                location
-                            );
+        } else {
 
-                        if (
-                            weather &&
-                            weather.ok
-                        ) {
+            /*
+                Normal internet araştırması
+            */
 
-                           researchContext =
-    `
+            const research =
+                await researchWeb(
+                    message
+                );
+
+            if (
+                research &&
+                research.ok
+            ) {
+
+                researchContext =
+                    `
 [İNTERNET ARAŞTIRMASI]
 
 Arama:
@@ -3916,39 +3944,38 @@ ${String(
     research.text || ""
 ).slice(
     0,
-    2000
+    4000
 )}
 `.trim();
 
-                            researchSources =
-                                research.sources ||
-                                [];
+                researchSources =
+                    research.sources ||
+                    [];
 
-                            researchUsed =
-                                true;
+                researchUsed =
+                    true;
 
-                            console.log(
-                                "İNTERNET ARAŞTIRMASI AKTİF"
-                            );
-                        }
-                    }
-
-                } catch (
-                    researchError
-                ) {
-
-                    console.error(
-                        "ARAŞTIRMA HATASI:",
-                        researchError.message
-                    );
-
-                    /*
-                        Araştırma başarısız olursa
-                        normal AI cevabı yine çalışır.
-                    */
-                }
+                console.log(
+                    "İNTERNET ARAŞTIRMASI AKTİF"
+                );
             }
+        }
 
+    } catch (
+        researchError
+    ) {
+
+        console.error(
+            "ARAŞTIRMA HATASI:",
+            researchError.message
+        );
+
+        /*
+            Araştırma başarısız olursa
+            normal AI cevabı çalışmaya devam eder.
+        */
+    }
+}
             /* -----------------------------------------
             GROQ MESAJLARI
             ----------------------------------------- */
