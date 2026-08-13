@@ -2109,9 +2109,8 @@ const trustedResults =
     combined =
         combined.slice(
             0,
-            18000
-        );
-
+        6000
+     );      
     return {
 
         ok:
@@ -3850,6 +3849,12 @@ Eski hafıza veya model bilgisi bununla çelişirse
 Güncel bilgi sorularında eski bilgiyi kullanma.`
     });
 }
+messages.forEach(message => {
+    if (typeof message.content === "string") {
+        message.content =
+            message.content.slice(0, 3000);
+    }
+});
 console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             console.log(
                 "GROQ İSTEĞİ GÖNDERİLİYOR..."
