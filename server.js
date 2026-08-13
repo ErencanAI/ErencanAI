@@ -2688,7 +2688,11 @@ async function requestGroq(
 
             lastError =
                 error;
-
+if (
+    error.status === 429
+) {
+    throw error;
+}
             console.error(
                 "GROQ DENEME " +
                 attempt +
@@ -2816,7 +2820,7 @@ async function requestGemini(
                                 0.2,
 
                             maxOutputTokens:
-                                700
+                                300
 
                         }
 
@@ -3317,7 +3321,37 @@ app.get(
             });
         }
 
+  if (!isWeatherQuestion(message)) {
+
+    const research =
+        await researchWeb(message);
+
+    if (research && research.ok) {
+
+        researchContext =
+            `
+[İNTERNET ARAŞTIRMASI]
+
+Arama:
+${research.query}
+
+Sonuçlar:
+${String(
+    research.text || ""
+).slice(0, 2000)}
+`.trim();
+
+        researchSources =
+            research.sources || [];
+
+        researchUsed =
+            true;
+
+        console.log(
+            "İNTERNET ARAŞTIRMASI AKTİF"
+        );
     }
+}  }
 );
 
 /* =========================================================
