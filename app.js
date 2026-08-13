@@ -2,10 +2,12 @@
 
 /* =====================================================
 ERENCANAI PRO 8.00
-SOHBET GEÇMİŞİ + LOCALSTORAGE + ÇOKLU KULLANICI
+SOHBET + HAFIZA + İNTERNET ARAŞTIRMASI
 ===================================================== */
 
 const API_URL = "/api/chat";
+const MEMORY_API_URL = "/api/user-memory";
+const RESEARCH_API_URL = "/api/research";
 
 const STORAGE_KEY = "erencanai_pro_chats_v1";
 const USER_ID_KEY = "erencanai_pro_user_id_v1";
@@ -95,24 +97,11 @@ function init() {
     elements.deleteHistoryButton =
         document.getElementById("deleteHistoryButton");
 
-    /* =================================================
-       ARAŞTIR / HAVA / HAFIZA
-       ================================================= */
+    elements.researchButton =
+        document.getElementById("researchToolButton");
 
-    elements.researchToolButton =
-        document.getElementById(
-            "researchToolButton"
-        );
-
-    elements.weatherToolButton =
-        document.getElementById(
-            "weatherToolButton"
-        );
-
-    elements.memoryToolButton =
-        document.getElementById(
-            "memoryToolButton"
-        );
+    elements.memoryButton =
+        document.getElementById("memoryToolButton");
 
     loadChats();
 
@@ -129,8 +118,8 @@ function init() {
     }
 
     /* =================================================
-       GÖNDER
-       ================================================= */
+    GÖNDER
+    ================================================= */
 
     if (elements.sendButton) {
 
@@ -141,8 +130,8 @@ function init() {
     }
 
     /* =================================================
-       INPUT
-       ================================================= */
+    ENTER
+    ================================================= */
 
     if (elements.messageInput) {
 
@@ -169,8 +158,8 @@ function init() {
     }
 
     /* =================================================
-       YENİ SOHBET
-       ================================================= */
+    YENİ SOHBET
+    ================================================= */
 
     if (elements.newChatButton) {
 
@@ -184,8 +173,8 @@ function init() {
     }
 
     /* =================================================
-       SOHBET TEMİZLE
-       ================================================= */
+    SOHBET TEMİZLE
+    ================================================= */
 
     if (elements.clearChatButton) {
 
@@ -199,8 +188,8 @@ function init() {
     }
 
     /* =================================================
-       MOBİL MENÜ
-       ================================================= */
+    MOBİL MENÜ
+    ================================================= */
 
     if (elements.menuButton) {
 
@@ -219,8 +208,8 @@ function init() {
     }
 
     /* =================================================
-       SOHBET ARAMA
-       ================================================= */
+    ARAMA
+    ================================================= */
 
     if (elements.searchButton) {
 
@@ -231,20 +220,33 @@ function init() {
     }
 
     /* =================================================
-       AYARLAR
-       ================================================= */
+    AYARLAR
+    ================================================= */
 
     if (elements.settingsButton) {
 
         elements.settingsButton.addEventListener(
             "click",
-            openSettings
+            function () {
+
+                const modal =
+                    document.getElementById(
+                        "settingsModal"
+                    );
+
+                if (modal) {
+
+                    modal.classList.add(
+                        "active"
+                    );
+                }
+            }
         );
     }
 
     /* =================================================
-       TÜM GEÇMİŞİ SİL
-       ================================================= */
+    TÜM GEÇMİŞİ SİL
+    ================================================= */
 
     if (elements.deleteHistoryButton) {
 
@@ -255,92 +257,32 @@ function init() {
     }
 
     /* =================================================
-       ARAŞTIR BUTONU
-       ================================================= */
+    İNTERNET ARAŞTIRMASI BUTONU
+    ================================================= */
 
-    if (elements.researchToolButton) {
+    if (elements.researchButton) {
 
-        elements.researchToolButton.addEventListener(
+        elements.researchButton.addEventListener(
             "click",
-            function () {
-
-                if (!elements.messageInput) {
-                    return;
-                }
-
-                elements.messageInput.value =
-                    "Bu konu hakkında güncel internet araştırması yap ve güvenilir kaynaklardan doğrula: ";
-
-                elements.messageInput.focus();
-
-                autoResizeInput();
-            }
+            startResearch
         );
     }
 
     /* =================================================
-       HAVA DURUMU BUTONU
-       ================================================= */
+    HAFIZA BUTONU
+    ================================================= */
 
-    if (elements.weatherToolButton) {
+    if (elements.memoryButton) {
 
-        elements.weatherToolButton.addEventListener(
+        elements.memoryButton.addEventListener(
             "click",
-            function () {
-
-                if (!elements.messageInput) {
-                    return;
-                }
-
-                elements.messageInput.value =
-                    "Güncel hava durumunu araştır ve bana bildir. Konum: ";
-
-                elements.messageInput.focus();
-
-                autoResizeInput();
-            }
+            showUserMemory
         );
     }
 
     /* =================================================
-       HAFIZA BUTONU
-       ================================================= */
-
-    if (elements.memoryToolButton) {
-
-        elements.memoryToolButton.addEventListener(
-            "click",
-            function () {
-
-                console.log(
-                    "HAFIZA BUTONUNA BASILDI"
-                );
-
-                if (!elements.messageInput) {
-                    console.error(
-                        "messageInput bulunamadı."
-                    );
-                    return;
-                }
-
-                elements.messageInput.value =
-                    "Hafızamda benimle ilgili neler var? Kayıtlı bilgileri kısa ve düzenli şekilde göster.";
-
-                elements.messageInput.focus();
-
-                autoResizeInput();
-
-                /*
-                 * Butona basınca otomatik göndermiyoruz.
-                 * Kullanıcı isterse Enter'a basarak gönderir.
-                 */
-            }
-        );
-    }
-
-    /* =================================================
-       ÖNERİLER
-       ================================================= */
+    ÖNERİLER
+    ================================================= */
 
     document
         .querySelectorAll(".suggestion")
@@ -358,14 +300,8 @@ function init() {
                             return;
                         }
 
-                        if (!elements.messageInput) {
-                            return;
-                        }
-
                         elements.messageInput.value =
                             prompt;
-
-                        autoResizeInput();
 
                         sendMessage();
                     }
@@ -374,8 +310,8 @@ function init() {
         );
 
     /* =================================================
-       MODAL KAPATMA
-       ================================================= */
+    MODAL KAPATMA
+    ================================================= */
 
     document
         .querySelectorAll("[data-close]")
@@ -404,8 +340,8 @@ function init() {
         );
 
     /* =================================================
-       MODAL DIŞINA TIKLAMA
-       ================================================= */
+    MODAL DIŞINA TIKLAMA
+    ================================================= */
 
     document
         .querySelectorAll(".modal")
@@ -439,36 +375,10 @@ function init() {
         "KULLANICI ID:",
         ErencanAI.userId
     );
-
-    console.log(
-        "HAFIZA BUTONU:",
-        elements.memoryToolButton
-            ? "HAZIR"
-            : "BULUNAMADI"
-    );
 }
 
 /* =====================================================
-AYARLAR
-===================================================== */
-
-function openSettings() {
-
-    const modal =
-        document.getElementById(
-            "settingsModal"
-        );
-
-    if (modal) {
-
-        modal.classList.add(
-            "active"
-        );
-    }
-}
-
-/* =====================================================
-SOHBET VERİLERİ
+SOHBETLERİ YÜKLE
 ===================================================== */
 
 function loadChats() {
@@ -509,6 +419,10 @@ function loadChats() {
         ErencanAI.chats = [];
     }
 }
+
+/* =====================================================
+SOHBETLERİ KAYDET
+===================================================== */
 
 function saveChats() {
 
@@ -624,7 +538,7 @@ function openChat(chatId) {
 }
 
 /* =====================================================
-SOHBET BAŞLIĞI
+BAŞLIK
 ===================================================== */
 
 function createTitle(text) {
@@ -651,7 +565,7 @@ function createTitle(text) {
 }
 
 /* =====================================================
-SOHBET GEÇMİŞİ
+GEÇMİŞİ GÖSTER
 ===================================================== */
 
 function renderChatHistory() {
@@ -709,7 +623,7 @@ function renderChatHistory() {
 }
 
 /* =====================================================
-MEVCUT SOHBETİ EKRANA BAS
+MEVCUT SOHBETİ GÖSTER
 ===================================================== */
 
 function renderCurrentChat() {
@@ -980,7 +894,7 @@ function addMessageToScreen(
 }
 
 /* =====================================================
-MESAJ GÖNDER
+ANA AI MESAJI
 ===================================================== */
 
 async function sendMessage() {
@@ -1006,15 +920,6 @@ async function sendMessage() {
     ErencanAI.isThinking =
         true;
 
-    input.disabled =
-        true;
-
-    if (elements.sendButton) {
-
-        elements.sendButton.disabled =
-            true;
-    }
-
     hideWelcome();
 
     addMessage(
@@ -1036,11 +941,6 @@ async function sendMessage() {
         );
 
     try {
-
-        console.log(
-            "API İSTEĞİ:",
-            API_URL
-        );
 
         const response =
             await fetch(
@@ -1222,6 +1122,414 @@ async function sendMessage() {
 
             elements.sendButton.disabled =
                 false;
+        }
+    }
+}
+
+/* =====================================================
+🧠 HAFIZA BUTONU
+===================================================== */
+
+async function showUserMemory() {
+
+    if (ErencanAI.isThinking) {
+        return;
+    }
+
+    hideWelcome();
+
+    const thinking =
+        addMessage(
+            "ErencanAI",
+            "🧠 Hafızam kontrol ediliyor...",
+            "ai thinking"
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                MEMORY_API_URL,
+                {
+
+                    method:
+                        "GET",
+
+                    headers: {
+
+                        "Accept":
+                            "application/json",
+
+                        "X-User-ID":
+                            ErencanAI.userId
+                    }
+                }
+            );
+
+        const rawText =
+            await response.text();
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Hafıza sunucu hatası (" +
+                response.status +
+                ")"
+            );
+        }
+
+        let data;
+
+        try {
+
+            data =
+                JSON.parse(
+                    rawText
+                );
+
+        } catch (error) {
+
+            throw new Error(
+                "Hafıza API'sinden geçersiz cevap geldi."
+            );
+        }
+
+        if (
+            !data ||
+            data.ok !== true
+        ) {
+
+            throw new Error(
+                data &&
+                data.reply
+                    ? data.reply
+                    : "Hafıza alınamadı."
+            );
+        }
+
+        const messages =
+            Array.isArray(data.messages)
+                ? data.messages
+                : [];
+
+        if (thinking) {
+
+            thinking.message.remove();
+        }
+
+        if (messages.length === 0) {
+
+            addMessage(
+                "ErencanAI",
+                "🧠 Hafızam şu anda boş.",
+                "ai"
+            );
+
+            return;
+        }
+
+        /*
+         * Son 20 hafıza mesajını göster.
+         * Böylece butona basınca ekran aşırı
+         * uzun bir mesajla dolmaz.
+         */
+
+        const recent =
+            messages.slice(-20);
+
+        let memoryText =
+            "🧠 Hafızamda " +
+            messages.length +
+            " kayıt bulunuyor.\n\n";
+
+        recent.forEach(
+            function (item) {
+
+                const role =
+                    item.role === "assistant"
+                        ? "ErencanAI"
+                        : "Sen";
+
+                const content =
+                    String(
+                        item.content || ""
+                    ).trim();
+
+                if (!content) {
+                    return;
+                }
+
+                memoryText +=
+                    role +
+                    ": " +
+                    content +
+                    "\n\n";
+            }
+        );
+
+        addMessage(
+            "ErencanAI",
+            memoryText.trim(),
+            "ai"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "HAFIZA HATASI:",
+            error
+        );
+
+        if (thinking) {
+
+            thinking.message.remove();
+        }
+
+        addMessage(
+            "ErencanAI",
+            "Hafızaya ulaşılamadı: " +
+            (
+                error.message ||
+                "Bilinmeyen hata"
+            ),
+            "error"
+        );
+    }
+}
+
+/* =====================================================
+🔎 İNTERNET ARAŞTIRMASI
+===================================================== */
+
+async function startResearch() {
+
+    if (ErencanAI.isThinking) {
+        return;
+    }
+
+    const input =
+        elements.messageInput;
+
+    if (!input) {
+        return;
+    }
+
+    const query =
+        input.value
+            .trim();
+
+    /*
+     * Butona basıldığında kutu boşsa
+     * kullanıcıdan konu ister.
+     */
+
+    if (!query) {
+
+        input.value =
+            "";
+
+        input.placeholder =
+            "Araştırılacak konuyu yaz...";
+
+        input.focus();
+
+        return;
+    }
+
+    ErencanAI.isThinking =
+        true;
+
+    hideWelcome();
+
+    addMessage(
+        "Sen",
+        "🔎 " + query,
+        "user"
+    );
+
+    input.value = "";
+
+    input.style.height =
+        "auto";
+
+    const thinking =
+        addMessage(
+            "ErencanAI",
+            "🔎 İnternette araştırıyor...",
+            "ai thinking"
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                RESEARCH_API_URL,
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            query:
+                                query
+                        })
+                }
+            );
+
+        const rawText =
+            await response.text();
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Araştırma sunucu hatası (" +
+                response.status +
+                ")"
+            );
+        }
+
+        let data;
+
+        try {
+
+            data =
+                JSON.parse(
+                    rawText
+                );
+
+        } catch (error) {
+
+            throw new Error(
+                "Araştırma API'sinden geçersiz cevap geldi."
+            );
+        }
+
+        if (
+            !data ||
+            data.ok !== true
+        ) {
+
+            throw new Error(
+                data &&
+                data.reply
+                    ? data.reply
+                    : "İnternet araştırması başarısız."
+            );
+        }
+
+        if (thinking) {
+
+            thinking.message.remove();
+        }
+
+        let researchText =
+            String(
+                data.text ||
+                data.reply ||
+                ""
+            ).trim();
+
+        if (!researchText) {
+
+            researchText =
+                "Araştırma sonucu bulunamadı.";
+        }
+
+        /*
+         * Kaynaklar varsa cevabın sonuna ekle.
+         */
+
+        if (
+            Array.isArray(data.sources) &&
+            data.sources.length > 0
+        ) {
+
+            researchText +=
+                "\n\nKaynaklar:";
+
+            data.sources
+                .slice(0, 6)
+                .forEach(
+                    function (source) {
+
+                        if (!source) {
+                            return;
+                        }
+
+                        const title =
+                            source.title ||
+                            source.name ||
+                            "Kaynak";
+
+                        const url =
+                            source.url ||
+                            source.link ||
+                            "";
+
+                        researchText +=
+                            "\n• " +
+                            title;
+
+                        if (url) {
+
+                            researchText +=
+                                "\n  " +
+                                url;
+                        }
+                    }
+                );
+        }
+
+        addMessage(
+            "ErencanAI",
+            researchText,
+            "ai"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "ARAŞTIRMA HATASI:",
+            error
+        );
+
+        if (thinking) {
+
+            thinking.message.remove();
+        }
+
+        addMessage(
+            "ErencanAI",
+            "İnternet araştırması yapılamadı: " +
+            (
+                error.message ||
+                "Bilinmeyen hata"
+            ),
+            "error"
+        );
+
+    } finally {
+
+        ErencanAI.isThinking =
+            false;
+
+        if (input) {
+
+            input.disabled =
+                false;
+
+            input.focus();
         }
     }
 }
@@ -1511,3 +1819,4 @@ if (
 
     init();
 }
+
