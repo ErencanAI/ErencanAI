@@ -1575,7 +1575,12 @@ function shouldResearch(
             return true;
         }
     }
-
+  console.log(
+    "SHOULD RESEARCH:",
+    text,
+    "=>",
+    false
+);
     return false;
 }
 
@@ -2112,7 +2117,12 @@ async function researchWeb(
 
     const sourceTexts = [];
 const trustedResults =
-    results;
+    results.filter(
+        result =>
+            result &&
+            result.url &&
+            result.title
+    );
     for (
         const result of trustedResults.slice(
             0,
