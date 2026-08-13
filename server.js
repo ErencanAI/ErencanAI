@@ -2788,7 +2788,7 @@ async function requestGemini(
 
     const response =
         await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
             {
 
                 method:
@@ -2933,8 +2933,12 @@ async function requestAI(
             console.error(
                 "GEMINI DE BAŞARISIZ:",
                 geminiError.message
-            );
-
+             );
+        
+console.error(
+    "GEMINI DETAY:",
+    geminiError
+);
             throw new Error(
                 "Groq ve Gemini kullanılamıyor."
             );
