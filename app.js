@@ -95,6 +95,25 @@ function init() {
     elements.deleteHistoryButton =
         document.getElementById("deleteHistoryButton");
 
+    /* =================================================
+       ARAŞTIR / HAVA / HAFIZA
+       ================================================= */
+
+    elements.researchToolButton =
+        document.getElementById(
+            "researchToolButton"
+        );
+
+    elements.weatherToolButton =
+        document.getElementById(
+            "weatherToolButton"
+        );
+
+    elements.memoryToolButton =
+        document.getElementById(
+            "memoryToolButton"
+        );
+
     loadChats();
 
     if (ErencanAI.chats.length === 0) {
@@ -109,6 +128,10 @@ function init() {
         openChat(lastChat.id);
     }
 
+    /* =================================================
+       GÖNDER
+       ================================================= */
+
     if (elements.sendButton) {
 
         elements.sendButton.addEventListener(
@@ -116,6 +139,10 @@ function init() {
             sendMessage
         );
     }
+
+    /* =================================================
+       INPUT
+       ================================================= */
 
     if (elements.messageInput) {
 
@@ -141,6 +168,10 @@ function init() {
         );
     }
 
+    /* =================================================
+       YENİ SOHBET
+       ================================================= */
+
     if (elements.newChatButton) {
 
         elements.newChatButton.addEventListener(
@@ -152,6 +183,10 @@ function init() {
         );
     }
 
+    /* =================================================
+       SOHBET TEMİZLE
+       ================================================= */
+
     if (elements.clearChatButton) {
 
         elements.clearChatButton.addEventListener(
@@ -162,6 +197,10 @@ function init() {
             }
         );
     }
+
+    /* =================================================
+       MOBİL MENÜ
+       ================================================= */
 
     if (elements.menuButton) {
 
@@ -179,6 +218,10 @@ function init() {
         );
     }
 
+    /* =================================================
+       SOHBET ARAMA
+       ================================================= */
+
     if (elements.searchButton) {
 
         elements.searchButton.addEventListener(
@@ -187,26 +230,21 @@ function init() {
         );
     }
 
+    /* =================================================
+       AYARLAR
+       ================================================= */
+
     if (elements.settingsButton) {
 
         elements.settingsButton.addEventListener(
             "click",
-            function () {
-
-                const modal =
-                    document.getElementById(
-                        "settingsModal"
-                    );
-
-                if (modal) {
-
-                    modal.classList.add(
-                        "active"
-                    );
-                }
-            }
+            openSettings
         );
     }
+
+    /* =================================================
+       TÜM GEÇMİŞİ SİL
+       ================================================= */
 
     if (elements.deleteHistoryButton) {
 
@@ -215,6 +253,94 @@ function init() {
             deleteAllChats
         );
     }
+
+    /* =================================================
+       ARAŞTIR BUTONU
+       ================================================= */
+
+    if (elements.researchToolButton) {
+
+        elements.researchToolButton.addEventListener(
+            "click",
+            function () {
+
+                if (!elements.messageInput) {
+                    return;
+                }
+
+                elements.messageInput.value =
+                    "Bu konu hakkında güncel internet araştırması yap ve güvenilir kaynaklardan doğrula: ";
+
+                elements.messageInput.focus();
+
+                autoResizeInput();
+            }
+        );
+    }
+
+    /* =================================================
+       HAVA DURUMU BUTONU
+       ================================================= */
+
+    if (elements.weatherToolButton) {
+
+        elements.weatherToolButton.addEventListener(
+            "click",
+            function () {
+
+                if (!elements.messageInput) {
+                    return;
+                }
+
+                elements.messageInput.value =
+                    "Güncel hava durumunu araştır ve bana bildir. Konum: ";
+
+                elements.messageInput.focus();
+
+                autoResizeInput();
+            }
+        );
+    }
+
+    /* =================================================
+       HAFIZA BUTONU
+       ================================================= */
+
+    if (elements.memoryToolButton) {
+
+        elements.memoryToolButton.addEventListener(
+            "click",
+            function () {
+
+                console.log(
+                    "HAFIZA BUTONUNA BASILDI"
+                );
+
+                if (!elements.messageInput) {
+                    console.error(
+                        "messageInput bulunamadı."
+                    );
+                    return;
+                }
+
+                elements.messageInput.value =
+                    "Hafızamda benimle ilgili neler var? Kayıtlı bilgileri kısa ve düzenli şekilde göster.";
+
+                elements.messageInput.focus();
+
+                autoResizeInput();
+
+                /*
+                 * Butona basınca otomatik göndermiyoruz.
+                 * Kullanıcı isterse Enter'a basarak gönderir.
+                 */
+            }
+        );
+    }
+
+    /* =================================================
+       ÖNERİLER
+       ================================================= */
 
     document
         .querySelectorAll(".suggestion")
@@ -232,14 +358,24 @@ function init() {
                             return;
                         }
 
+                        if (!elements.messageInput) {
+                            return;
+                        }
+
                         elements.messageInput.value =
                             prompt;
+
+                        autoResizeInput();
 
                         sendMessage();
                     }
                 );
             }
         );
+
+    /* =================================================
+       MODAL KAPATMA
+       ================================================= */
 
     document
         .querySelectorAll("[data-close]")
@@ -266,6 +402,10 @@ function init() {
                 );
             }
         );
+
+    /* =================================================
+       MODAL DIŞINA TIKLAMA
+       ================================================= */
 
     document
         .querySelectorAll(".modal")
@@ -299,6 +439,32 @@ function init() {
         "KULLANICI ID:",
         ErencanAI.userId
     );
+
+    console.log(
+        "HAFIZA BUTONU:",
+        elements.memoryToolButton
+            ? "HAZIR"
+            : "BULUNAMADI"
+    );
+}
+
+/* =====================================================
+AYARLAR
+===================================================== */
+
+function openSettings() {
+
+    const modal =
+        document.getElementById(
+            "settingsModal"
+        );
+
+    if (modal) {
+
+        modal.classList.add(
+            "active"
+        );
+    }
 }
 
 /* =====================================================
@@ -839,6 +1005,15 @@ async function sendMessage() {
 
     ErencanAI.isThinking =
         true;
+
+    input.disabled =
+        true;
+
+    if (elements.sendButton) {
+
+        elements.sendButton.disabled =
+            true;
+    }
 
     hideWelcome();
 
