@@ -2820,7 +2820,7 @@ async function requestGemini(
                                 0.2,
 
                             maxOutputTokens:
-                                300
+                                700
 
                         }
 
