@@ -22,7 +22,9 @@ const GROQ_API_KEY =
     process.env.GROQ_API_KEY ||
     process.env.GR0Q_API_KEY ||
     "";
-
+const GEMINI_API_KEY =
+    process.env.GEMINI_API_KEY ||
+    "";
 const GROQ_URL =
     "https://api.groq.com/openai/v1/chat/completions";
 
@@ -2892,6 +2894,54 @@ async function requestGemini(
     };
 }
 /* =========================================================
+GROQ → GEMINI YEDEK SİSTEMİ
+========================================================= */
+
+async function requestAI(
+    messages
+) {
+
+    try {
+
+        console.log(
+            "AI: GROQ"
+        );
+
+        return await requestGroq(
+            messages
+        );
+
+    } catch (groqError) {
+
+        console.error(
+            "GROQ BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
+            groqError.message
+        );
+
+        try {
+
+            console.log(
+                "AI: GEMINI YEDEK"
+            );
+
+            return await requestGemini(
+                messages
+            );
+
+        } catch (geminiError) {
+
+            console.error(
+                "GEMINI DE BAŞARISIZ:",
+                geminiError.message
+            );
+
+            throw new Error(
+                "Groq ve Gemini kullanılamıyor."
+            );
+        }
+    }
+}
+/* =========================================================
 BAŞLANGIÇ HAFIZALARI
 ========================================================= */
 
@@ -4045,10 +4095,10 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             GROQ
             ----------------------------------------- */
 
-            const data =
-                await requestGroq(
-                    messages
-                );
+              const data =
+             await requestAI(
+                messages
+          );
 
             /* -----------------------------------------
             CEVAP
@@ -4176,10 +4226,9 @@ Kısa, doğal ve doğru cevap ver.
                             ];
 
                         const secondData =
-                            await requestGroq(
-                                secondMessages
-                            );
-
+                        await requestAI(
+                          secondMessages
+                       );            
                         let secondReply =
                             "";
 
