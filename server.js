@@ -2051,16 +2051,11 @@ async function researchWeb(
 
     const sourceTexts = [];
 const trustedResults =
-    results.filter(
-        result =>
-            !/wikipedia\.org/i.test(
-                result.url
-            )
-    );
+    results;
     for (
         const result of trustedResults.slice(
             0,
-            4
+            6
         )
     ) {
 
@@ -2109,7 +2104,7 @@ const trustedResults =
     combined =
         combined.slice(
             0,
-        6000
+        12000
      );      
     return {
 
@@ -3852,7 +3847,7 @@ Güncel bilgi sorularında eski bilgiyi kullanma.`
 messages.forEach(message => {
     if (typeof message.content === "string") {
         message.content =
-            message.content.slice(0, 3000);
+            message.content.slice(0, 12000);
     }
 });
 console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
@@ -4658,7 +4653,6 @@ app.listen(
 
     }
 );
-
 
 
 
