@@ -3663,46 +3663,20 @@ app.post(
                             weather.ok
                         ) {
 
-                            researchContext =
-                                formatWeatherForAI(
-                                    weather
-                                );
-
-                            researchUsed =
-                                true;
-
-                            console.log(
-                                "HAVA DURUMU ARAŞTIRMASI AKTİF"
-                            );
-
-                        } else {
-
-                            console.log(
-                                "HAVA DURUMU BULUNAMADI"
-                            );
-                        }
-
-                    } else {
-
-                        const research =
-                            await researchWeb(
-                                message
-                            );
-
-                        if (
-                            research &&
-                            research.ok
-                        ) {
-
-                            researchContext =
-                                `
+                           researchContext =
+    `
 [İNTERNET ARAŞTIRMASI]
 
 Arama:
 ${research.query}
 
 Sonuçlar:
-${research.text}
+${String(
+    research.text || ""
+).slice(
+    0,
+    5000
+)}
 `.trim();
 
                             researchSources =
