@@ -2050,11 +2050,12 @@ async function researchWeb(
     }
 
     const sourceTexts = [];
-
+const trustedResults =
+    results;
     for (
-        const result of results.slice(
+        const result of trustedResults.slice(
             0,
-            4
+            6
         )
     ) {
 
@@ -2103,9 +2104,8 @@ async function researchWeb(
     combined =
         combined.slice(
             0,
-            18000
-        );
-
+        12000
+     );      
     return {
 
         ok:
@@ -3831,7 +3831,26 @@ kullan.
                     ? "AKTİF"
                     : "GEREKMİYOR"
             );
+if (researchContext) {
+    messages.push({
+        role: "system",
+        content: `ÖNEMLİ GÜNCEL İNTERNET BİLGİSİ:
 
+${researchContext}
+
+Bu bilgi internet araştırmasından alınmıştır.
+Eski hafıza veya model bilgisi bununla çelişirse
+İNTERNET ARAŞTIRMASI SONUCUNU esas al.
+Güncel bilgi sorularında eski bilgiyi kullanma.`
+    });
+}
+messages.forEach(message => {
+    if (typeof message.content === "string") {
+        message.content =
+            message.content.slice(0, 12000);
+    }
+});
+console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             console.log(
                 "GROQ İSTEĞİ GÖNDERİLİYOR..."
             );
@@ -4634,7 +4653,6 @@ app.listen(
 
     }
 );
-
 
 
 
