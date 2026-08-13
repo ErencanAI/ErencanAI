@@ -2693,14 +2693,7 @@ async function requestGroq(
                 " HATASI:",
                 error.message
             );
-if (
-    error.status === 429
-) {
 
-    throw new Error(
-        "Groq kullanım sınırına ulaşıldı. Lütfen biraz sonra tekrar dene."
-    );
-}
             if (
                 error.status === 401 ||
                 error.status === 403
@@ -2744,7 +2737,160 @@ if (
         )
     );
 }
+/* =========================================================
+GEMINI YEDEK AI
+========================================================= */
 
+async function requestGemini(
+    messages
+) {
+
+    if (
+        !GEMINI_API_KEY
+    ) {
+
+        throw new Error(
+            "Gemini API anahtarı bulunamadı."
+        );
+    }
+
+    const contents =
+        messages
+            .filter(
+                item =>
+                    item &&
+                    item.content
+            )
+            .map(
+                item => ({
+
+                    role:
+                        item.role ===
+                        "assistant"
+                            ? "model"
+                            : "user",
+
+                    parts: [
+
+                        {
+                            text:
+                                String(
+                                    item.content
+                                )
+                        }
+
+                    ]
+
+                })
+            );
+
+    const response =
+        await fetch(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+            {
+
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json",
+
+                    "x-goog-api-key":
+                        GEMINI_API_KEY
+
+                },
+
+                body:
+                    JSON.stringify({
+
+                        contents:
+                            contents,
+
+                        generationConfig: {
+
+                            temperature:
+                                0.2,
+
+                            maxOutputTokens:
+                                700
+
+                        }
+
+                    })
+
+            }
+        );
+
+    const responseText =
+        await response.text();
+
+    if (
+        !response.ok
+    ) {
+
+        const error =
+            new Error(
+                "Gemini HTTP " +
+                response.status +
+                " - " +
+                responseText.slice(
+                    0,
+                    500
+                )
+            );
+
+        error.status =
+            response.status;
+
+        error.body =
+            responseText;
+
+        throw error;
+    }
+
+    let data;
+
+    try {
+
+        data =
+            JSON.parse(
+                responseText
+            );
+
+    } catch (error) {
+
+        throw new Error(
+            "Gemini geçersiz JSON gönderdi."
+        );
+    }
+
+    return {
+
+        choices: [
+
+            {
+
+                message: {
+
+                    role:
+                        "assistant",
+
+                    content:
+                        data
+                            ?.candidates?.[0]
+                            ?.content?.parts?.[0]
+                            ?.text || ""
+
+                }
+
+            }
+
+        ]
+
+    };
+}
 /* =========================================================
 BAŞLANGIÇ HAFIZALARI
 ========================================================= */
