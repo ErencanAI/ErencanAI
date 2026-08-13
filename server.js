@@ -28,7 +28,7 @@ const GEMINI_API_KEY =
 const GROQ_URL =
     "https://api.groq.com/openai/v1/chat/completions";
 
-const GROQ_MODEL = "openai/gpt-oss-20b";
+const GROQ_MODEL = "openai/gpt-oss-120b";
 
 /* =========================================================
 ARAŞTIRMA
