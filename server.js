@@ -2792,8 +2792,9 @@ async function requestGemini(
 
     const response =
         await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
-            {
+           "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent",
+           {
+            
 
                 method:
                     "POST",
@@ -2808,23 +2809,26 @@ async function requestGemini(
 
                 },
 
-                body:
-                    JSON.stringify({
+               body:
+    JSON.stringify({
 
-                        contents:
-                            contents,
+        contents:
+            contents,
 
-                        generationConfig: {
+        tools: [
+            {
+                google_search: {}
+            }
+        ],
 
-                            temperature:
-                                0.2,
+        generationConfig: {
 
-                            maxOutputTokens:
-                                700
+            maxOutputTokens:
+                700
 
-                        }
+        }
 
-                    })
+    })
 
             }
         );
