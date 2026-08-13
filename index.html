@@ -1,70 +1,173 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
 
-    <title>ErencanAI 8.00</title>
+<title>ErencanAI 8.00</title>
 
-    <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/style.css">
 
-    <!-- =====================================================
-         MOBİL ARAÇ BUTONLARI
-         ===================================================== -->
+<!-- =====================================================
+     MOBİL ARAÇ BUTONLARI
+     ===================================================== -->
 
-    <style>
+<style>
 
-        @media (max-width: 600px) {
+    /*
+     * MOBİLDE ARAŞTIR / HAVA DURUMU / HAFIZA
+     * BUTONLARININ GÖRÜNMESİNİ GARANTİLE
+     */
 
-            .composer-wrapper {
-                position: relative;
-                padding-bottom: 8px;
-            }
+    @media (max-width: 800px) {
 
-            .composer {
-                position: relative;
-            }
-
-            .composer-tools {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                margin-top: 8px;
-                padding: 0 4px;
-            }
-
-            .tool-group {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px;
-                width: 100%;
-            }
-
-            .quick-tool-static {
-                flex: 1 1 auto;
-                min-height: 38px;
-                padding: 8px 10px;
-                white-space: nowrap;
-            }
-
-            .composer-info {
-                display: none;
-            }
-
-            .footer-warning {
-                margin-top: 5px;
-                padding-bottom: 4px;
-            }
-
+        .composer-wrapper {
+            position: absolute !important;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 10px 12px 9px !important;
+            z-index: 20;
         }
 
-    </style>
+        .composer {
+            position: relative;
+            width: 100%;
+        }
+
+        .composer-tools {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+            gap: 8px !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 46px;
+            margin-top: 4px !important;
+            padding: 0 4px 8px !important;
+            overflow: visible !important;
+        }
+
+        .tool-group {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: stretch !important;
+            gap: 6px !important;
+            width: 100% !important;
+            min-width: 0;
+            overflow: visible !important;
+        }
+
+        .quick-tool-static {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            flex: 1 1 0 !important;
+
+            width: auto !important;
+            min-width: 0 !important;
+            min-height: 40px !important;
+
+            padding: 8px 7px !important;
+
+            color: var(--muted) !important;
+            background: var(--panel-2) !important;
+
+            border: 1px solid var(--border) !important;
+            border-radius: 9px !important;
+
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+
+            font-size: 10px !important;
+            line-height: 1 !important;
+
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .quick-tool-static:hover,
+        .quick-tool-static:active {
+            background: var(--panel-3) !important;
+            color: var(--text) !important;
+        }
+
+        .composer-info {
+            display: none !important;
+        }
+
+        .footer-warning {
+            display: none !important;
+        }
+
+        #researchToolButton,
+        #weatherToolButton,
+        #memoryToolButton {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+    }
+
+
+    /*
+     * DAHA DAR TELEFONLAR
+     */
+
+    @media (max-width: 500px) {
+
+        .composer-wrapper {
+            padding:
+                8px 8px 7px !important;
+        }
+
+        .composer-tools {
+            padding:
+                0 2px 7px !important;
+        }
+
+        .tool-group {
+            gap: 4px !important;
+        }
+
+        .quick-tool-static {
+            min-height: 38px !important;
+            padding:
+                7px 4px !important;
+            font-size: 9px !important;
+        }
+
+    }
+
+
+    /*
+     * ÇOK DAR EKRANLAR
+     */
+
+    @media (max-width: 360px) {
+
+        .quick-tool-static {
+            font-size: 8px !important;
+            padding:
+                7px 2px !important;
+        }
+
+    }
+
+</style>
+```
 
 </head>
 
@@ -72,553 +175,557 @@
 
 <div class="app">
 
-    <!-- =====================================================
-         SIDEBAR
-         ===================================================== -->
+```
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
 
-    <aside
-        class="sidebar"
-        id="sidebar"
+<aside
+    class="sidebar"
+    id="sidebar"
+>
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            E
+        </div>
+
+        <div>
+
+            <div class="brand-name">
+                ErencanAI
+            </div>
+
+            <div class="brand-version">
+                8.00 PRO
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PRO DURUMU -->
+
+    <div class="pro-status-card">
+
+        <div class="pro-status-icon">
+            ★
+        </div>
+
+        <div>
+
+            <strong>
+                ErencanAI Pro
+            </strong>
+
+            <small>
+                Gelişmiş yapay zeka
+            </small>
+
+        </div>
+
+        <span class="pro-active-badge">
+            AKTİF
+        </span>
+
+    </div>
+
+
+    <!-- YENİ SOHBET -->
+
+    <button
+        class="new-chat-button"
+        id="newChatButton"
+        type="button"
     >
 
-        <div class="brand">
+        <span>
+            ＋
+        </span>
 
-            <div class="brand-logo">
-                E
-            </div>
+        Yeni Sohbet
 
-            <div>
-
-                <div class="brand-name">
-                    ErencanAI
-                </div>
-
-                <div class="brand-version">
-                    8.00 PRO
-                </div>
-
-            </div>
-
-        </div>
+    </button>
 
 
-        <!-- PRO DURUMU -->
+    <!-- GEÇMİŞ -->
 
-        <div class="pro-status-card">
+    <div class="sidebar-section-title">
+        SOHBET GEÇMİŞİ
+    </div>
 
-            <div class="pro-status-icon">
-                ★
-            </div>
-
-            <div>
-
-                <strong>
-                    ErencanAI Pro
-                </strong>
-
-                <small>
-                    Gelişmiş yapay zeka
-                </small>
-
-            </div>
-
-            <span class="pro-active-badge">
-                AKTİF
-            </span>
-
-        </div>
+    <div
+        class="chat-history"
+        id="chatHistory"
+    ></div>
 
 
-        <!-- YENİ SOHBET -->
+    <!-- ALT BUTONLAR -->
+
+    <div class="sidebar-bottom">
 
         <button
-            class="new-chat-button"
-            id="newChatButton"
+            class="sidebar-button"
+            id="clearChatButton"
             type="button"
         >
 
-            <span>
-                ＋
-            </span>
+            🗑️
 
-            Yeni Sohbet
+            <span>
+                Bu Sohbeti Temizle
+            </span>
 
         </button>
 
 
-        <!-- GEÇMİŞ -->
+        <button
+            class="sidebar-button"
+            id="searchButton"
+            type="button"
+        >
 
-        <div class="sidebar-section-title">
-            SOHBET GEÇMİŞİ
-        </div>
+            🔎
 
-        <div
-            class="chat-history"
-            id="chatHistory"
-        ></div>
+            <span>
+                Sohbetlerde Ara
+            </span>
+
+        </button>
 
 
-        <!-- ALT BUTONLAR -->
+        <button
+            class="sidebar-button"
+            id="settingsButton"
+            type="button"
+        >
 
-        <div class="sidebar-bottom">
+            ⚙️
+
+            <span>
+                Ayarlar
+            </span>
+
+        </button>
+
+
+        <button
+            class="account-card"
+            id="accountButton"
+            type="button"
+        >
+
+            <div class="account-avatar">
+                E
+            </div>
+
+            <div class="account-info">
+
+                <strong>
+                    Erencan
+                </strong>
+
+                <small>
+                    Pro hesap
+                </small>
+
+            </div>
+
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     ANA ALAN
+     ===================================================== -->
+
+<main class="main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="topbar-left">
 
             <button
-                class="sidebar-button"
-                id="clearChatButton"
+                class="icon-button mobile-menu"
+                id="menuButton"
                 type="button"
+                aria-label="Menü"
             >
-
-                🗑️
-
-                <span>
-                    Bu Sohbeti Temizle
-                </span>
-
+                ☰
             </button>
 
 
-            <button
-                class="sidebar-button"
-                id="searchButton"
-                type="button"
-            >
+            <div class="model-selector">
 
-                🔎
-
-                <span>
-                    Sohbetlerde Ara
-                </span>
-
-            </button>
-
-
-            <button
-                class="sidebar-button"
-                id="settingsButton"
-                type="button"
-            >
-
-                ⚙️
-
-                <span>
-                    Ayarlar
-                </span>
-
-            </button>
-
-
-            <button
-                class="account-card"
-                id="accountButton"
-                type="button"
-            >
-
-                <div class="account-avatar">
+                <div class="model-icon">
                     E
                 </div>
 
-                <div class="account-info">
+                <div>
 
-                    <strong>
-                        Erencan
-                    </strong>
+                    <div class="model-title">
+                        ErencanAI
+                    </div>
 
-                    <small>
-                        Pro hesap
-                    </small>
+                    <div class="model-status">
+
+                        <span class="status-dot"></span>
+
+                        <span>
+                            Çevrimiçi
+                        </span>
+
+                    </div>
 
                 </div>
 
+            </div>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <span class="version-badge">
+                PRO 8.00
+            </span>
+
+            <button
+                class="icon-button"
+                id="topSettingsButton"
+                type="button"
+                aria-label="Ayarlar"
+            >
+                ⚙
             </button>
 
         </div>
 
-    </aside>
+    </header>
 
 
     <!-- =====================================================
-         ANA ALAN
+         SOHBET
          ===================================================== -->
 
-    <main class="main">
+    <section
+        class="chat-area"
+        id="chatArea"
+    >
+
+        <div
+            class="chat-container"
+            id="chatContainer"
+        >
 
 
-        <!-- TOPBAR -->
+            <!-- WELCOME -->
 
-        <header class="topbar">
+            <div
+                class="welcome"
+                id="welcome"
+            >
 
-            <div class="topbar-left">
+                <div class="welcome-logo">
 
-                <button
-                    class="icon-button mobile-menu"
-                    id="menuButton"
-                    type="button"
-                    aria-label="Menü"
-                >
-                    ☰
-                </button>
-
-
-                <div class="model-selector">
-
-                    <div class="model-icon">
+                    <div class="welcome-logo-inner">
                         E
                     </div>
 
-                    <div>
-
-                        <div class="model-title">
-                            ErencanAI
-                        </div>
-
-                        <div class="model-status">
-
-                            <span class="status-dot"></span>
-
-                            <span>
-                                Çevrimiçi
-                            </span>
-
-                        </div>
-
-                    </div>
-
                 </div>
 
-            </div>
 
-
-            <div class="topbar-right">
-
-                <span class="version-badge">
-                    PRO 8.00
-                </span>
-
-                <button
-                    class="icon-button"
-                    id="topSettingsButton"
-                    type="button"
-                    aria-label="Ayarlar"
-                >
-                    ⚙
-                </button>
-
-            </div>
-
-        </header>
-
-
-        <!-- =====================================================
-             SOHBET
-             ===================================================== -->
-
-        <section
-            class="chat-area"
-            id="chatArea"
-        >
-
-            <div
-                class="chat-container"
-                id="chatContainer"
-            >
-
-
-                <!-- WELCOME -->
-
-                <div
-                    class="welcome"
-                    id="welcome"
-                >
-
-                    <div class="welcome-logo">
-
-                        <div class="welcome-logo-inner">
-                            E
-                        </div>
-
-                    </div>
-
-
-                    <div class="pro-welcome-badge">
-                        ★ ERENCANAI PRO 8.00
-                    </div>
-
-
-                    <h1>
-                        Merhaba, ben ErencanAI
-                    </h1>
-
-
-                    <p>
-
-                        Sorularını cevaplayabilir,
-                        kod yazabilir,
-                        araştırabilir,
-                        güncel bilgileri kontrol edebilir,
-                        hava durumunu öğrenebilir
-                        ve dosyalarını inceleyebilirim.
-
-                    </p>
-
-
-                    <!-- ÖNERİLER -->
-
-                    <div class="suggestions">
-
-
-                        <button
-                            class="suggestion"
-                            type="button"
-                            data-prompt="Bana bugün yapabileceğim güzel bir proje fikri ver."
-                        >
-
-                            <span>
-                                💡
-                            </span>
-
-                            <div>
-
-                                <strong>
-                                    Proje fikri
-                                </strong>
-
-                                <div>
-                                    Bana bir proje fikri ver
-                                </div>
-
-                            </div>
-
-                        </button>
-
-
-                        <button
-                            class="suggestion"
-                            type="button"
-                            data-prompt="JavaScript öğrenmeme yardım et."
-                        >
-
-                            <span>
-                                💻
-                            </span>
-
-                            <div>
-
-                                <strong>
-                                    Kodlama
-                                </strong>
-
-                                <div>
-                                    Kodlama öğrenmeme yardım et
-                                </div>
-
-                            </div>
-
-                        </button>
-
-
-                        <button
-                            class="suggestion"
-                            type="button"
-                            data-prompt="Benim için güncel bir konu araştır."
-                        >
-
-                            <span>
-                                🔎
-                            </span>
-
-                            <div>
-
-                                <strong>
-                                    Araştırma
-                                </strong>
-
-                                <div>
-                                    Güncel bir konu araştır
-                                </div>
-
-                            </div>
-
-                        </button>
-
-
-                        <button
-                            class="suggestion"
-                            type="button"
-                            data-prompt="Bugün Konya'da hava nasıl?"
-                        >
-
-                            <span>
-                                🌤️
-                            </span>
-
-                            <div>
-
-                                <strong>
-                                    Hava durumu
-                                </strong>
-
-                                <div>
-                                    Güncel hava durumunu öğren
-                                </div>
-
-                            </div>
-
-                        </button>
-
-
-                    </div>
-
+                <div class="pro-welcome-badge">
+                    ★ ERENCANAI PRO 8.00
                 </div>
 
-            </div>
 
-        </section>
-
-
-        <!-- =====================================================
-             MESAJ GÖNDERME
-             ===================================================== -->
-
-        <div class="composer-wrapper">
-
-            <div class="composer">
+                <h1>
+                    Merhaba, ben ErencanAI
+                </h1>
 
 
-                <!-- GİRİŞ SATIRI -->
+                <p>
 
-                <div class="input-row">
+                    Sorularını cevaplayabilir,
+                    kod yazabilir,
+                    araştırabilir,
+                    güncel bilgileri kontrol edebilir,
+                    hava durumunu öğrenebilir
+                    ve dosyalarını inceleyebilirim.
 
-
-                    <!-- DOSYA -->
-
-                    <input
-                        type="file"
-                        id="fileInput"
-                        hidden
-                        multiple
-                        accept=".txt,.json,.js,.html,.css,.py,.cs,.md,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp"
-                    >
+                </p>
 
 
-                    <!-- ATAÇ -->
+                <!-- ÖNERİLER -->
+
+                <div class="suggestions">
+
 
                     <button
-                        class="attach-button"
-                        id="attachButton"
+                        class="suggestion"
                         type="button"
-                        aria-label="Dosya ekle"
-                        title="Dosya ekle"
+                        data-prompt="Bana bugün yapabileceğim güzel bir proje fikri ver."
                     >
-                        📎
+
+                        <span>
+                            💡
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Proje fikri
+                            </strong>
+
+                            <div>
+                                Bana bir proje fikri ver
+                            </div>
+
+                        </div>
+
                     </button>
 
 
-                    <!-- MESAJ -->
-
-                    <textarea
-                        id="messageInput"
-                        rows="1"
-                        placeholder="ErencanAI'ye bir şey sor..."
-                        autocomplete="off"
-                    ></textarea>
-
-
-                    <!-- GÖNDER -->
-
                     <button
-                        class="send-button"
-                        id="sendButton"
+                        class="suggestion"
                         type="button"
-                        aria-label="Gönder"
+                        data-prompt="JavaScript öğrenmeme yardım et."
                     >
-                        ➤
+
+                        <span>
+                            💻
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Kodlama
+                            </strong>
+
+                            <div>
+                                Kodlama öğrenmeme yardım et
+                            </div>
+
+                        </div>
+
                     </button>
 
-                </div>
+
+                    <button
+                        class="suggestion"
+                        type="button"
+                        data-prompt="Benim için güncel bir konu araştır."
+                    >
+
+                        <span>
+                            🔎
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Araştırma
+                            </strong>
+
+                            <div>
+                                Güncel bir konu araştır
+                            </div>
+
+                        </div>
+
+                    </button>
 
 
-                <!-- =================================================
-                     SEÇİLEN DOSYALAR
-                     ================================================= -->
+                    <button
+                        class="suggestion"
+                        type="button"
+                        data-prompt="Bugün Konya'da hava nasıl?"
+                    >
 
-                <div
-                    class="selected-files"
-                    id="selectedFiles"
-                    style="display:none;"
-                ></div>
+                        <span>
+                            🌤️
+                        </span>
 
+                        <div>
 
-                <!-- =================================================
-                     ARAŞTIR / HAVA / HAFIZA
-                     ================================================= -->
+                            <strong>
+                                Hava durumu
+                            </strong>
 
-                <div class="composer-tools">
+                            <div>
+                                Güncel hava durumunu öğren
+                            </div>
 
-                    <div class="tool-group">
+                        </div>
 
+                    </button>
 
-                        <!-- ARAŞTIR -->
-
-                        <button
-                            class="quick-tool-static"
-                            type="button"
-                            id="researchToolButton"
-                        >
-                            🔎 Araştır
-                        </button>
-
-
-                        <!-- HAVA -->
-
-                        <button
-                            class="quick-tool-static"
-                            type="button"
-                            id="weatherToolButton"
-                        >
-                            🌤️ Hava Durumu
-                        </button>
-
-
-                        <!-- HAFIZA -->
-
-                        <button
-                            class="quick-tool-static"
-                            type="button"
-                            id="memoryToolButton"
-                        >
-                            🧠 Hafıza
-                        </button>
-
-
-                    </div>
-
-
-                    <div class="composer-info">
-
-                        Enter: Gönder · Shift + Enter: Yeni satır
-
-                    </div>
 
                 </div>
-
-
-            </div>
-
-
-            <div class="footer-warning">
-
-                ErencanAI bazen hata yapabilir.
-                Önemli bilgileri kontrol et.
 
             </div>
 
         </div>
 
-    </main>
+    </section>
+
+
+    <!-- =====================================================
+         MESAJ GÖNDERME
+         ===================================================== -->
+
+    <div class="composer-wrapper">
+
+        <div class="composer">
+
+
+            <!-- GİRİŞ SATIRI -->
+
+            <div class="input-row">
+
+
+                <!-- DOSYA -->
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    hidden
+                    multiple
+                    accept=".txt,.json,.js,.html,.css,.py,.cs,.md,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp"
+                >
+
+
+                <!-- ATAÇ -->
+
+                <button
+                    class="attach-button"
+                    id="attachButton"
+                    type="button"
+                    aria-label="Dosya ekle"
+                    title="Dosya ekle"
+                >
+                    📎
+                </button>
+
+
+                <!-- MESAJ -->
+
+                <textarea
+                    id="messageInput"
+                    rows="1"
+                    placeholder="ErencanAI'ye bir şey sor..."
+                    autocomplete="off"
+                ></textarea>
+
+
+                <!-- GÖNDER -->
+
+                <button
+                    class="send-button"
+                    id="sendButton"
+                    type="button"
+                    aria-label="Gönder"
+                >
+                    ➤
+                </button>
+
+            </div>
+
+
+            <!-- SEÇİLEN DOSYALAR -->
+
+            <div
+                class="selected-files"
+                id="selectedFiles"
+                style="display:none;"
+            ></div>
+
+
+            <!-- =================================================
+                 ARAŞTIR / HAVA / HAFIZA
+                 ================================================= -->
+
+            <div
+                class="composer-tools"
+                id="composerTools"
+            >
+
+                <div class="tool-group">
+
+
+                    <!-- ARAŞTIR -->
+
+                    <button
+                        class="quick-tool-static"
+                        type="button"
+                        id="researchToolButton"
+                        aria-label="İnternet araştırması"
+                    >
+                        🔎 Araştır
+                    </button>
+
+
+                    <!-- HAVA -->
+
+                    <button
+                        class="quick-tool-static"
+                        type="button"
+                        id="weatherToolButton"
+                        aria-label="Hava durumu"
+                    >
+                        🌤️ Hava Durumu
+                    </button>
+
+
+                    <!-- HAFIZA -->
+
+                    <button
+                        class="quick-tool-static"
+                        type="button"
+                        id="memoryToolButton"
+                        aria-label="Hafıza"
+                    >
+                        🧠 Hafıza
+                    </button>
+
+
+                </div>
+
+
+                <div class="composer-info">
+
+                    Enter: Gönder · Shift + Enter: Yeni satır
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="footer-warning">
+
+            ErencanAI bazen hata yapabilir.
+            Önemli bilgileri kontrol et.
+
+        </div>
+
+    </div>
+
+</main>
+```
 
 </div>
-
-
 
 <!-- =========================================================
      AYARLAR MODALI
@@ -629,166 +736,166 @@
     id="settingsModal"
 >
 
-    <div class="modal-box">
+```
+<div class="modal-box">
 
 
-        <div class="modal-header">
+    <div class="modal-header">
 
-            <div>
+        <div>
 
-                <h2>
-                    Ayarlar
-                </h2>
+            <h2>
+                Ayarlar
+            </h2>
 
-                <p>
-                    ErencanAI ayarlarını yönet
-                </p>
-
-            </div>
-
-
-            <button
-                class="modal-close"
-                type="button"
-                data-close="settingsModal"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="settings-list">
-
-
-            <div class="setting">
-
-                <div>
-
-                    <strong>
-                        Hafıza
-                    </strong>
-
-                    <small>
-                        Sohbet geçmişini hatırla
-                    </small>
-
-                </div>
-
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="memorySwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-
-                    <strong>
-                        Animasyonlar
-                    </strong>
-
-                    <small>
-                        Arayüz animasyonlarını kullan
-                    </small>
-
-                </div>
-
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="animationSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-
-                    <strong>
-                        Güncel bilgi araştırması
-                    </strong>
-
-                    <small>
-                        Güncel sorularda araştırma sistemini kullan
-                    </small>
-
-                </div>
-
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="researchSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-
-                    <strong>
-                        Pro özellikleri
-                    </strong>
-
-                    <small>
-                        ErencanAI Pro 8.00 özellikleri
-                    </small>
-
-                </div>
-
-
-                <span class="pro-active-badge">
-                    PRO
-                </span>
-
-            </div>
-
+            <p>
+                ErencanAI ayarlarını yönet
+            </p>
 
         </div>
 
 
         <button
-            class="danger-button"
-            id="deleteHistoryButton"
+            class="modal-close"
             type="button"
+            data-close="settingsModal"
         >
-            Tüm Sohbet Geçmişini Sil
+            ×
         </button>
 
     </div>
 
+
+    <div class="settings-list">
+
+
+        <div class="setting">
+
+            <div>
+
+                <strong>
+                    Hafıza
+                </strong>
+
+                <small>
+                    Sohbet geçmişini hatırla
+                </small>
+
+            </div>
+
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="memorySwitch"
+                    checked
+                >
+
+                <span></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting">
+
+            <div>
+
+                <strong>
+                    Animasyonlar
+                </strong>
+
+                <small>
+                    Arayüz animasyonlarını kullan
+                </small>
+
+            </div>
+
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="animationSwitch"
+                    checked
+                >
+
+                <span></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting">
+
+            <div>
+
+                <strong>
+                    Güncel bilgi araştırması
+                </strong>
+
+                <small>
+                    Güncel sorularda araştırma sistemini kullan
+                </small>
+
+            </div>
+
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="researchSwitch"
+                    checked
+                >
+
+                <span></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting">
+
+            <div>
+
+                <strong>
+                    Pro özellikleri
+                </strong>
+
+                <small>
+                    ErencanAI Pro 8.00 özellikleri
+                </small>
+
+            </div>
+
+
+            <span class="pro-active-badge">
+                PRO
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    <button
+        class="danger-button"
+        id="deleteHistoryButton"
+        type="button"
+    >
+        Tüm Sohbet Geçmişini Sil
+    </button>
+
 </div>
+```
 
-
+</div>
 
 <!-- =========================================================
      GOOGLE GİRİŞ MODALI
@@ -799,79 +906,79 @@
     id="googleLoginModal"
 >
 
-    <div class="modal-box small">
+```
+<div class="modal-box small">
 
 
-        <div class="modal-header">
+    <div class="modal-header">
 
-            <div>
+        <div>
 
-                <h2>
-                    Hesap
-                </h2>
-
-                <p>
-                    ErencanAI hesabına giriş yap
-                </p>
-
-            </div>
-
-
-            <button
-                class="modal-close"
-                type="button"
-                data-close="googleLoginModal"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="google-login-area">
-
-
-            <div class="google-login-logo">
-                G
-            </div>
-
-
-            <h3>
-                Google ile giriş
-            </h3>
-
+            <h2>
+                Hesap
+            </h2>
 
             <p>
-
-                Hesabını bağlayarak sohbet geçmişini
-                cihazların arasında kullanabilirsin.
-
+                ErencanAI hesabına giriş yap
             </p>
 
-
-            <button
-                class="google-login-button"
-                type="button"
-                id="googleLoginButton"
-            >
-                G Google ile devam et
-            </button>
-
-
-            <small class="login-note">
-
-                Giriş sistemi daha sonra etkinleştirilebilir.
-
-            </small>
-
-
         </div>
+
+
+        <button
+            class="modal-close"
+            type="button"
+            data-close="googleLoginModal"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <div class="google-login-area">
+
+
+        <div class="google-login-logo">
+            G
+        </div>
+
+
+        <h3>
+            Google ile giriş
+        </h3>
+
+
+        <p>
+
+            Hesabını bağlayarak sohbet geçmişini
+            cihazların arasında kullanabilirsin.
+
+        </p>
+
+
+        <button
+            class="google-login-button"
+            type="button"
+            id="googleLoginButton"
+        >
+            G Google ile devam et
+        </button>
+
+
+        <small class="login-note">
+
+            Giriş sistemi daha sonra etkinleştirilebilir.
+
+        </small>
+
 
     </div>
 
 </div>
+```
 
-
+</div>
 
 <!-- =========================================================
      ARAMA MODALI
@@ -882,62 +989,62 @@
     id="searchModal"
 >
 
-    <div class="modal-box small">
+```
+<div class="modal-box small">
 
 
-        <div class="modal-header">
+    <div class="modal-header">
 
-            <div>
+        <div>
 
-                <h2>
-                    Sohbetlerde Ara
-                </h2>
+            <h2>
+                Sohbetlerde Ara
+            </h2>
 
-                <p>
-                    Eski konuşmalarında ara
-                </p>
-
-            </div>
-
-
-            <button
-                class="modal-close"
-                type="button"
-                data-close="searchModal"
-            >
-                ×
-            </button>
+            <p>
+                Eski konuşmalarında ara
+            </p>
 
         </div>
 
 
-        <input
-            id="chatSearchInput"
-            type="text"
-            placeholder="Sohbet ara..."
-            style="
-                width:100%;
-                padding:12px;
-                border-radius:10px;
-                border:1px solid var(--border);
-                background:var(--panel-2);
-                color:var(--text);
-                outline:none;
-            "
+        <button
+            class="modal-close"
+            type="button"
+            data-close="searchModal"
         >
-
-
-        <div
-            id="searchResults"
-            style="margin-top:15px;"
-        ></div>
-
+            ×
+        </button>
 
     </div>
 
+
+    <input
+        id="chatSearchInput"
+        type="text"
+        placeholder="Sohbet ara..."
+        style="
+            width:100%;
+            padding:12px;
+            border-radius:10px;
+            border:1px solid var(--border);
+            background:var(--panel-2);
+            color:var(--text);
+            outline:none;
+        "
+    >
+
+
+    <div
+        id="searchResults"
+        style="margin-top:15px;"
+    ></div>
+
+
 </div>
+```
 
-
+</div>
 
 <!-- =========================================================
      TOAST
@@ -948,8 +1055,6 @@
     id="toast"
 ></div>
 
-
-
 <!-- =========================================================
      DOSYA MODALI
      ========================================================= -->
@@ -959,53 +1064,51 @@
     id="fileModal"
 >
 
-    <div class="modal-box small">
+```
+<div class="modal-box small">
 
 
-        <div class="modal-header">
+    <div class="modal-header">
 
-            <div>
+        <div>
 
-                <h2>
-                    Dosya
-                </h2>
+            <h2>
+                Dosya
+            </h2>
 
-                <p>
-                    ErencanAI'ye dosya gönder
-                </p>
-
-            </div>
-
-
-            <button
-                class="modal-close"
-                type="button"
-                data-close="fileModal"
-            >
-                ×
-            </button>
+            <p>
+                ErencanAI'ye dosya gönder
+            </p>
 
         </div>
 
 
-        <div
-            id="fileModalContent"
-        ></div>
-
+        <button
+            class="modal-close"
+            type="button"
+            data-close="fileModal"
+        >
+            ×
+        </button>
 
     </div>
 
+
+    <div
+        id="fileModalContent"
+    ></div>
+
+
 </div>
+```
 
-
+</div>
 
 <!-- =========================================================
      APP.JS
      ========================================================= -->
 
 <script src="/app.js"></script>
-
-
 
 <!-- =========================================================
      GÜVENLİ BAŞLANGIÇ
