@@ -1697,139 +1697,79 @@ async function webSearch(
         return [];
     }
 
-    const url =
-        SEARCH_URL +
-        "?q=" +
-        encodeURIComponent(
-            cleanQuery
-        );
+    try {
 
-    const response =
-        await fetchWithTimeout(
-            url,
-            {
-                method:
-                    "GET",
+        const url =
+            SEARCH_URL +
+            "?q=" +
+            encodeURIComponent(
+                cleanQuery
+            );
 
-                headers: {
+        const response =
+            await fetchWithTimeout(
+                url,
+                {
+                    method:
+                        "GET",
 
-                    "User-Agent":
-                        "Mozilla/5.0 ErencanAI/8.00"
+                    headers: {
 
-                }
-            }
-        );
+                        "User-Agent":
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/150.0.0.0 Safari/537.36",
 
-    if (
-        !response.ok
-    ) {
+                        "Accept":
+                            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 
-        throw new Error(
-            "Web arama HTTP " +
-            response.status
-        );
-    }
+                        "Accept-Language":
+                            "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
 
-    const html =
-        await response.text();
+                        "Cache-Control":
+                            "no-cache"
 
-    const results = [];
-
-    const resultPattern =
-        /<a[^>]*class=["'][^"']*result__a[^"']*["'][^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
-
-    let match;
-
-    while (
-        (
-            match =
-                resultPattern.exec(
-                    html
-                )
-        ) !== null &&
-        results.length <
-            MAX_SEARCH_RESULTS
-    ) {
-
-        let href =
-            match[1];
-
-        const title =
-            stripHtml(
-                match[2]
+                    }
+                },
+                15000
             );
 
         if (
-            href.includes(
-                "uddg="
-            )
+            !response.ok
         ) {
 
-            try {
-
-                const parsed =
-                    new URL(
-                        href,
-                        "https://html.duckduckgo.com"
-                    );
-
-                const realUrl =
-                    parsed.searchParams.get(
-                        "uddg"
-                    );
-
-                if (
-                    realUrl
-                ) {
-
-                    href =
-                        realUrl;
-                }
-
-            } catch (error) {
-
-                // URL parse hatası.
-            }
+            throw new Error(
+                "Web arama HTTP " +
+                response.status
+            );
         }
 
-        href =
-            cleanUrl(
-                href
-            );
+        const html =
+            await response.text();
 
         if (
-            title &&
-            href
+            !html ||
+            html.length < 100
         ) {
 
-            results.push({
-
-                title:
-                    title,
-
-                url:
-                    href
-
-            });
+            throw new Error(
+                "Arama motorundan boş sonuç geldi."
+            );
         }
-    }
 
-    /*
-        Bazı arama sonuçlarında farklı HTML yapısı olabilir.
-        Bu durumda alternatif bağlantı taraması yapılır.
-    */
+        const results = [];
 
-    if (
-        results.length === 0
-    ) {
+        /*
+            DuckDuckGo sonuçları
+        */
 
-        const linkPattern =
-            /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+        const resultPattern =
+            /<a[^>]*class=["'][^"']*result__a[^"']*["'][^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+
+        let match;
 
         while (
             (
                 match =
-                    linkPattern.exec(
+                    resultPattern.exec(
                         html
                     )
             ) !== null &&
@@ -1837,21 +1777,13 @@ async function webSearch(
                 MAX_SEARCH_RESULTS
         ) {
 
-            const title =
-                stripHtml(
-                    match[2]
-                );
-
             let href =
                 match[1];
 
-            if (
-                !title ||
-                title.length < 4
-            ) {
-
-                continue;
-            }
+            const title =
+                stripHtml(
+                    match[2]
+                ).trim();
 
             if (
                 href.includes(
@@ -1892,13 +1824,14 @@ async function webSearch(
                 );
 
             if (
+                title &&
                 href &&
                 !href.includes(
                     "duckduckgo.com"
                 )
             ) {
 
-                const alreadyExists =
+                const exists =
                     results.some(
                         item =>
                             item.url ===
@@ -1906,7 +1839,7 @@ async function webSearch(
                     );
 
                 if (
-                    !alreadyExists
+                    !exists
                 ) {
 
                     results.push({
@@ -1924,11 +1857,137 @@ async function webSearch(
                 }
             }
         }
+
+        /*
+            Alternatif bağlantı taraması
+        */
+
+        if (
+            results.length === 0
+        ) {
+
+            const linkPattern =
+                /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+
+            while (
+                (
+                    match =
+                        linkPattern.exec(
+                            html
+                        )
+                ) !== null &&
+                results.length <
+                    MAX_SEARCH_RESULTS
+            ) {
+
+                let href =
+                    match[1];
+
+                const title =
+                    stripHtml(
+                        match[2]
+                    ).trim();
+
+                if (
+                    !title ||
+                    title.length < 4
+                ) {
+
+                    continue;
+                }
+
+                if (
+                    href.includes(
+                        "uddg="
+                    )
+                ) {
+
+                    try {
+
+                        const parsed =
+                            new URL(
+                                href,
+                                "https://html.duckduckgo.com"
+                            );
+
+                        const realUrl =
+                            parsed.searchParams.get(
+                                "uddg"
+                            );
+
+                        if (
+                            realUrl
+                        ) {
+
+                            href =
+                                realUrl;
+                        }
+
+                    } catch (error) {
+
+                        continue;
+                    }
+                }
+
+                href =
+                    cleanUrl(
+                        href
+                    );
+
+                if (
+                    !href ||
+                    href.includes(
+                        "duckduckgo.com"
+                    )
+                ) {
+
+                    continue;
+                }
+
+                const exists =
+                    results.some(
+                        item =>
+                            item.url ===
+                            href
+                    );
+
+                if (
+                    !exists
+                ) {
+
+                    results.push({
+
+                        title:
+                            title.slice(
+                                0,
+                                300
+                            ),
+
+                        url:
+                            href
+
+                    });
+                }
+            }
+        }
+
+        console.log(
+            "WEB ARAMA SONUÇLARI:",
+            results.length
+        );
+
+        return results;
+
+    } catch (error) {
+
+        console.error(
+            "WEB ARAMA HATASI:",
+            error.message
+        );
+
+        throw error;
     }
-
-    return results;
 }
-
 /* =========================================================
 WEB SAYFASI OKUMA
 ========================================================= */
@@ -2055,7 +2114,7 @@ const trustedResults =
     for (
         const result of trustedResults.slice(
             0,
-            6
+            3
         )
     ) {
 
@@ -2104,7 +2163,7 @@ const trustedResults =
     combined =
         combined.slice(
             0,
-        12000
+        5000
      );      
     return {
 
@@ -2545,7 +2604,7 @@ async function requestGroq(
                                     0.20,
 
                                 max_tokens:
-                                    1200,
+                                    700,
 
                                 reasoning_effort:
                                     "low",
