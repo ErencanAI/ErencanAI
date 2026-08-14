@@ -4074,25 +4074,30 @@ kullan.
                     ? "AKTİF"
                     : "GEREKMİYOR"
             );
-if (researchContext) {
+        if (researchContext) {
     messages.push({
         role: "system",
-        content: `ÖNEMLİ GÜNCEL İNTERNET BİLGİSİ:
+        content: `ÖNEMLİ: AŞAĞIDAKİ METİN GÜNCEL İNTERNET ARAŞTIRMASI SONUCUDUR.
 
 ${researchContext}
 
-Bu bilgi internet araştırmasından alınmıştır.
-Eski hafıza veya model bilgisi bununla çelişirse
-İNTERNET ARAŞTIRMASI SONUCUNU esas al.
-Güncel bilgi sorularında eski bilgiyi kullanma.`
+ARAŞTIRMA KURALLARI:
+
+1. Cevabını öncelikle yukarıdaki araştırma metnine dayanarak ver.
+2. Araştırma metninde açıkça bulunmayan hiçbir sayı, fiyat, kur, tarih, saat, istatistik veya olay bilgisini UYDURMA.
+3. Araştırma metninde bir bilgi bulunmuyorsa, bunu varmış gibi gösterme.
+4. Bir kaynağın adı araştırma metninde gerçekten geçmiyorsa o kaynağın adını kullanma.
+5. Bloomberg, Reuters, TCMB, MGM veya başka bir kurumdan alınmış gibi bilgi UYDURMA.
+6. Araştırma metnindeki kaynaklar birbiriyle çelişiyorsa bunu açıkça belirt ve kesin olmayan bilgiyi kesinmiş gibi sunma.
+7. Güncel bilgi sorusunda eski model bilgini kullanarak araştırma sonucunu değiştirme.
+8. Emin olmadığın güncel bir bilgiyi tahmin etme. "Araştırma kaynaklarında doğrulanamadı" de.
+9. Kullanıcı yalnızca araştırma sonucunu soruyorsa kısa ve doğrudan cevap ver.
+10. Kaynakta 47 TL yazıyorsa 27 TL gibi başka bir rakam üretme.
+
+ÖZELLİKLE:
+Kaynak metninde bulunmayan kesin rakamları veya kaynakları asla kendin oluşturma.`
     });
 }
-messages.forEach(message => {
-    if (typeof message.content === "string") {
-        message.content =
-            message.content.slice(0, 12000);
-    }
-});
 console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             console.log(
                 "GROQ İSTEĞİ GÖNDERİLİYOR..."
