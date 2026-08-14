@@ -2010,13 +2010,16 @@ async function fetchPageText(
                     headers: {
 
                         "User-Agent":
-                            "Mozilla/5.0 ErencanAI/8.00",
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/150.0 Safari/537.36",
 
                         "Accept":
-                            "text/html,application/xhtml+xml"
+                            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+
+                        "Accept-Language":
+                            "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
                     }
                 },
-                8000
+                10000
             );
 
         if (
@@ -2043,19 +2046,86 @@ async function fetchPageText(
         const html =
             await response.text();
 
-        const text =
-            stripHtml(
-                html
-            );
-console.log(
-    "ARAŞTIRMA KAYNAĞI OKUNDU:",
-    url
-);
+        if (
+            !html ||
+            html.length < 100
+        ) {
 
-console.log(
-    "KAYNAK METNİ:",
-    text.slice(0, 1000)
-);
+            return "";
+        }
+
+        let text =
+            html
+                .replace(
+                    /<script[\s\S]*?<\/script>/gi,
+                    " "
+                )
+                .replace(
+                    /<style[\s\S]*?<\/style>/gi,
+                    " "
+                )
+                .replace(
+                    /<noscript[\s\S]*?<\/noscript>/gi,
+                    " "
+                )
+                .replace(
+                    /<svg[\s\S]*?<\/svg>/gi,
+                    " "
+                )
+                .replace(
+                    /<nav[\s\S]*?<\/nav>/gi,
+                    " "
+                )
+                .replace(
+                    /<footer[\s\S]*?<\/footer>/gi,
+                    " "
+                )
+                .replace(
+                    /<header[\s\S]*?<\/header>/gi,
+                    " "
+                );
+
+        text =
+            text.replace(
+                /<[^>]+>/g,
+                " "
+            );
+
+        text =
+            text
+                .replace(
+                    /&nbsp;/gi,
+                    " "
+                )
+                .replace(
+                    /&amp;/gi,
+                    "&"
+                )
+                .replace(
+                    /&quot;/gi,
+                    '"'
+                )
+                .replace(
+                    /&#39;/gi,
+                    "'"
+                )
+                .replace(
+                    /&lt;/gi,
+                    "<"
+                )
+                .replace(
+                    /&gt;/gi,
+                    ">"
+                );
+
+        text =
+            text
+                .replace(
+                    /\s+/g,
+                    " "
+                )
+                .trim();
+
         if (
             !text
         ) {
@@ -2065,7 +2135,7 @@ console.log(
 
         return text.slice(
             0,
-            5000
+            12000
         );
 
     } catch (error) {
