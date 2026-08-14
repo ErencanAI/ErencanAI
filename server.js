@@ -2047,7 +2047,15 @@ async function fetchPageText(
             stripHtml(
                 html
             );
+console.log(
+    "ARAŞTIRMA KAYNAĞI OKUNDU:",
+    url
+);
 
+console.log(
+    "KAYNAK METNİ:",
+    text.slice(0, 1000)
+);
         if (
             !text
         ) {
