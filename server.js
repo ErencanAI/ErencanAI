@@ -3344,10 +3344,22 @@ app.get(
 Arama:
 ${research.query}
 
-Sonuçlar:
+İNTERNET ARAŞTIRMASI KURALLARI:
+
+- Aşağıdaki bilgiler internetten alınmıştır.
+- SADECE aşağıdaki araştırma sonuçlarında bulunan bilgileri kullan.
+- Araştırma sonuçlarında olmayan hiçbir bilgiyi tahmin etme veya uydurma.
+- Güncel fiyat, tarih, saat, maç, döviz kuru ve haberlerde özellikle dikkatli ol.
+- Bir bilgi kaynaklarda yoksa "Araştırma sonuçlarında bu bilgi bulunamadı." de.
+- Kaynaklar birbiriyle çelişiyorsa bunu açıkça belirt.
+- "Resmi kaynak", "TCMB", "TFF" gibi ifadeleri yalnızca araştırma metninde gerçekten böyle bir kaynak varsa kullan.
+- Kullanıcı güncel bilgi sorduğunda kendi eski bilgini araştırma sonucunun yerine koyma.
+- Cevabını mümkün olduğunca araştırma sonuçlarına dayandır.
+
+ARAŞTIRMA SONUÇLARI:
 ${String(
     research.text || ""
-).slice(0, 2000)}
+).slice(0, 5000)}
 `.trim();
 
         researchSources =
