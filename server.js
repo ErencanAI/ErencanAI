@@ -3965,7 +3965,7 @@ ${String(
     research.text || ""
 ).slice(
     0,
-    4000
+    5000
 )}
 `.trim();
 
