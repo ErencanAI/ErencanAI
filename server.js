@@ -3205,7 +3205,7 @@ async function requestGemini(
 
     const contents =
         messages
-            .filter(
+              filter(
                 item =>
                     item &&
                     item.content
@@ -4341,7 +4341,7 @@ app.post(
                 )
             )
     );
-        filter(
+                recentMessages.filter(
             item =>
                 item &&
                 item.content &&
