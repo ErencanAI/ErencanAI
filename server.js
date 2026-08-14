@@ -25,17 +25,26 @@ const GROQ_API_KEY =
 const GEMINI_API_KEY =
     process.env.GEMINI_API_KEY ||
     "";
+    const CEREBRAS_API_KEY =
+    process.env.CEREBRAS_API_KEY ||
+    "";
 const GROQ_URL =
     "https://api.groq.com/openai/v1/chat/completions";
 
 const GROQ_MODEL = "openai/gpt-oss-20b";
+const CEREBRAS_URL =
+    "https://api.cerebras.ai/v1/chat/completions";
 
+const CEREBRAS_MODEL =
+    "gpt-oss-120b";
 /* =========================================================
 ARA�TIRMA
 ========================================================= */
 
 const SEARCH_URL =
     "https://html.duckduckgo.com/html/";
+    const TCMB_TODAY_URL =
+    "https://www.tcmb.gov.tr/kurlar/today.xml";
 const GITHUB_SEARCH_URL = "https://api.github.com/search/repositories";
 
 const WEATHER_GEOCODING_URL =
@@ -1493,7 +1502,15 @@ function shouldResearch(
     }
 
     const researchWords = [
-
+                "dolar",
+        "usd",
+        "euro",
+        "eur",
+        "sterlin",
+        "gbp",
+        "döviz",
+        "döviz kuru",
+        "döviz kurları",
         "ara�t�r",
         "ara�t�r�r m�s�n",
         "internetten bak",
@@ -1757,7 +1774,7 @@ async function webSearch(
             );
         }
 
-        const results = [];
+        
 
         /*
             DuckDuckGo sonu�lar�
@@ -1990,7 +2007,112 @@ async function webSearch(
         throw error;
     }
 }
+/* =========================================================
+TCMB GÜNCEL DÖVİZ KURU
+========================================================= */
 
+async function getTcmbUsdRate() {
+
+    const url =
+        "https://www.tcmb.gov.tr/kurlar/today.xml";
+
+    const response =
+        await fetchWithTimeout(
+            url,
+            {
+                method:
+                    "GET",
+
+                headers: {
+
+                    "User-Agent":
+                        "Mozilla/5.0",
+
+                    "Accept":
+                        "application/xml,text/xml,*/*"
+
+                }
+            },
+            15000
+        );
+
+    if (
+        !response.ok
+    ) {
+
+        throw new Error(
+            "TCMB HTTP " +
+            response.status
+        );
+    }
+
+    const xml =
+        await response.text();
+
+    if (
+        !xml ||
+        xml.length < 100
+    ) {
+
+        throw new Error(
+            "TCMB boş veri döndürdü."
+        );
+    }
+
+    const usdMatch =
+        xml.match(
+            /<Currency[^>]*Kod="USD"[^>]*>[\s\S]*?<ForexBuying>(.*?)<\/ForexBuying>[\s\S]*?<ForexSelling>(.*?)<\/ForexSelling>[\s\S]*?<\/Currency>/
+        );
+
+    if (
+        !usdMatch
+    ) {
+
+        throw new Error(
+            "TCMB USD kuru bulunamadı."
+        );
+    }
+
+    const buying =
+        Number(
+            usdMatch[1]
+        );
+
+    const selling =
+        Number(
+            usdMatch[2]
+        );
+
+    if (
+        !Number.isFinite(
+            buying
+        ) ||
+        !Number.isFinite(
+            selling
+        )
+    ) {
+
+        throw new Error(
+            "TCMB USD kuru geçersiz."
+        );
+    }
+
+    console.log(
+        "TCMB USD:",
+        buying,
+        selling
+    );
+
+    return {
+
+        buying:
+            buying,
+
+        selling:
+            selling
+
+    };
+}
 
 /* =========================================================
 ARA�TIRMA SONUCU OLU�TUR
@@ -2000,6 +2122,217 @@ async function researchWeb(
     query
 ) {
 
+    console.log(
+        "İNTERNET ARAŞTIRMASI:",
+        query
+    );
+
+    const currencyQuery =
+    String(
+        query || ""
+    ).toLowerCase();
+
+    if (
+               currencyQuery.includes("dolar") ||
+               currencyQuery.includes("usd") ||
+                  currencyQuery.includes("döviz kuru") ||
+                        currencyQuery.includes ("döviz kurları")
+    ) {
+
+        try {
+
+            const usd =
+                await getTcmbUsdRate();
+
+            return {
+
+                ok:
+                    true,
+
+                query:
+                    query,
+
+                text:
+                    `
+TCMB GÜNCEL DÖVİZ KURU
+
+Tarih:
+${new Date().toLocaleDateString("tr-TR")}
+
+ABD DOLARI (USD):
+
+Forex alış:
+${usd.buying.toFixed(4)} TL
+
+Forex satış:
+${usd.selling.toFixed(4)} TL
+
+Bu değerler doğrudan TCMB'nin güncel XML verisinden alınmıştır.
+`.trim(),
+
+                sources: [
+
+                    {
+
+                        title:
+                            "Türkiye Cumhuriyet Merkez Bankası - Güncel Döviz Kurları",
+
+                        url:
+                            "https://www.tcmb.gov.tr/kurlar/today.xml"
+
+                    }
+
+                ]
+
+            };
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "TCMB KUR HATASI:",
+                error.message
+            );
+
+        }
+    }
+
+      const searchResults =
+    await webSearch(
+        query
+    );
+    const lowerQuery =
+        String(query || "").toLowerCase();
+
+    const isUsdTryQuestion =
+        (
+            lowerQuery.includes("dolar") ||
+            lowerQuery.includes("usd")
+        ) &&
+        (
+            lowerQuery.includes("kaç tl") ||
+            lowerQuery.includes("kaç lira") ||
+            lowerQuery.includes("tl") ||
+            lowerQuery.includes("kur") ||
+            lowerQuery.includes("alış") ||
+            lowerQuery.includes("satış")
+        );
+
+    if (isUsdTryQuestion) {
+
+        try {
+console.log(
+    "USD/TRY ÖZEL KONTROLÜ:",
+    isUsdTryQuestion
+);                
+             console.log(
+    "TCMB KONTROLÜ TAMAM:",
+    isUsdTryQuestion ? "EVET" : "HAYIR"
+);
+            console.log(
+                "TCMB USD KURU DOĞRUDAN ALINIYOR..."
+            );
+
+            const response =
+                await fetchWithTimeout(
+                    "https://www.tcmb.gov.tr/kurlar/today.xml",
+                    {
+                        method: "GET",
+                        headers: {
+                            "User-Agent":
+                                "ErencanAI/1.0"
+                        }
+                    },
+                    10000
+                );
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "TCMB HTTP " +
+                    response.status
+                );
+            }
+
+            const xml =
+                await response.text();
+
+            const usdMatch =
+                xml.match(
+                    /<Currency[^>]*Kod="USD"[\s\S]*?<ForexBuying>(.*?)<\/ForexBuying>[\s\S]*?<ForexSelling>(.*?)<\/ForexSelling>[\s\S]*?<BanknoteBuying>(.*?)<\/BanknoteBuying>[\s\S]*?<BanknoteSelling>(.*?)<\/BanknoteSelling>[\s\S]*?<\/Currency>/
+                );
+
+            if (
+                !usdMatch
+            ) {
+
+                throw new Error(
+                    "TCMB USD verisi bulunamadı."
+                );
+            }
+
+            const buying =
+                usdMatch[1].trim();
+
+            const selling =
+                usdMatch[2].trim();
+
+            const banknoteBuying =
+                usdMatch[3].trim();
+
+            const banknoteSelling =
+                usdMatch[4].trim();
+
+            console.log(
+                "TCMB USD:",
+                buying,
+                selling
+            );
+
+            return {
+
+                ok: true,
+
+                query: query,
+
+                text:
+                    "TCMB resmi USD kuru:\n" +
+                    "Forex alış: " +
+                    buying +
+                    " TL\n" +
+                    "Forex satış: " +
+                    selling +
+                    " TL\n" +
+                    "Banknot alış: " +
+                    banknoteBuying +
+                    " TL\n" +
+                    "Banknot satış: " +
+                    banknoteSelling +
+                    " TL",
+
+                sources: [
+                    {
+                        title:
+                            "TCMB - Günlük Döviz Kurları",
+
+                        url:
+                            "https://www.tcmb.gov.tr/kurlar/today.xml"
+                    }
+                ]
+
+            };
+
+        } catch (error) {
+
+            console.error(
+                "TCMB USD KURU HATASI:",
+                error.message
+            );
+
+            // TCMB başarısızsa normal araştırmaya devam et.
+        }
+    }
     console.log(
         "�NTERNET ARA�TIRMASI:",
         query
@@ -2011,8 +2344,8 @@ async function researchWeb(
         );
 
     if (
-        !results.length
-    ) {
+    !searchResults.length
+) {
 
         return {
 
@@ -2030,7 +2363,74 @@ async function researchWeb(
 
         };
     }
+const trustedDomains = [
+    "tcmb.gov.tr",
+    "tff.org",
+    "resmigazete.gov.tr",
+    "gov.tr",
+    "tuik.gov.tr",
+    "mevzuat.gov.tr"
+];
 
+const scoreResult =
+    result => {
+
+        try {
+
+            const hostname =
+                new URL(
+                    result.url
+                ).hostname
+                .toLowerCase();
+
+            if (
+                hostname === "tcmb.gov.tr" ||
+                hostname.endsWith(".tcmb.gov.tr")
+            ) {
+                return 100;
+            }
+
+            if (
+                hostname === "tff.org" ||
+                hostname.endsWith(".tff.org")
+            ) {
+                return 95;
+            }
+
+            if (
+                hostname === "resmigazete.gov.tr" ||
+                hostname.endsWith(".resmigazete.gov.tr")
+            ) {
+                return 95;
+            }
+
+            if (
+                hostname.endsWith(".gov.tr")
+            ) {
+                return 90;
+            }
+
+            if (
+                trustedDomains.some(
+                    domain =>
+                        hostname === domain ||
+                        hostname.endsWith(
+                            "." + domain
+                        )
+                )
+            ) {
+                return 85;
+            }
+
+            return 10;
+
+        } catch (
+            error
+        ) {
+
+            return 0;
+        }
+    };
     const sourceTexts = [];
 const trustedResults =
     results.filter(
@@ -2039,6 +2439,14 @@ const trustedResults =
             result.url &&
             result.title
     );
+    trustedResults.sort(
+    (
+        a,
+        b
+    ) =>
+        scoreResult(b) -
+        scoreResult(a)
+);
     for (
         const result of trustedResults.slice(
             0,
@@ -2091,7 +2499,7 @@ const trustedResults =
     combined =
         combined.slice(
             0,
-        14000
+        5000
      );      
     return {
 
@@ -2534,10 +2942,11 @@ async function requestGroq(
                                 max_tokens:
                                     700,
 
-                                reasoning_effort:
-                                    "low",
+                               reasoning_effort:
+                               "low",
 
-                                reasoning_format: "hidden",
+                          include_reasoning:
+                                false,
 
                             stream: false,
 
@@ -2668,6 +3077,114 @@ if (
             "Groq ba�lant�s� kurulamad�."
         )
     );
+}
+/* =========================================================
+CEREBRAS AI
+========================================================= */
+
+async function requestCerebras(
+    messages
+) {
+
+    if (
+        !CEREBRAS_API_KEY
+    ) {
+
+        throw new Error(
+            "Cerebras API anahtarı bulunamadı."
+        );
+    }
+
+    const response =
+        await fetch(
+            CEREBRAS_URL,
+            {
+
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        "Bearer " +
+                        CEREBRAS_API_KEY
+
+                },
+
+                body:
+                    JSON.stringify({
+
+                        model:
+                            CEREBRAS_MODEL,
+
+                        messages:
+                            messages,
+
+                        temperature:
+                            0.20,
+
+                        max_tokens:
+                            700,
+
+                        stream:
+                            false
+
+                    })
+
+            }
+        );
+
+    const responseText =
+        await response.text();
+
+    if (
+        !response.ok
+    ) {
+
+        const error =
+            new Error(
+                "Cerebras HTTP " +
+                response.status +
+                (
+                    responseText
+                        ? " - " +
+                          responseText.slice(
+                              0,
+                              500
+                          )
+                        : ""
+                )
+            );
+
+        error.status =
+            response.status;
+
+        error.body =
+            responseText;
+
+        throw error;
+    }
+
+    let data;
+
+    try {
+
+        data =
+            JSON.parse(
+                responseText
+            );
+
+    } catch (error) {
+
+        throw new Error(
+            "Cerebras geçersiz JSON gönderdi."
+        );
+    }
+
+    return data;
 }
 /* =========================================================
 GEMINI YEDEK AI
@@ -2848,34 +3365,53 @@ async function requestAI(
     } catch (groqError) {
 
         console.error(
-            "GROQ BA�ARISIZ, GEMINI'YE GE��L�YOR:",
+            "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
             groqError.message
         );
 
         try {
 
             console.log(
-                "AI: GEMINI YEDEK"
+                "AI: CEREBRAS YEDEK"
             );
 
-            return await requestGemini(
+            return await requestCerebras(
                 messages
             );
 
-        } catch (geminiError) {
+        } catch (cerebrasError) {
 
             console.error(
-                "GEMINI DE BA�ARISIZ:",
-                geminiError.message
-             );
-        
-console.error(
-    "GEMINI DETAY:",
-    geminiError
-);
-            throw new Error(
-                "Groq ve Gemini kullan�lam�yor."
+                "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
+                cerebrasError.message
             );
+
+            try {
+
+                console.log(
+                    "AI: GEMINI YEDEK"
+                );
+
+                return await requestGemini(
+                    messages
+                );
+
+            } catch (geminiError) {
+
+                console.error(
+                    "GEMINI DE BAŞARISIZ:",
+                    geminiError.message
+                );
+
+                console.error(
+                    "GEMINI DETAY:",
+                    geminiError
+                );
+
+                throw new Error(
+                    "Groq, Cerebras ve Gemini kullanılamıyor."
+                );
+            }
         }
     }
 }
@@ -3270,7 +3806,9 @@ ${research.query}
 - A�a��daki bilgiler internetten al�nm��t�r.
 - SADECE a�a��daki ara�t�rma sonu�lar�nda bulunan bilgileri kullan.
 - Ara�t�rma sonu�lar�nda olmayan hi�bir bilgiyi tahmin etme veya uydurma.
-- G�ncel fiyat, tarih, saat, ma�, d�viz kuru ve haberlerde �zellikle dikkatli ol.
+- G�ncel, bug�nk�, �u anki, son dakika veya en son bilgi isteniyorsa yaln�zca a�a��daki internet ara�t�rmas�n� esas al.
+- Fiyat, tarih, saat, ma�, skor, d�viz kuru, haber ve benzeri g�ncel bilgilerde eski bilgini kullanma veya tahmin yapma.
+- Ara�t�rma sonu�lar�nda bilgi yeterince a��k de�ilse bilgi uydurma.
 - Bir bilgi kaynaklarda yoksa "Ara�t�rma sonu�lar�nda bu bilgi bulunamad�." de.
 - Kaynaklar birbiriyle �eli�iyorsa bunu a��k�a belirt.
 - "Resmi kaynak", "TCMB", "TFF" gibi ifadeleri yaln�zca ara�t�rma metninde ger�ekten b�yle bir kaynak varsa kullan.
@@ -3779,10 +4317,40 @@ app.post(
             ----------------------------------------- */
 
             const recentMessages =
-                userMemory.slice(
-                    -USER_CONTEXT_MESSAGES
-                );
-
+    userMemory
+        .slice(
+            -USER_CONTEXT_MESSAGES
+        )
+        const cleanRecentMessages =
+    recentMessages.filter(
+        item =>
+            !(
+                item &&
+                item.role === "assistant" &&
+                typeof item.content === "string" &&
+                (
+                    item.content.includes(
+                        "[İNTERNET ARAŞTIRMASI]"
+                    ) ||
+                    item.content.includes(
+                        "27.80"
+                    ) ||
+                    item.content.includes(
+                        "27.88"
+                    )
+                )
+            )
+    );
+        filter(
+            item =>
+                item &&
+                item.content &&
+                !String(
+                    item.content
+                ).includes(
+                    "[İNTERNET ARAŞTIRMASI]"
+                )
+        );
             /* -----------------------------------------
             ARA�TIRMA
             ----------------------------------------- */
@@ -4030,11 +4598,45 @@ kullan.
             /* -----------------------------------------
             GE�M�� MESAJLAR
             ----------------------------------------- */
+            /* -----------------------------------------
+GÜNCEL ARAŞTIRMA ÖNCELİĞİ
+----------------------------------------- */
 
+if (researchContext) {
+
+    messages.push({
+
+        role:
+            "system",
+
+        content:
+            `
+ÇOK ÖNEMLİ:
+
+Güncel internet araştırması mevcut.
+
+Araştırma sonucu ile geçmiş mesajlar
+arasında farklılık varsa HER ZAMAN
+GÜNCEL ARAŞTIRMA SONUCUNU kullan.
+
+Geçmiş konuşmalardaki eski fiyat,
+kur, tarih, saat, skor veya başka
+güncel verileri kullanma.
+
+Araştırma sonucunda açıkça verilen
+rakamları değiştirme.
+
+Özellikle döviz kurlarında araştırma
+sonucundaki TCMB değerlerini aynen kullan.
+`.trim()
+
+    });
+
+}
             for (
-                const item of
-                recentMessages
-            ) {
+    const item of
+    cleanRecentMessages
+) {
 
                 if (
                     !item ||
@@ -4045,7 +4647,26 @@ kullan.
 
                     continue;
                 }
+                   /* Eski internet araştırma cevaplarını
+   tekrar AI'a gönderme */
 
+if (
+    item.role === "assistant" &&
+    (
+        item.content.includes(
+            "[İNTERNET ARAŞTIRMASI]"
+        ) ||
+        item.content.includes(
+            "27.80"
+        ) ||
+        item.content.includes(
+            "27.88"
+        )
+    )
+) {
+
+    continue;
+}
                 messages.push({
 
                     role:
