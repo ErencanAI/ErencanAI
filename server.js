@@ -1990,86 +1990,7 @@ async function webSearch(
         throw error;
     }
 }
-/* =========================================================
-WEB SAYFASI OKUMA
-========================================================= */
 
-async function fetchPageText(
-    url
-) {
-
-    try {
-
-        const response =
-            await fetchWithTimeout(
-                url,
-                {
-                    method:
-                        "GET",
-
-                    headers: {
-
-                        "User-Agent":
-                            "Mozilla/5.0 ErencanAI/8.00",
-
-                        "Accept":
-                            "text/html,application/xhtml+xml"
-                    }
-                },
-                8000
-            );
-
-        if (
-            !response.ok
-        ) {
-
-            return "";
-        }
-
-        const contentType =
-            response.headers.get(
-                "content-type"
-            ) || "";
-
-        if (
-            !contentType.includes(
-                "text/html"
-            )
-        ) {
-
-            return "";
-        }
-
-        const html =
-            await response.text();
-
-        const text =
-            stripHtml(
-                html
-            );
-
-        if (
-            !text
-        ) {
-
-            return "";
-        }
-
-        return text.slice(
-            0,
-            5000
-        );
-
-    } catch (error) {
-
-        console.error(
-            "SAYFA OKUMA HATASI:",
-            error.message
-        );
-
-        return "";
-    }
-}
 
 /* =========================================================
 ARAŞTIRMA SONUCU OLUŞTUR
@@ -2170,7 +2091,7 @@ const trustedResults =
     combined =
         combined.slice(
             0,
-        5000
+        14000
      );      
     return {
 
