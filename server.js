@@ -2198,10 +2198,160 @@ Bu değerler doğrudan TCMB'nin güncel XML verisinden alınmıştır.
         }
     }
 
-      const searchResults =
-    await webSearch(
-        query
+      
+        const researchCategories = {
+
+        gold: [
+            "altın",
+            "gram altın",
+            "çeyrek altın",
+            "yarım altın",
+            "tam altın",
+            "cumhuriyet altını",
+            "ons altın"
+        ],
+
+        currency: [
+            "euro",
+            "eur",
+            "sterlin",
+            "gbp",
+            "frank",
+            "döviz"
+        ],
+
+        cars: [
+            "araba",
+            "otomobil",
+            "araç",
+            "araba fiyatı",
+            "otomobil fiyatı",
+            "ikinci el",
+            "sıfır araba"
+        ],
+
+        phones: [
+            "telefon",
+            "iphone",
+            "samsung",
+            "xiaomi",
+            "oppo",
+            "redmi"
+        ],
+
+        computers: [
+            "bilgisayar",
+            "laptop",
+            "ekran kartı",
+            "işlemci",
+            "ram",
+            "ssd"
+        ],
+
+        games: [
+            "oyun",
+            "steam",
+            "playstation",
+            "xbox",
+            "minecraft",
+            "valorant"
+        ],
+
+        sports: [
+            "maç",
+            "futbol",
+            "basketbol",
+            "transfer",
+            "puan durumu",
+            "fikstür",
+            "skor"
+        ],
+
+        news: [
+            "haber",
+            "son dakika",
+            "gündem",
+            "son gelişmeler"
+        ],
+
+        economy: [
+            "borsa",
+            "enflasyon",
+            "faiz",
+            "ekonomi",
+            "petrol"
+        ],
+
+        housing: [
+            "ev fiyatı",
+            "konut",
+            "kira",
+            "daire fiyatı"
+        ],
+
+        transport: [
+            "uçak bileti",
+            "uçuş",
+            "otobüs bileti",
+            "sefer"
+        ],
+
+        movies: [
+            "film",
+            "dizi",
+            "sinema",
+            "vizyon"
+        ],
+
+        education: [
+            "sınav",
+            "okul takvimi",
+            "eğitim",
+            "üniversite"
+        ],
+
+        events: [
+            "konser",
+            "festival",
+            "etkinlik"
+        ]
+
+    };
+
+    let detectedCategory =
+        "general";
+
+    for (
+        const category of
+        Object.keys(
+            researchCategories
+        )
+    ) {
+
+        if (
+            researchCategories[
+                category
+            ].some(
+                word =>
+                    lowerQuery.includes(
+                        word
+                    )
+            )
+        ) {
+
+            detectedCategory =
+                category;
+
+            break;
+        }
+    }
+
+    console.log(
+        "ARAŞTIRMA KATEGORİSİ:",
+        detectedCategory
     );
+
+    
     const lowerQuery =
         String(query || "").toLowerCase();
 
