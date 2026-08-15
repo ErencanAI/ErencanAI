@@ -15,58 +15,77 @@ const PORT =
     Number(process.env.PORT) || 3000;
 
 /* =========================================================
-GROQ
+GROQ → GEMINI YEDEK SİSTEMİ
 ========================================================= */
 
-const GROQ_API_KEY =
-    process.env.GROQ_API_KEY ||
-    process.env.GR0Q_API_KEY ||
-    "";
-const GEMINI_API_KEY =
-    process.env.GEMINI_API_KEY ||
-    "";
-    const CEREBRAS_API_KEY =
-    process.env.CEREBRAS_API_KEY ||
-    "";
-const GROQ_URL =
-    "https://api.groq.com/openai/v1/chat/completions";
+async function requestAI(
+    messages
+) {
 
-const GROQ_MODEL = "openai/gpt-oss-20b";
-const CEREBRAS_URL =
-    "https://api.cerebras.ai/v1/chat/completions";
+    try {
 
-const CEREBRAS_MODEL =
-    "gpt-oss-120b";
+        console.log(
+            "AI: GROQ"
+        );
 
-   /* =========================================================
-CLOUDFLARE
-========================================================= */
+        return await requestGroq(
+            messages
+        );
 
-const CLOUDFLARE_ACCOUNT_ID =
-    process.env.CLOUDFLARE_ACCOUNT_ID ||
-    "";
+    } catch (groqError) {
 
-const CLOUDFLARE_API_TOKEN =
-    process.env.CLOUDFLARE_API_TOKEN ||
-    "";
+        console.error(
+            "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
+            groqError.message
+        );
 
-console.log(
-    "CLOUDFLARE KEY DURUMU:",
-    CLOUDFLARE_API_TOKEN
-        ? "BULUNDU"
-        : "YOK"
-);
+        try {
 
-const CLOUDFLARE_MODEL =
-    "@cf/meta/llama-3.1-8b-instruct-fast";
+            console.log(
+                "AI: CEREBRAS YEDEK"
+            );
 
-const CLOUDFLARE_URL =
-    "https://api.cloudflare.com/client/v4/accounts/" +
-    CLOUDFLARE_ACCOUNT_ID +
-    "/ai/run/" +
-    CLOUDFLARE_MODEL;
-/* =========================================================
-ARA?TIRMA
+            return await requestCerebras(
+                messages
+            );
+
+        } catch (cerebrasError) {
+
+            console.error(
+                "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
+                cerebrasError.message
+            );
+
+            try {
+
+                console.log(
+                    "AI: GEMINI YEDEK"
+                );
+
+                return await requestGemini(
+                    messages
+                );
+
+            } catch (geminiError) {
+
+                console.error(
+                    "GEMINI DE BAŞARISIZ:",
+                    geminiError.message
+                );
+
+                console.error(
+                    "GEMINI DETAY:",
+                    geminiError
+                );
+
+                throw new Error(
+                    "Groq, Cerebras ve Gemini kullanılamıyor."
+                );
+            }
+        }
+    }
+}
+/* =========================================================`r`nARA?TIRMA
 ========================================================= */
 
 const SEARCH_URL =
@@ -4267,6 +4286,7 @@ async function requestAI(
     messages
 ) {
 
+
     try {
 
         console.log(
@@ -4280,7 +4300,7 @@ async function requestAI(
     } catch (groqError) {
 
         console.error(
-            "GROQ BA�ARISIZ, CEREBRAS'A GE��L�YOR:",
+            "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
             groqError.message
         );
 
@@ -4297,7 +4317,7 @@ async function requestAI(
         } catch (cerebrasError) {
 
             console.error(
-                "CEREBRAS DA BA�ARISIZ, GEMINI'YE GE��L�YOR:",
+                "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
                 cerebrasError.message
             );
 
@@ -4311,11 +4331,10 @@ async function requestAI(
                     messages
                 );
 
-          
-                           } catch (geminiError) {
+            } catch (geminiError) {
 
                 console.error(
-                    "GEMINI DE BA�ARISIZ:",
+                    "GEMINI DE BAŞARISIZ:",
                     geminiError.message
                 );
 
@@ -4324,117 +4343,14 @@ async function requestAI(
                     geminiError
                 );
 
-                try {
-
-                    console.log(
-                        "AI: CLOUDFLARE YEDEK"
-                    );
-
-                    return await  requestCloudflare(
-                        messages
-                    );
-
-                } catch (cloudflareError) {
-
-                    console.error(
-                        "CLOUDFLARE DA BAŞARISIZ:",
-                         cloudflareError.message
-                    );
-
-                    throw new Error(
-                        "Groq, Cerebras, Gemini ve Cloudflare kullan�lam�yor."
-                    );
-
-                }
+                throw new Error(
+                    "Groq, Cerebras ve Gemini kullanılamıyor."
+                );
             }
         }
     }
 }
-/* =========================================================
-     CLOUDFLARE YEDEK AI
-========================================================= */
 
-async function requestCloudflare(
-    messages
-) {
-
-    if (
-        !CLOUDFLARE_ACCOUNT_ID ||
-        !CLOUDFLARE_API_TOKEN
-    ) {
-
-        throw new Error(
-            "Cloudflare API bilgileri bulunamad�."
-        );
-    }
-
-    console.log(
-        "CLOUDFLARE �STE�� G�NDER�L�YOR..."
-    );
-
-    const response =
-        await fetch(
-            CLOUDFLARE_URL,
-            {
-                method:
-                    "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json",
-
-                    "Authorization":
-                        "Bearer " +
-                        CLOUDFLARE_API_TOKEN
-                },
-
-                body:
-                    JSON.stringify({
-                        messages:
-                            messages,
-
-                        temperature:
-                            0.20,
-
-                        max_tokens:
-                            700
-                    })
-            }
-        );
-
-    const data =
-        await response.json();
-
-    if (
-        !response.ok
-    ) {
-
-        throw new Error(
-            "Cloudflare HTTP " +
-            response.status +
-            " - " +
-            JSON.stringify(data)
-        );
-    }
-
-    const reply =
-        data &&
-        data.result &&
-        data.result.response;
-
-    if (
-        !reply
-    ) {
-
-        throw new Error(
-            "Cloudflare bo� cevap d�nd�rd�."
-        );
-    }
-
-    return String(
-        reply
-    );
-}
 /* =========================================================
 BA?LANGI? HAFIZALARI
 ========================================================= */
@@ -6543,10 +6459,5 @@ app.listen(
 
     }
 );
-
-
-
-
-
 
 
