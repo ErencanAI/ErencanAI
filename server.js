@@ -85,35 +85,7 @@ async function requestAI(
         }
     }
 }
-/* =========================================================
-CLOUDFLARE
-========================================================= */
-
-const CLOUDFLARE_ACCOUNT_ID =
-    process.env.CLOUDFLARE_ACCOUNT_ID ||
-    "";
-
-const CLOUDFLARE_API_TOKEN =
-    process.env.CLOUDFLARE_API_TOKEN ||
-    "";
-
-console.log(
-    "CLOUDFLARE KEY DURUMU:",
-    CLOUDFLARE_API_TOKEN
-        ? "BULUNDU"
-        : "YOK"
-);
-
-const CLOUDFLARE_MODEL =
-    "@cf/meta/llama-3.1-8b-instruct-fast";
-
-const CLOUDFLARE_URL =
-    "https://api.cloudflare.com/client/v4/accounts/" +
-    CLOUDFLARE_ACCOUNT_ID +
-    "/ai/run/" +
-    CLOUDFLARE_MODEL;
-/* =========================================================
-ARA?TIRMA
+/* =========================================================`r`nARA?TIRMA
 ========================================================= */
 
 const SEARCH_URL =
@@ -6487,4 +6459,5 @@ app.listen(
 
     }
 );
+
 
