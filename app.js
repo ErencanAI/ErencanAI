@@ -12,11 +12,77 @@ const RESEARCH_API_URL = "/api/research";
 const STORAGE_KEY = "erencanai_pro_chats_v1";
 const USER_ID_KEY = "erencanai_pro_user_id_v1";
 const SETTINGS_KEY = "erencanai_pro_settings_v1";
+const DEFAULT_SETTINGS = {
+
+    memory: true,
+
+    animations: true,
+
+    research: true,
+
+    advancedCoding: true,
+
+    certainty: true,
+
+    sources: true,
+
+    deepResearch: true,
+
+    autoMode: true,
+
+    securityCheck: true
+
+};
+
+
+function loadSettings() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                SETTINGS_KEY
+            );
+
+        if (!saved) {
+
+            return {
+                ...DEFAULT_SETTINGS
+            };
+        }
+
+        return {
+            ...DEFAULT_SETTINGS,
+            ...JSON.parse(saved)
+        };
+
+    } catch (error) {
+
+        console.error(
+            "AYARLAR YÜKLENEMEDİ:",
+            error
+        );
+
+        return {
+            ...DEFAULT_SETTINGS
+        };
+    }
+}
+
+
+function saveSettings(settings) {
+
+    localStorage.setItem(
+        SETTINGS_KEY,
+        JSON.stringify(settings)
+    );
+}
 const ErencanAI = {
     isThinking: false,
     chats: [],
     currentChatId: null,
-    userId: null
+    userId: null,
+    settings: loadSettings()
 };
 
 const elements = {};
@@ -368,7 +434,7 @@ function init() {
     renderChatHistory();
 
     console.log(
-        "ERENCANAI PRO 8.00 HAZIR"
+        "ERENCANAI PRO 9.00 HAZIR"
     );
 
     console.log(
