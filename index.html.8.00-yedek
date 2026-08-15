@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="tr">
 <head>
@@ -10,19 +10,19 @@
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
 >
 
-<title>ErencanAI 9.00</title>
+<title>ErencanAI 8.00</title>
 
 <link rel="stylesheet" href="/style.css">
 
 <!-- =====================================================
-     MOBÄ°L ARAÃ‡ BUTONLARI
+     MOBİL ARAÇ BUTONLARI
      ===================================================== -->
 
 <style>
 
     /*
-     * MOBÄ°LDE ARAÅTIR / HAVA DURUMU / HAFIZA
-     * BUTONLARININ GÃ–RÃœNMESÄ°NÄ° GARANTÄ°LE
+     * MOBİLDE ARAŞTIR / HAVA DURUMU / HAFIZA
+     * BUTONLARININ GÖRÜNMESİNİ GARANTİLE
      */
 
     @media (max-width: 800px) {
@@ -51,7 +51,7 @@
             height: auto !important;
             min-height: 46px;
 
-            /* TUÅLARI BÄ°RAZ YUKARI AL */
+            /* TUŞLARI BİRAZ YUKARI AL */
             margin-top: -3px !important;
 
             padding: 0 4px 8px !important;
@@ -139,7 +139,7 @@
             padding:
                 0 2px 7px !important;
 
-            /* DAR EKRANDA DA BÄ°RAZ YUKARIDA */
+            /* DAR EKRANDA DA BİRAZ YUKARIDA */
             margin-top: -3px !important;
         }
 
@@ -158,7 +158,7 @@
 
 
     /*
-     * Ã‡OK DAR EKRANLAR
+     * ÇOK DAR EKRANLAR
      */
 
     @media (max-width: 360px) {
@@ -201,7 +201,7 @@
             </div>
 
             <div class="brand-version">
-                9.00 PRO
+                8.00 PRO
             </div>
 
         </div>
@@ -214,7 +214,7 @@
     <div class="pro-status-card">
 
         <div class="pro-status-icon">
-            â˜…
+            ★
         </div>
 
         <div>
@@ -224,19 +224,19 @@
             </strong>
 
             <small>
-                GeliÅŸmiÅŸ yapay zeka
+                Gelişmiş yapay zeka
             </small>
 
         </div>
 
         <span class="pro-active-badge">
-            AKTÄ°F
+            AKTİF
         </span>
 
     </div>
 
 
-    <!-- YENÄ° SOHBET -->
+    <!-- YENİ SOHBET -->
 
     <button
         class="new-chat-button"
@@ -245,7 +245,7 @@
     >
 
         <span>
-            ï¼‹
+            ＋
         </span>
 
         Yeni Sohbet
@@ -253,10 +253,10 @@
     </button>
 
 
-    <!-- GEÃ‡MÄ°Å -->
+    <!-- GEÇMİŞ -->
 
     <div class="sidebar-section-title">
-        SOHBET GEÃ‡MÄ°ÅÄ°
+        SOHBET GEÇMİŞİ
     </div>
 
     <div
@@ -275,7 +275,7 @@
             type="button"
         >
 
-            ğŸ—‘ï¸
+            🗑️
 
             <span>
                 Bu Sohbeti Temizle
@@ -290,7 +290,7 @@
             type="button"
         >
 
-            ğŸ”
+            🔎
 
             <span>
                 Sohbetlerde Ara
@@ -305,7 +305,7 @@
             type="button"
         >
 
-            âš™ï¸
+            ⚙️
 
             <span>
                 Ayarlar
@@ -360,9 +360,9 @@
                 class="icon-button mobile-menu"
                 id="menuButton"
                 type="button"
-                aria-label="MenÃ¼"
+                aria-label="Menü"
             >
-                â˜°
+                ☰
             </button>
 
 
@@ -383,7 +383,7 @@
                         <span class="status-dot"></span>
 
                         <span>
-                            Ã‡evrimiÃ§i
+                            Çevrimiçi
                         </span>
 
                     </div>
@@ -398,7 +398,7 @@
         <div class="topbar-right">
 
             <span class="version-badge">
-                PRO 9.00
+                PRO 8.00
             </span>
 
             <button
@@ -407,7 +407,7 @@
                 type="button"
                 aria-label="Ayarlar"
             >
-                âš™
+                ⚙
             </button>
 
         </div>
@@ -447,7 +447,7 @@
 
 
                 <div class="pro-welcome-badge">
-                    â˜… ERENCANAI PRO 9.00
+                    ★ ERENCANAI PRO 8.00
                 </div>
 
 
@@ -458,17 +458,17 @@
 
                 <p>
 
-                    SorularÄ±nÄ± cevaplayabilir,
+                    Sorularını cevaplayabilir,
                     kod yazabilir,
-                    araÅŸtÄ±rabilir,
-                    gÃ¼ncel bilgileri kontrol edebilir,
-                    hava durumunu Ã¶ÄŸrenebilir
-                    ve dosyalarÄ±nÄ± inceleyebilirim.
+                    araştırabilir,
+                    güncel bilgileri kontrol edebilir,
+                    hava durumunu öğrenebilir
+                    ve dosyalarını inceleyebilirim.
 
                 </p>
 
 
-                <!-- Ã–NERÄ°LER -->
+                <!-- ÖNERİLER -->
 
                 <div class="suggestions">
 
@@ -476,11 +476,11 @@
                     <button
                         class="suggestion"
                         type="button"
-                        data-prompt="Bana bugÃ¼n yapabileceÄŸim gÃ¼zel bir proje fikri ver."
+                        data-prompt="Bana bugün yapabileceğim güzel bir proje fikri ver."
                     >
 
                         <span>
-                            ğŸ’¡
+                            💡
                         </span>
 
                         <div>
@@ -501,11 +501,11 @@
                     <button
                         class="suggestion"
                         type="button"
-                        data-prompt="JavaScript Ã¶ÄŸrenmeme yardÄ±m et."
+                        data-prompt="JavaScript öğrenmeme yardım et."
                     >
 
                         <span>
-                            ğŸ’»
+                            💻
                         </span>
 
                         <div>
@@ -515,7 +515,7 @@
                             </strong>
 
                             <div>
-                                Kodlama Ã¶ÄŸrenmeme yardÄ±m et
+                                Kodlama öğrenmeme yardım et
                             </div>
 
                         </div>
@@ -526,21 +526,21 @@
                     <button
                         class="suggestion"
                         type="button"
-                        data-prompt="Benim iÃ§in gÃ¼ncel bir konu araÅŸtÄ±r."
+                        data-prompt="Benim için güncel bir konu araştır."
                     >
 
                         <span>
-                            ğŸ”
+                            🔎
                         </span>
 
                         <div>
 
                             <strong>
-                                AraÅŸtÄ±rma
+                                Araştırma
                             </strong>
 
                             <div>
-                                GÃ¼ncel bir konu araÅŸtÄ±r
+                                Güncel bir konu araştır
                             </div>
 
                         </div>
@@ -551,11 +551,11 @@
                     <button
                         class="suggestion"
                         type="button"
-                        data-prompt="BugÃ¼n Konya'da hava nasÄ±l?"
+                        data-prompt="Bugün Konya'da hava nasıl?"
                     >
 
                         <span>
-                            ğŸŒ¤ï¸
+                            🌤️
                         </span>
 
                         <div>
@@ -565,7 +565,7 @@
                             </strong>
 
                             <div>
-                                GÃ¼ncel hava durumunu Ã¶ÄŸren
+                                Güncel hava durumunu öğren
                             </div>
 
                         </div>
@@ -583,7 +583,7 @@
 
 
     <!-- =====================================================
-         MESAJ GÃ–NDERME
+         MESAJ GÖNDERME
          ===================================================== -->
 
     <div class="composer-wrapper">
@@ -591,7 +591,7 @@
         <div class="composer">
 
 
-            <!-- GÄ°RÄ°Å SATIRI -->
+            <!-- GİRİŞ SATIRI -->
 
             <div class="input-row">
 
@@ -607,7 +607,7 @@
                 >
 
 
-                <!-- ATAÃ‡ -->
+                <!-- ATAÇ -->
 
                 <button
                     class="attach-button"
@@ -616,7 +616,7 @@
                     aria-label="Dosya ekle"
                     title="Dosya ekle"
                 >
-                    ğŸ“
+                    📎
                 </button>
 
 
@@ -625,26 +625,26 @@
                 <textarea
                     id="messageInput"
                     rows="1"
-                    placeholder="ErencanAI'ye bir ÅŸey sor..."
+                    placeholder="ErencanAI'ye bir şey sor..."
                     autocomplete="off"
                 ></textarea>
 
 
-                <!-- GÃ–NDER -->
+                <!-- GÖNDER -->
 
                 <button
                     class="send-button"
                     id="sendButton"
                     type="button"
-                    aria-label="GÃ¶nder"
+                    aria-label="Gönder"
                 >
-                    â¤
+                    ➤
                 </button>
 
             </div>
 
 
-            <!-- SEÃ‡Ä°LEN DOSYALAR -->
+            <!-- SEÇİLEN DOSYALAR -->
 
             <div
                 class="selected-files"
@@ -654,7 +654,7 @@
 
 
             <!-- =================================================
-                 ARAÅTIR / HAVA / HAFIZA
+                 ARAŞTIR / HAVA / HAFIZA
                  ================================================= -->
 
             <div
@@ -665,15 +665,15 @@
                 <div class="tool-group">
 
 
-                    <!-- ARAÅTIR -->
+                    <!-- ARAŞTIR -->
 
                     <button
                         class="quick-tool-static"
                         type="button"
                         id="researchToolButton"
-                        aria-label="Ä°nternet araÅŸtÄ±rmasÄ±"
+                        aria-label="İnternet araştırması"
                     >
-                        ğŸ” AraÅŸtÄ±r
+                        🔎 Araştır
                     </button>
 
 
@@ -685,7 +685,7 @@
                         id="weatherToolButton"
                         aria-label="Hava durumu"
                     >
-                        ğŸŒ¤ï¸ Hava Durumu
+                        🌤️ Hava Durumu
                     </button>
 
 
@@ -695,9 +695,9 @@
                         class="quick-tool-static"
                         type="button"
                         id="memoryToolButton"
-                        aria-label="HafÄ±za"
+                        aria-label="Hafıza"
                     >
-                        ğŸ§  HafÄ±za
+                        🧠 Hafıza
                     </button>
 
 
@@ -706,7 +706,7 @@
 
                 <div class="composer-info">
 
-                    Enter: GÃ¶nder Â· Shift + Enter: Yeni satÄ±r
+                    Enter: Gönder · Shift + Enter: Yeni satır
 
                 </div>
 
@@ -719,7 +719,7 @@
         <div class="footer-warning">
 
             ErencanAI bazen hata yapabilir.
-            Ã–nemli bilgileri kontrol et.
+            Önemli bilgileri kontrol et.
 
         </div>
 
@@ -739,296 +739,168 @@
     id="settingsModal"
 >
 
-    <div class="modal-box">
+<div class="modal-box">
 
-        <div class="modal-header">
 
-            <div>
+    <div class="modal-header">
 
-                <h2>
-                    Ayarlar
-                </h2>
+        <div>
 
-                <p>
-                    ErencanAI 9.00 ayarlarÄ±nÄ± yÃ¶net
-                </p>
+            <h2>
+                Ayarlar
+            </h2>
 
-            </div>
-
-            <button
-                class="modal-close"
-                type="button"
-                data-close="settingsModal"
-            >
-                Ã—
-            </button>
-
-        </div>
-
-
-        <div class="settings-list">
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>HafÄ±za</strong>
-
-                    <small>
-                        Sohbet geÃ§miÅŸini hatÄ±rla
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="memorySwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>Animasyonlar</strong>
-
-                    <small>
-                        ArayÃ¼z animasyonlarÄ±nÄ± kullan
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="animationSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>GÃ¼ncel Bilgi AraÅŸtÄ±rmasÄ±</strong>
-
-                    <small>
-                        GÃ¼ncel sorularda internet araÅŸtÄ±rmasÄ±nÄ± kullan
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="researchSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>GeliÅŸmiÅŸ Kodlama Modu</strong>
-
-                    <small>
-                        9.00 geliÅŸmiÅŸ kodlama karar motorunu kullan
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="advancedCodingSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>Kesinlik Modu</strong>
-
-                    <small>
-                        Emin olunmayan bilgileri aÃ§Ä±kÃ§a belirt
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="certaintySwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>KaynaklarÄ± GÃ¶ster</strong>
-
-                    <small>
-                        Ä°nternet araÅŸtÄ±rmasÄ±nda kullanÄ±lan kaynaklarÄ± gÃ¶ster
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="sourcesSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>Derin AraÅŸtÄ±rma</strong>
-
-                    <small>
-                        GerektiÄŸinde daha kapsamlÄ± araÅŸtÄ±rma yap
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="deepResearchSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>Otomatik Mod</strong>
-
-                    <small>
-                        Uygun Ã§alÄ±ÅŸma modunu otomatik seÃ§
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="autoModeSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>GÃ¼venlik KontrolÃ¼</strong>
-
-                    <small>
-                        Kod deÄŸiÅŸikliklerinde ek gÃ¼venlik kontrolÃ¼ yap
-                    </small>
-                </div>
-
-                <label class="switch">
-
-                    <input
-                        type="checkbox"
-                        id="securityCheckSwitch"
-                        checked
-                    >
-
-                    <span></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="setting">
-
-                <div>
-                    <strong>Pro Ã–zellikleri</strong>
-
-                    <small>
-                        ErencanAI Pro 9.00 Ã¶zellikleri
-                    </small>
-                </div>
-
-                <span class="pro-active-badge">
-                    PRO
-                </span>
-
-            </div>
-
+            <p>
+                ErencanAI ayarlarını yönet
+            </p>
 
         </div>
 
 
         <button
-            class="danger-button"
-            id="deleteHistoryButton"
+            class="modal-close"
             type="button"
+            data-close="settingsModal"
         >
-            TÃ¼m Sohbet GeÃ§miÅŸini Sil
+            ×
         </button>
 
     </div>
+
+
+    <div class="settings-list">
+
+
+        <div class="setting">
+
+            <div>
+
+                <strong>
+                    Hafıza
+                </strong>
+
+                <small>
+                    Sohbet geçmişini hatırla
+                </small>
+
+            </div>
+
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="memorySwitch"
+                    checked
+                >
+
+                <span></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting">
+
+            <div>
+
+                <strong>
+                    Animasyonlar
+                </strong>
+
+                <small>
+                    Arayüz animasyonlarını kullan
+                </small>
+
+            </div>
+
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="animationSwitch"
+                    checked
+                >
+
+                <span></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting">
+
+            <div>
+
+                <strong>
+                    Güncel bilgi araştırması
+                </strong>
+
+                <small>
+                    Güncel sorularda araştırma sistemini kullan
+                </small>
+
+            </div>
+
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="researchSwitch"
+                    checked
+                >
+
+                <span></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting">
+
+            <div>
+
+                <strong>
+                    Pro özellikleri
+                </strong>
+
+                <small>
+                    ErencanAI Pro 8.00 özellikleri
+                </small>
+
+            </div>
+
+
+            <span class="pro-active-badge">
+                PRO
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    <button
+        class="danger-button"
+        id="deleteHistoryButton"
+        type="button"
+    >
+        Tüm Sohbet Geçmişini Sil
+    </button>
+
+</div>
 
 </div>
 
 
 <!-- =========================================================
-     GOOGLE GÄ°RÄ°Å MODALI
+     GOOGLE GİRİŞ MODALI
      ========================================================= -->
 
 <div
@@ -1048,7 +920,7 @@
             </h2>
 
             <p>
-                ErencanAI hesabÄ±na giriÅŸ yap
+                ErencanAI hesabına giriş yap
             </p>
 
         </div>
@@ -1059,7 +931,7 @@
             type="button"
             data-close="googleLoginModal"
         >
-            Ã—
+            ×
         </button>
 
     </div>
@@ -1074,14 +946,14 @@
 
 
         <h3>
-            Google ile giriÅŸ
+            Google ile giriş
         </h3>
 
 
         <p>
 
-            HesabÄ±nÄ± baÄŸlayarak sohbet geÃ§miÅŸini
-            cihazlarÄ±n arasÄ±nda kullanabilirsin.
+            Hesabını bağlayarak sohbet geçmişini
+            cihazların arasında kullanabilirsin.
 
         </p>
 
@@ -1097,7 +969,7 @@
 
         <small class="login-note">
 
-            GiriÅŸ sistemi daha sonra etkinleÅŸtirilebilir.
+            Giriş sistemi daha sonra etkinleştirilebilir.
 
         </small>
 
@@ -1130,7 +1002,7 @@
             </h2>
 
             <p>
-                Eski konuÅŸmalarÄ±nda ara
+                Eski konuşmalarında ara
             </p>
 
         </div>
@@ -1141,7 +1013,7 @@
             type="button"
             data-close="searchModal"
         >
-            Ã—
+            ×
         </button>
 
     </div>
@@ -1205,7 +1077,7 @@
             </h2>
 
             <p>
-                ErencanAI'ye dosya gÃ¶nder
+                ErencanAI'ye dosya gönder
             </p>
 
         </div>
@@ -1216,7 +1088,7 @@
             type="button"
             data-close="fileModal"
         >
-            Ã—
+            ×
         </button>
 
     </div>
@@ -1240,7 +1112,7 @@
 
 
 <!-- =========================================================
-     GÃœVENLÄ° BAÅLANGIÃ‡
+     GÜVENLİ BAŞLANGIÇ
      ========================================================= -->
 
 <script>
@@ -1251,7 +1123,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           GENEL DEÄÄ°ÅKENLER
+           GENEL DEĞİŞKENLER
            ===================================================== */
 
         const input =
@@ -1261,7 +1133,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           Ã–NERÄ°LER
+           ÖNERİLER
            ===================================================== */
 
         const suggestions =
@@ -1348,7 +1220,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           MODAL DIÅINA TIKLAMA
+           MODAL DIŞINA TIKLAMA
            ===================================================== */
 
         document
@@ -1517,7 +1389,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           DOSYA ATAÃ‡
+           DOSYA ATAÇ
            ===================================================== */
 
         const attachButton =
@@ -1556,7 +1428,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           DOSYA SEÃ‡Ä°LDÄ°
+           DOSYA SEÇİLDİ
            ===================================================== */
 
         if (fileInput) {
@@ -1622,7 +1494,7 @@ document.addEventListener(
 
 
                             item.textContent =
-                                "ğŸ“ " +
+                                "📎 " +
                                 file.name +
                                 " (" +
                                 sizeMB +
@@ -1643,7 +1515,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ARAÅTIR BUTONU
+           ARAŞTIR BUTONU
            ===================================================== */
 
         const researchButton =
@@ -1662,7 +1534,7 @@ document.addEventListener(
                 function () {
 
                     input.value =
-                        "Bu konu hakkÄ±nda gÃ¼ncel internet araÅŸtÄ±rmasÄ± yap: ";
+                        "Bu konu hakkında güncel internet araştırması yap: ";
 
 
                     input.focus();
@@ -1704,7 +1576,7 @@ document.addEventListener(
                 function () {
 
                     input.value =
-                        "GÃ¼ncel hava durumunu araÅŸtÄ±r ve bana bildir. Konum: ";
+                        "Güncel hava durumunu araştır ve bana bildir. Konum: ";
 
 
                     input.focus();
@@ -1746,7 +1618,7 @@ document.addEventListener(
                 function () {
 
                     input.value =
-                        "HafÄ±zamda benimle ilgili neler var?";
+                        "Hafızamda benimle ilgili neler var?";
 
 
                     input.focus();

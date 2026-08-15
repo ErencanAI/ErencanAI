@@ -1040,35 +1040,6 @@ SADECE DAHA �Y� B�R NEDEN VARSA DE���T�R.
 
 Bir sistem �al��m�yorsa:
 �NCE K�K NEDEN� BUL, SONRA DE���T�R.
-9.00 GELİŞMİŞ KODLAMA KONTROLÜ:
-
-- Bir kod değişikliğinin diğer fonksiyonlar, değişkenler, endpointler ve dosyalar üzerindeki etkisini düşün.
-- Değişiklikten önce mevcut davranışı korumaya çalış.
-- Birden fazla çözüm mümkünse çözümleri güvenlik, uyumluluk, karmaşıklık ve değişiklik miktarı açısından karşılaştır.
-- En küçük ve en güvenli çözümü tercih et.
-- Değişiklik sonrasında hangi özelliklerin test edilmesi gerektiğini belirle.
-- Bir değişikliğin başka bir özelliği bozma ihtimali varsa bunu belirt.
-- Kullanıcı tarafından gönderilen gerçek kodu varsayımsal koddan üstün tut.
-- Kodun yalnızca görünen bölümüne bakarak bağlantılar hakkında kesin varsayım yapma.
-- Bir fonksiyonun başka yerlerde kullanılıp kullanılmadığını kontrol etmeden adını, parametrelerini veya return yapısını değiştirme.
-- Bir API veya kütüphane kullanılıyorsa mevcut kullanım biçimini kontrol et.
-- Çözüm için yeni dependency eklemek son seçenek olsun.
-- Büyük değişiklikleri mümkün olduğunca küçük ve test edilebilir aşamalara böl.
-- Değişiklik tamamlandıktan sonra syntax, mantık, uyumluluk, güvenlik ve performans açısından tekrar kontrol et.
-- Bir çözüm başarısız olursa önceki çözümü tekrar etmek yerine yeni hata kanıtlarını analiz et.
-- Çalışan kodu sırf daha temiz görünüyor diye yeniden yazma.
-
-KODLAMA CEVABI:
-
-Kod değişikliği önerirken mümkün olduğunca:
-1. Sorunu belirt.
-2. Kök nedeni belirt.
-3. Değiştirilecek yeri belirt.
-4. Gerekli minimum değişikliği yap.
-5. Değişikliğin neden güvenli olduğunu belirt.
-6. Test edilmesi gereken noktaları belirt.
-
-Kod kullanıcı tarafından verilmemişse, mevcut dosyanın içeriğini uydurma.
 JAVASCRIPT:
 
 - ES5
@@ -1269,7 +1240,7 @@ Kod i?ine ger?ek API anahtar? koyma.
 PROJE:
 
 Proje:
-ErencanAI 9.00 PRO
+ErencanAI 8.00 PRO
 
 Backend:
 Node.js + Express
@@ -3338,7 +3309,7 @@ const scoreResult =
             return 0;
         }
     };
-   
+    const sourceTexts = [];
 const trustedResults =
     results.filter(
         result =>
@@ -3565,7 +3536,7 @@ async function getWeather(
                 headers: {
 
                     "User-Agent":
-                        "ErencanAI/9.00"
+                        "ErencanAI/8.00"
 
                 }
             }
