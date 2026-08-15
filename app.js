@@ -1,7 +1,7 @@
 "use strict";
 
 /* =====================================================
-ERENCANAI PRO 8.00
+ERENCANAI PRO 9.00
 SOHBET + HAFIZA + İNTERNET ARAŞTIRMASI
 ===================================================== */
 
@@ -11,7 +11,7 @@ const RESEARCH_API_URL = "/api/research";
 
 const STORAGE_KEY = "erencanai_pro_chats_v1";
 const USER_ID_KEY = "erencanai_pro_user_id_v1";
-
+const SETTINGS_KEY = "erencanai_pro_settings_v1";
 const ErencanAI = {
     isThinking: false,
     chats: [],
