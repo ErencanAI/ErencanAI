@@ -13,7 +13,13 @@ SUNUCU
 
 const PORT =
     Number(process.env.PORT) || 3000;
-
+  const CEREBRAS_MODEL =
+    "gpt-oss-120b";
+    const GROQ_MODEL =
+    "openai/gpt-oss-20b";
+    const GROQ_API_KEY =
+    process.env.GROQ_API_KEY ||
+    "";
 /* =========================================================
 GROQ → GEMINI YEDEK SİSTEMİ
 ========================================================= */
