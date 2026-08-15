@@ -4614,16 +4614,7 @@ app.post(
                 )
             )
     );
-           messages.filter(
-    item =>
-        item &&
-        item.content &&
-        !String(
-            item.content
-        ).includes(
-            "[İNTERNET ARAŞTIRMASI]"
-        )
-);
+          
             /* -----------------------------------------
             ARA�TIRMA
             ----------------------------------------- */
