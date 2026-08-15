@@ -26,7 +26,7 @@ const PORT =
 const CEREBRAS_API_KEY =
     process.env.CEREBRAS_API_KEY ||
     "";
-
+const CEREBRAS_URL = "https://api.cerebras.ai/v1/chat/completions";
 const GEMINI_API_KEY =
     process.env.GEMINI_API_KEY ||
     "";
@@ -4062,7 +4062,20 @@ async function requestGroq(
 
                     }
                 );
+console.log(
+    "GROQ KALAN İSTEK:",
+    response.headers.get("x-ratelimit-remaining-requests")
+);
 
+console.log(
+    "GROQ KALAN TOKEN:",
+    response.headers.get("x-ratelimit-remaining-tokens")
+);
+
+console.log(
+    "GROQ LİMİT SIFIRLANMA:",
+    response.headers.get("x-ratelimit-reset-requests")
+);
             clearTimeout(
                 timeout
             );
@@ -5618,7 +5631,7 @@ ${String(
                         "system",
 
                     content:
-                        SYSTEM_PROMPT
+                        `Sen ErencanAI'sın. Kullanıcıyla doğal ve kısa konuş. Kullanıcının dilinde cevap ver. Güncel bilgi gerekiyorsa araştırma sonucunu kullan. Gereksiz açıklama yapma. Kod sorularında mevcut kodu koru ve sadece gerekli değişikliği öner.`
 
                 },
 
@@ -5753,10 +5766,7 @@ sonucundaki TCMB de�erlerini aynen kullan.
     });
 
 }
-            for (
-    const item of
-    cleanRecentMessages
-) {
+            for (const item of cleanRecentMessages.slice(-USER_CONTEXT_MESSAGES)) {
 
                 if (
                     !item ||
@@ -6641,6 +6651,10 @@ app.listen(
 
     }
 );
+
+
+
+
 
 
 
