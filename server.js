@@ -3457,7 +3457,7 @@ async function requestGemini(
 
    const contents =
     messages
-    recentMessages.filter(
+    .filter(
     
         item =>
             item &&
@@ -3649,7 +3649,8 @@ async function requestAI(
                     messages
                 );
 
-            } catch (geminiError) {
+          
+                           } catch (geminiError) {
 
                 console.error(
                     "GEMINI DE BAŞARISIZ:",
@@ -3661,9 +3662,28 @@ async function requestAI(
                     geminiError
                 );
 
-                throw new Error(
-                    "Groq, Cerebras ve Gemini kullanılamıyor."
-                );
+                try {
+
+                    console.log(
+                        "AI: OPENROUTER YEDEK"
+                    );
+
+                    return await requestOpenRouter(
+                        messages
+                    );
+
+                } catch (openRouterError) {
+
+                    console.error(
+                        "OPENROUTER DA BAŞARISIZ:",
+                        openRouterError.message
+                    );
+
+                    throw new Error(
+                        "Groq, Cerebras, Gemini ve OpenRouter kullanılamıyor."
+                    );
+
+                }
             }
         }
     }
@@ -4594,16 +4614,16 @@ app.post(
                 )
             )
     );
-                recentMessages.filter(
-            item =>
-                item &&
-                item.content &&
-                !String(
-                    item.content
-                ).includes(
-                    "[İNTERNET ARAŞTIRMASI]"
-                )
-        );
+           messages.filter(
+    item =>
+        item &&
+        item.content &&
+        !String(
+            item.content
+        ).includes(
+            "[İNTERNET ARAŞTIRMASI]"
+        )
+);
             /* -----------------------------------------
             ARA�TIRMA
             ----------------------------------------- */
