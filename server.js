@@ -1501,50 +1501,152 @@ function shouldResearch(
         return false;
     }
 
-    const researchWords = [
-                "dolar",
-        "usd",
-        "euro",
-        "eur",
-        "sterlin",
-        "gbp",
-        "döviz",
-        "döviz kuru",
-        "döviz kurları",
-        "ara�t�r",
-        "ara�t�r�r m�s�n",
-        "internetten bak",
-        "internetten ara�t�r",
-        "web'den bak",
-        "webden bak",
-        "internete bak",
-        "kaynak bul",
-        "kaynaklar� bul",
-        "g�ncel bilgi",
-        "g�ncel olarak",
-        "son durum",
-        "son geli�meler",
-        "en son",
-        "�u an",
-        "�uan",
-        "�imdi",
-        "bug�n",
-        "d�n",
-        "yar�n",
-        "bu hafta",
-        "bu ay",
-        "2026",
-        "haber",
-        "haberler",
-        "son haberler",
-        "latest",
-        "current",
-        "recent",
-        "news",
-        "what is happening",
-        "what's happening"
+      const researchWords = [
 
-    ];
+    "dolar",
+    "usd",
+    "euro",
+    "eur",
+    "sterlin",
+    "gbp",
+    "frank",
+    "döviz",
+    "döviz kuru",
+    "döviz kurları",
+
+    "altın",
+    "gram altın",
+    "çeyrek altın",
+    "yarım altın",
+    "tam altın",
+    "cumhuriyet altını",
+    "ons altın",
+    "altın fiyatı",
+
+    "araba",
+    "otomobil",
+    "araç",
+    "araba fiyatı",
+    "otomobil fiyatı",
+    "araç fiyatı",
+    "ikinci el araba",
+    "ikinci el araç",
+    "sıfır araba",
+    "sıfır araç",
+    "otomobil fiyatları",
+
+    "telefon",
+    "telefon fiyatı",
+    "telefon fiyatları",
+    "iphone",
+    "samsung",
+    "xiaomi",
+    "oppo",
+    "redmi",
+
+    "bilgisayar",
+    "bilgisayar fiyatı",
+    "bilgisayar fiyatları",
+    "laptop",
+    "laptop fiyatı",
+    "ekran kartı",
+    "ekran kartı fiyatı",
+    "işlemci",
+    "işlemci fiyatı",
+    "ram",
+    "ssd",
+
+    "oyun",
+    "steam",
+    "playstation",
+    "xbox",
+    "minecraft",
+    "valorant",
+
+    "maç",
+    "skor",
+    "transfer",
+    "puan durumu",
+    "fikstür",
+    "futbol",
+    "basketbol",
+    "spor",
+
+    "borsa",
+    "enflasyon",
+    "faiz",
+    "ekonomi",
+    "petrol",
+
+    "konut",
+    "konut fiyatı",
+    "konut fiyatları",
+    "ev fiyatı",
+    "ev fiyatları",
+    "kira",
+    "kira fiyatı",
+
+    "uçak bileti",
+    "uçuş",
+    "otobüs bileti",
+    "sefer",
+
+    "film",
+    "dizi",
+    "sinema",
+    "vizyon",
+    "vizyonda",
+
+    "sınav",
+    "okul takvimi",
+    "eğitim",
+    "üniversite",
+
+    "konser",
+    "festival",
+    "etkinlik",
+
+    "haber",
+    "haberler",
+    "son dakika",
+    "son haberler",
+    "gündem",
+    "son gelişmeler",
+
+    "araştır",
+    "araştırır mısın",
+    "internetten bak",
+    "internetten araştır",
+    "web'den bak",
+    "webden bak",
+    "internete bak",
+    "kaynak bul",
+    "kaynakları bul",
+    "güncel bilgi",
+    "güncel olarak",
+    "son durum",
+    "son gelişmeler",
+    "en son",
+    "şu an",
+    "şuan",
+    "şimdi",
+    "bugün",
+    "dün",
+    "yarın",
+    "bu hafta",
+    "bu ay",
+    "2026",
+    "latest",
+    "current",
+    "recent",
+    "news",
+    "what is happening",
+    "what's happening"
+
+];
+                
+
+    
 
     for (
         const word of researchWords
@@ -2333,9 +2435,9 @@ Bu değerler doğrudan TCMB'nin güncel XML verisinden alınmıştır.
                 category
             ].some(
                 word =>
-                    lowerQuery.includes(
-                        word
-                    )
+                    currencyQuery.includes(
+    word
+)
             )
         ) {
 
