@@ -1,12 +1,1 @@
-{
-  "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "erencanai",
-  "main": "cloudflare/index.js",
-  "compatibility_date": "2026-08-15",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "assets": {
-    "directory": "./public"
-  }
-}
+
