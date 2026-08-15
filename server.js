@@ -37,6 +37,25 @@ const CEREBRAS_URL =
 
 const CEREBRAS_MODEL =
     "gpt-oss-120b";
+
+    /* =========================================================
+OPENROUTER
+========================================================= */
+
+const OPENROUTER_API_KEY =
+    process.env.OPENROUTER_API_KEY ||
+    "";
+console.log(
+    "OPENROUTER KEY DURUMU:",
+    OPENROUTER_API_KEY
+        ? "BULUNDU"
+        : "YOK"
+);
+const OPENROUTER_URL =
+    "https://openrouter.ai/api/v1/chat/completions";
+
+const OPENROUTER_MODEL =
+    "openai/gpt-oss-20b";
 /* =========================================================
 ARA�TIRMA
 ========================================================= */
@@ -3687,6 +3706,97 @@ async function requestAI(
             }
         }
     }
+}
+/* =========================================================
+OPENROUTER YEDEK AI
+========================================================= */
+
+async function requestOpenRouter(
+    messages
+) {
+
+    if (
+        !OPENROUTER_API_KEY
+    ) {
+
+        throw new Error(
+            "OpenRouter API anahtarı bulunamadı."
+        );
+    }
+
+    const response =
+        await fetch(
+            OPENROUTER_URL,
+            {
+                method:
+                    "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        "Bearer " +
+                        OPENROUTER_API_KEY,
+
+                    "HTTP-Referer":
+                        "http://localhost:3000",
+
+                    "X-Title":
+                        "ErencanAI"
+                },
+
+                body:
+                    JSON.stringify({
+                        model:
+                            OPENROUTER_MODEL,
+
+                        messages:
+                            messages,
+
+                        temperature:
+                            0.20,
+
+                        max_tokens:
+                            700
+                    })
+            }
+        );
+
+    const data =
+        await response.json();
+
+    if (
+        !response.ok
+    ) {
+
+        throw new Error(
+            "OpenRouter HTTP " +
+            response.status +
+            " - " +
+            JSON.stringify(data)
+        );
+    }
+
+    const reply =
+        data &&
+        data.choices &&
+        data.choices[0] &&
+        data.choices[0].message &&
+        data.choices[0].message.content;
+
+    if (
+        !reply
+    ) {
+
+        throw new Error(
+            "OpenRouter boş cevap döndürdü."
+        );
+    }
+
+    return String(
+        reply
+    );
 }
 /* =========================================================
 BA�LANGI� HAFIZALARI
