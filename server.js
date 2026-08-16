@@ -34,73 +34,6 @@ const GEMINI_API_KEY =
 GROQ � CEBRAS � GEMINI YEDEK S�STEM
 ========================================================= */
 
-async function requestAI(
-    messages
-) {
-
-    try {
-
-        console.log(
-            "AI: GROQ"
-        );
-
-        return await requestGroq(
-            messages
-        );
-
-    } catch (groqError) {
-
-        console.error(
-            "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
-            groqError.message
-        );
-
-        try {
-
-            console.log(
-                "AI: CEREBRAS YEDEK"
-            );
-
-            return await requestCerebras(
-                messages
-            );
-
-        } catch (cerebrasError) {
-
-            console.error(
-                "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
-                cerebrasError.message
-            );
-
-            try {
-
-                console.log(
-                    "AI: GEMINI YEDEK"
-                );
-
-                return await requestGemini(
-                    messages
-                );
-
-            } catch (geminiError) {
-
-                console.error(
-                    "GEMINI DE BAŞARISIZ:",
-                    geminiError.message
-                );
-
-                console.error(
-                    "GEMINI DETAY:",
-                    geminiError
-                );
-
-                throw new Error(
-                    "Groq, Cerebras ve Gemini kullanılamıyor."
-                );
-            }
-        }
-    }
-}
 /* =========================================================`r`nARA?TIRMA
 ========================================================= */
 
@@ -4467,6 +4400,282 @@ async function requestAI(
     messages
 ) {
 
+    const lastUserMessage =
+        messages
+            .filter(
+                m =>
+                    m &&
+                    m.role === "user"
+            )
+            .pop()
+            ?.content
+            ?.trim()
+            .toLowerCase() || "";
+           console.log(
+    "YEREL TEST MESAJI:",
+    JSON.stringify(lastUserMessage)
+);
+
+    /* =========================================================
+    BASİT MESAJLAR
+    API KULLANILMAZ
+    ========================================================= */
+
+    const simpleMessages = {
+
+        "selam":
+            "Selam! 😊",
+
+        "slm":
+            "Selam! 😊",
+
+        "merhaba":
+            "Merhaba! Size nasıl yardımcı olabilirim?",
+
+        "mrb":
+            "Merhaba! 😊",
+
+        "hey":
+            "Hey! 👋",
+
+        "sa":
+            "Selam! 😊",
+
+        "s.a.":
+            "Selam! 😊",
+
+        "günaydın":
+            "Günaydın! ☀️",
+
+        "iyi akşamlar":
+            "İyi akşamlar! 😊",
+
+        "iyi geceler":
+            "İyi geceler! 🌙",
+
+        "teşekkürler":
+            "Rica ederim! 😊",
+
+        "teşekkür ederim":
+            "Rica ederim! 😊",
+
+        "sağ ol":
+            "Ne demek! 😊",
+
+        "tamam":
+            "Tamamdır! 👍",
+
+        "olur":
+            "Olur! 👍",
+
+        "peki":
+            "Peki! 😊",
+
+        "anladım":
+            "Harika! 👍",
+
+        "görüşürüz":
+            "Görüşürüz! 👋",
+
+        "bye":
+            "Görüşürüz! 👋"
+
+    };
+
+    /* =========================================================
+AKILLI API'SİZ MOTOR - PAKET 1
+SOHBET + ERÉNCANAI + TEPKİLER
+========================================================= */
+
+const localRules = [
+
+    /* -------------------------
+    NASILSIN
+    ------------------------- */
+
+    {
+        words: [
+            "nasılsın",
+            "nasilsin",
+            "iyi misin",
+            "iyisin"
+        ],
+        answer:
+            "İyiyim knk 😎 Sen nasılsın?"
+    },
+
+    /* -------------------------
+    NABER
+    ------------------------- */
+
+    {
+        words: [
+            "naber",
+            "ne haber",
+            "n'aber"
+        ],
+        answer:
+            "İyi gidiyor knk 😎 Sende ne var ne yok?"
+    },
+
+    /* -------------------------
+    NE YAPIYORSUN
+    ------------------------- */
+
+    {
+        words: [
+            "ne yapıyorsun",
+            "ne yapiyorsun",
+            "napıyorsun",
+            "napıyosun"
+        ],
+        answer:
+            "Seninle konuşuyorum knk 😎"
+    },
+
+    /* -------------------------
+    KİMSİN
+    ------------------------- */
+
+    {
+        words: [
+            "kimsin",
+            "sen kimsin",
+            "sen nesin"
+        ],
+        answer:
+            "Ben ErencanAI 🤖"
+    },
+
+    /* -------------------------
+    ADIN NE
+    ------------------------- */
+
+    {
+        words: [
+            "adın ne",
+            "adin ne",
+            "ismin ne"
+        ],
+        answer:
+            "Benim adım ErencanAI 🤖"
+    },
+
+    /* -------------------------
+    YAPAY ZEKA MISIN
+    ------------------------- */
+
+    {
+        words: [
+            "yapay zeka mısın",
+            "yapay zeka misin",
+            "ai misin"
+        ],
+        answer:
+            "Evet 😎 Ben bir yapay zekâyım."
+    },
+
+    /* -------------------------
+    TEŞEKKÜR
+    ------------------------- */
+
+    {
+        words: [
+            "teşekkür",
+            "teşekkürler",
+            "teşekkür ederim",
+            "sağ ol",
+            "sag ol",
+            "eyvallah"
+        ],
+        answer:
+            "Rica ederim knk! 😎"
+    },
+
+    /* -------------------------
+    ÖZÜR
+    ------------------------- */
+
+    {
+        words: [
+            "özür dilerim",
+            "ozur dilerim",
+            "pardon"
+        ],
+        answer:
+            "Sorun yok knk 😄"
+    },
+
+    /* -------------------------
+    SÜPERSİN
+    ------------------------- */
+
+    {
+        words: [
+            "süpersin",
+            "supersin",
+            "çok iyisin",
+            "cok iyisin",
+            "harikasın",
+            "harikasin"
+        ],
+        answer:
+            "Eyvallah knk 😎🔥"
+    },
+
+    /* -------------------------
+    GÖRÜŞÜRÜZ
+    ------------------------- */
+
+    {
+        words: [
+            "görüşürüz",
+            "gorusuruz",
+            "sonra görüşürüz",
+            "bye bye"
+        ],
+        answer:
+            "Görüşürüz knk! 👋😎"
+    }
+
+];
+
+for (const rule of localRules) {
+
+    const matched = rule.words.some(
+        word =>
+            lastUserMessage === word ||
+            lastUserMessage.includes(word)
+    );
+
+    console.log(
+        "LOCAL RULE:",
+        JSON.stringify(rule.words),
+        "MATCH:",
+        matched
+    );
+
+    if (matched) {
+
+        console.log(
+            "AI: YEREL AKILLI CEVAP (0 API TOKEN)"
+        );
+
+        return {
+            choices: [
+                {
+                    message: {
+                        content: rule.answer
+                    }
+                }
+            ]
+        };
+    }
+}
+
+    /* =========================================================
+    NORMAL / GÜNCEL / KARMAŞIK SORULAR
+    ========================================================= */
 
     try {
 
@@ -5849,6 +6058,14 @@ ARA?TIRMA KURALLARI:
 Kaynak metninde bulunmayan kesin rakamlar? veya kaynaklar? asla kendin olu?turma.`
     });
 }
+console.log(
+    "USER MESSAGE DEĞERİ:",
+    JSON.stringify(message)
+);
+messages.push({
+    role: "user",
+    content: message
+});
 console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             console.log(
                 "GROQ ?STE?? G?NDER?L?YOR..."
@@ -6651,6 +6868,7 @@ app.listen(
 
     }
 );
+
 
 
 
