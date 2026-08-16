@@ -4399,6 +4399,10 @@ GROQ ? GEMINI YEDEK S?STEM?
 async function requestAI(
     messages
 ) {
+    console.log(
+    "AKTİF SERVER DOSYASI:",
+    __filename
+);
 
     const lastUserMessage =
         messages
@@ -4415,7 +4419,27 @@ async function requestAI(
     "YEREL TEST MESAJI:",
     JSON.stringify(lastUserMessage)
 );
+/* =========================================================
+MESAJ NORMALİZASYONU
+UZATILMIŞ HARFLERİ YAKALAR
+slmmm -> slm
+selammmm -> selam
+naberrrr -> naber
+knkkkk -> knk
+========================================================= */
 
+const normalizedMessage =
+    lastUserMessage
+        .replace(
+            /(.)\1{2,}/g,
+            "$1$1"
+        )
+        .trim();
+
+console.log(
+    "NORMALİZE MESAJ:",
+    JSON.stringify(normalizedMessage)
+);
     /* =========================================================
     BASİT MESAJLAR
     API KULLANILMAZ
@@ -4488,7 +4512,547 @@ SOHBET + ERÉNCANAI + TEPKİLER
 ========================================================= */
 
 const localRules = [
+    {
+    words: [
+        "selam",
+        "slm",
+        "merhaba",
+        "mrb",
+        "hey",
+        "sa",
+        "s.a.",
+        "selamlar"
+    ],
+    answer:
+        "Selam! 😊"
+},
+{
+    words: [
+        "selam",
+        "slm",
+        "merhaba",
+        "mrb",
+        "hey",
+        "heyoo",
+        "sa",
+        "s.a.",
+        "selamlar",
+        "selam knk",
+        "merhabalar"
+    ],
+    answer:
+        "Selam! 😊"
+},
 
+{
+    words: [
+        "nasılsın",
+        "nasilsin",
+        "iyi misin",
+        "iyisin",
+        "nasıl gidiyor",
+        "nasil gidiyor",
+        "keyifler nasıl",
+        "keyifler nasil"
+    ],
+    answer:
+        "İyiyim knk 😎 Sen nasılsın?"
+},
+
+{
+    words: [
+        "naber",
+        "ne haber",
+        "n'aber",
+        "ne var ne yok",
+        "napıyorsun",
+        "napıyosun",
+        "ne yapıyorsun",
+        "ne yapiyorsun"
+    ],
+    answer:
+        "İyi gidiyor knk 😎 Sende ne var ne yok?"
+},
+
+{
+    words: [
+        "kimsin",
+        "sen kimsin",
+        "sen nesin",
+        "sen kimsin ya"
+    ],
+    answer:
+        "Ben ErencanAI 🤖"
+},
+
+{
+    words: [
+        "adın ne",
+        "adin ne",
+        "ismin ne",
+        "senin adın ne",
+        "senin adin ne"
+    ],
+    answer:
+        "Benim adım ErencanAI 🤖"
+},
+
+{
+    words: [
+        "yapay zeka mısın",
+        "yapay zeka misin",
+        "ai misin",
+        "robot musun"
+    ],
+    answer:
+        "Evet 😎 Ben ErencanAI."
+},
+
+{
+    words: [
+        "teşekkürler",
+        "teşekkür ederim",
+        "teşekkür",
+        "sağ ol",
+        "sag ol",
+        "eyvallah",
+        "sağolasın",
+        "sagol"
+    ],
+    answer:
+        "Rica ederim knk 😎"
+},
+
+{
+    words: [
+        "süpersin",
+        "supersin",
+        "çok iyisin",
+        "cok iyisin",
+        "harikasın",
+        "harikasin",
+        "kralsın",
+        "kralsin",
+        "adamsın",
+        "adamsin"
+    ],
+    answer:
+        "Eyvallah knk 😎🔥"
+},
+
+{
+    words: [
+        "haha",
+        "hahaha",
+        "ahah",
+        "ahaha",
+        "lol",
+        "xd"
+    ],
+    answer:
+        "😂😂"
+},
+
+{
+    words: [
+        "sıkıldım",
+        "sikildim",
+        "canım sıkılıyor",
+        "canim sıkiliyor"
+    ],
+    answer:
+        "O zaman biraz eğlenelim 😎🎮"
+},
+
+{
+    words: [
+        "çok mutluyum",
+        "cok mutluyum",
+        "mutluyum",
+        "sevindim"
+    ],
+    answer:
+        "Ooo süper! 😎🔥"
+},
+
+{
+    words: [
+        "üzgünüm",
+        "uzgunum",
+        "moralim bozuk",
+        "moralim kötü",
+        "moralim kotu"
+    ],
+    answer:
+        "Umarım biraz daha iyi hissedersin. Ben buradayım. 🤝"
+},
+
+{
+    words: [
+        "aynen",
+        "doğru",
+        "dogru",
+        "kesinlikle",
+        "katılıyorum",
+        "katiliyorum"
+    ],
+    answer:
+        "Aynen 😎👍"
+},
+
+{
+    words: [
+        "tamamdır",
+        "tamamdir",
+        "olur",
+        "peki",
+        "aynen"
+    ],
+    answer:
+        "Tamamdır knk 👍"
+},
+
+{
+    words: [
+        "pardon",
+        "özür dilerim",
+        "ozur dilerim"
+    ],
+    answer:
+        "Sorun yok knk 😄"
+},
+
+{
+    words: [
+        "görüşürüz",
+        "gorusuruz",
+        "bye",
+        "bye bye",
+        "kaçtım",
+        "kactim"
+    ],
+    answer:
+        "Görüşürüz knk! 👋😎"
+},
+{
+    words: [
+        "iyi geceler",
+        "iyi geceler knk"
+    ],
+    answer:
+        "İyi geceler knk! 🌙😴"
+},
+
+{
+    words: [
+        "günaydın",
+        "gunaydin",
+        "günaydın knk"
+    ],
+    answer:
+        "Günaydın knk! ☀️😎"
+},
+
+{
+    words: [
+        "iyi akşamlar",
+        "iyi aksamlar"
+    ],
+    answer:
+        "İyi akşamlar knk! 🌆😊"
+},
+
+{
+    words: [
+        "iyi günler",
+        "iyi gunler"
+    ],
+    answer:
+        "İyi günler! 😊"
+},
+
+{
+    words: [
+        "uyuyor musun",
+        "uyuyon mu",
+        "uyuyor musun ya"
+    ],
+    answer:
+        "Yok knk, buradayım 😎🤖"
+},
+
+{
+    words: [
+        "burada mısın",
+        "burda mısın",
+        "burada misin",
+        "burda misin"
+    ],
+    answer:
+        "Buradayım knk 😎"
+},
+
+{
+    words: [
+        "beni duyuyor musun",
+        "duyuyor musun",
+        "beni görüyor musun",
+        "görüyor musun"
+    ],
+    answer:
+        "Mesajını görüyorum knk 😎👀"
+},
+
+{
+    words: [
+        "yardım",
+        "yardım et",
+        "yardım eder misin",
+        "yardim",
+        "yardim et"
+    ],
+    answer:
+        "Tabii knk 😎 Ne konuda yardım lazım?"
+},
+
+{
+    words: [
+        "hazır mısın",
+        "hazir misin",
+        "hazırız",
+        "haziriz"
+    ],
+    answer:
+        "Hazırım! 🚀😎"
+},
+
+{
+    words: [
+        "başlayalım",
+        "baslayalim",
+        "başla",
+        "basla"
+    ],
+    answer:
+        "Hadi başlayalım! 🚀🔥"
+},
+
+{
+    words: [
+        "devam",
+        "devam edelim",
+        "devamke",
+        "devam et"
+    ],
+    answer:
+        "Devammm 😎🔥"
+},
+
+{
+    words: [
+        "bekle",
+        "bir dakika",
+        "1 dakika",
+        "dur",
+        "dur biraz"
+    ],
+    answer:
+        "Tamam, bekliyorum 😎"
+},
+
+{
+    words: [
+        "çok güzel",
+        "cok guzel",
+        "güzel",
+        "guzel",
+        "mükemmel",
+        "mukemmel"
+    ],
+    answer:
+        "Aynen knk 😎🔥"
+},
+
+{
+    words: [
+        "vay",
+        "vay be",
+        "oha",
+        "yuh",
+        "wow"
+    ],
+    answer:
+        "😂🔥"
+},
+
+{
+    words: [
+        "ciddi misin",
+        "ciddisin",
+        "gerçekten mi",
+        "gercekten mi"
+    ],
+    answer:
+        "Evet knk 😎"
+},
+
+{
+    words: [
+        "emin misin",
+        "emin misin ya"
+    ],
+    answer:
+        "Elimden geldiğince eminim 😎"
+},
+
+{
+    words: [
+        "neden",
+        "niye",
+        "niçin",
+        "nicin"
+    ],
+    answer:
+        "Bunun birkaç nedeni olabilir 😎"
+},
+
+{
+    words: [
+        "anlamadım",
+        "anlamadim",
+        "anlamıyorum",
+        "anlamiyorum"
+    ],
+    answer:
+        "Sorun değil knk 😎 İstersen daha basit anlatayım."
+},
+
+{
+    words: [
+        "anlat",
+        "açıkla",
+        "acikla",
+        "detaylandır",
+        "detaylandir"
+    ],
+    answer:
+        "Tabii knk 😎"
+},
+
+{
+    words: [
+        "unutma",
+        "bunu unutma"
+    ],
+    answer:
+        "Tamam knk 👍"
+},
+
+{
+    words: [
+        "çok iyi",
+        "cok iyi",
+        "müthiş",
+        "muthis",
+        "efsane",
+        "efsanesin"
+    ],
+    answer:
+        "🔥🔥 Efsane knk!"
+},
+
+{
+    words: [
+        "şaka yapıyorum",
+        "saka yapiyorum",
+        "şaka",
+        "saka"
+    ],
+    answer:
+        "😂 Tamam knk, anladım."
+},
+
+{
+    words: [
+        "gerçekten",
+        "gercekten"
+    ],
+    answer:
+        "Aynen 😎"
+},
+
+{
+    words: [
+        "hmm",
+        "hımm",
+        "hmmm",
+        "hmmmm"
+    ],
+    answer:
+        "Hmm 🤔"
+},
+
+{
+    words: [
+        "ok",
+        "okay",
+        "okey",
+        "oki"
+    ],
+    answer:
+        "Tamamdır 😎👍"
+},
+
+{
+    words: [
+        "evet",
+        "evet knk"
+    ],
+    answer:
+        "👍😎"
+},
+
+{
+    words: [
+        "hayır",
+        "hayir",
+        "yok"
+    ],
+    answer:
+        "Tamamdır 😄"
+},
+
+{
+    words: [
+        "😂",
+        "🤣",
+        "😆",
+        "😄"
+    ],
+    answer:
+        "😂😂😂"
+},
+
+{
+    words: [
+        "🔥",
+        "🔥🔥",
+        "🔥🔥🔥"
+    ],
+    answer:
+        "🔥😎🔥"
+},
+
+{
+    words: [
+        "❤️",
+        "❤",
+        "💙",
+        "💚"
+    ],
+    answer:
+        "😎❤️"
+},
     /* -------------------------
     NASILSIN
     ------------------------- */
@@ -4639,13 +5203,24 @@ const localRules = [
     }
 
 ];
+console.log(
+    "LOCAL RULE SAYISI:",
+    localRules.length
+);
 
+console.log(
+    "SLM KURALI VAR MI:",
+    localRules.some(
+        rule =>
+            rule.words.includes("slm")
+    )
+);
 for (const rule of localRules) {
 
     const matched = rule.words.some(
         word =>
-            lastUserMessage === word ||
-            lastUserMessage.includes(word)
+            normalizedMessage === word ||
+normalizedMessage.includes(word)
     );
 
     console.log(
@@ -4672,7 +5247,241 @@ for (const rule of localRules) {
         };
     }
 }
+/* =========================================================
+API'SİZ MOTOR - PAKET 2
+SAAT + TARİH + MATEMATİK + BİRİM
+========================================================= */
 
+/* -------------------------
+SAAT
+------------------------- */
+
+if (
+    lastUserMessage.includes("saat kaç") ||
+    lastUserMessage.includes("saat kact") ||
+    lastUserMessage === "saat"
+) {
+
+    const now = new Date();
+
+    const time =
+        new Intl.DateTimeFormat(
+            "tr-TR",
+            {
+                timeZone: "Europe/Istanbul",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        ).format(now);
+
+    console.log(
+        "AI: YEREL SAAT (0 API TOKEN)"
+    );
+
+    return {
+        choices: [
+            {
+                message: {
+                    content:
+                        `Şu an saat ${time} 🕐`
+                }
+            }
+        ]
+    };
+}
+
+
+/* -------------------------
+TARİH
+------------------------- */
+
+if (
+    lastUserMessage.includes(
+        "bugünün tarihi"
+    ) ||
+    lastUserMessage.includes(
+        "bugun hangi gün"
+    ) ||
+    lastUserMessage.includes(
+        "bugün hangi gün"
+    ) ||
+    lastUserMessage === "tarih"
+) {
+
+    const now = new Date();
+
+    const date =
+        new Intl.DateTimeFormat(
+            "tr-TR",
+            {
+                timeZone: "Europe/Istanbul",
+                dateStyle: "full"
+            }
+        ).format(now);
+
+    console.log(
+        "AI: YEREL TARİH (0 API TOKEN)"
+    );
+
+    return {
+        choices: [
+            {
+                message: {
+                    content:
+                        `Bugün ${date}. 📅`
+                }
+            }
+        ]
+    };
+}
+
+
+/* -------------------------
+BASİT MATEMATİK
+------------------------- */
+
+const mathMatch =
+    lastUserMessage.match(
+        /^(-?\d+(?:\.\d+)?)\s*([+\-*/])\s*(-?\d+(?:\.\d+)?)$/
+    );
+
+if (mathMatch) {
+
+    const a =
+        Number(mathMatch[1]);
+
+    const operator =
+        mathMatch[2];
+
+    const b =
+        Number(mathMatch[3]);
+
+    let result;
+
+    if (operator === "+") {
+        result = a + b;
+    }
+
+    if (operator === "-") {
+        result = a - b;
+    }
+
+    if (operator === "*") {
+        result = a * b;
+    }
+
+    if (operator === "/") {
+
+        if (b === 0) {
+            result =
+                "Sıfıra bölme yapılamaz.";
+        } else {
+            result = a / b;
+        }
+    }
+
+    console.log(
+        "AI: YEREL MATEMATİK (0 API TOKEN)"
+    );
+
+    return {
+        choices: [
+            {
+                message: {
+                    content:
+                        `Sonuç: ${result} 🧮`
+                }
+            }
+        ]
+    };
+}
+
+
+/* =========================================================
+BİRİM DÖNÜŞÜMLERİ
+========================================================= */
+
+const unitMatch =
+    lastUserMessage.match(
+        /^(\d+(?:\.\d+)?)\s*(km|m|cm|mm|kg|g|mg|l|ml)\s*(?:kaç|kac)\s*(km|m|cm|mm|kg|g|mg|l|ml)$/
+    );
+
+if (unitMatch) {
+
+    const value =
+        Number(unitMatch[1]);
+
+    const from =
+        unitMatch[2];
+
+    const to =
+        unitMatch[3];
+
+    const units = {
+
+        mm: 0.001,
+        cm: 0.01,
+        m: 1,
+        km: 1000,
+
+        mg: 0.001,
+        g: 1,
+        kg: 1000,
+
+        ml: 0.001,
+        l: 1
+
+    };
+
+    const compatible =
+        (
+            ["mm", "cm", "m", "km"]
+                .includes(from)
+            &&
+            ["mm", "cm", "m", "km"]
+                .includes(to)
+        )
+        ||
+        (
+            ["mg", "g", "kg"]
+                .includes(from)
+            &&
+            ["mg", "g", "kg"]
+                .includes(to)
+        )
+        ||
+        (
+            ["ml", "l"]
+                .includes(from)
+            &&
+            ["ml", "l"]
+                .includes(to)
+        );
+
+    if (compatible) {
+
+        const base =
+            value * units[from];
+
+        const result =
+            base / units[to];
+
+        console.log(
+            "AI: YEREL BİRİM (0 API TOKEN)"
+        );
+
+        return {
+            choices: [
+                {
+                    message: {
+                        content:
+                            `${value} ${from} = ${result} ${to} 📏`
+                    }
+                }
+            ]
+        };
+    }
+}
     /* =========================================================
     NORMAL / GÜNCEL / KARMAŞIK SORULAR
     ========================================================= */
