@@ -4534,6 +4534,2521 @@ SOHBET + ERÉNCANAI + TEPKİLER
 const localRules = [
     {
     words: [
+        "aynen ya",
+        "aynen knk",
+        "aynen kanka",
+        "aynen reis",
+        "aynen bro",
+        "doğru diyosun",
+        "dogru diyosun",
+        "haklısın",
+        "haklisin",
+        "kesinlikle",
+        "kesinlikle ya",
+        "kesinlikle knk"
+    ],
+    answer:
+        "Aynen knk 😎🤝"
+},
+
+{
+    words: [
+        "yok ya",
+        "yok artık",
+        "yok artik",
+        "yok be",
+        "yok knk",
+        "yok kanka",
+        "yok öyle",
+        "yok oyle",
+        "yok artık ya",
+        "yok artik ya"
+    ],
+    answer:
+        "😂 Tamam knk."
+},
+
+{
+    words: [
+        "evet",
+        "evettt",
+        "evetttt",
+        "evet knk",
+        "evet kanka",
+        "evet reis",
+        "evet doğru",
+        "evet dogru",
+        "evet ya",
+        "aynen evet"
+    ],
+    answer:
+        "Aynen 😎👍"
+},
+
+{
+    words: [
+        "hayır",
+        "hayir",
+        "hayır ya",
+        "hayir ya",
+        "hayır knk",
+        "hayir knk",
+        "yok",
+        "yokkk",
+        "yokkkk",
+        "asla"
+    ],
+    answer:
+        "Tamam knk 😄"
+},
+
+{
+    words: [
+        "hmm",
+        "hmmm",
+        "hmmmm",
+        "hımm",
+        "himm",
+        "hımm tamam",
+        "himm tamam",
+        "hmm anladım",
+        "hmm anladim"
+    ],
+    answer:
+        "😎👍"
+},
+
+{
+    words: [
+        "hı",
+        "hi",
+        "ha",
+        "haa",
+        "haaa",
+        "hee",
+        "heee",
+        "he",
+        "hıı",
+        "hiii"
+    ],
+    answer:
+        "😄"
+},
+
+{
+    words: [
+        "valla",
+        "vallahi",
+        "vallaha",
+        "valla ya",
+        "vallahi ya",
+        "valla knk",
+        "harbi valla",
+        "cidden valla"
+    ],
+    answer:
+        "😂 Aynen knk."
+},
+
+{
+    words: [
+        "neyse",
+        "neyse ya",
+        "neyse knk",
+        "neyse kanka",
+        "boşver",
+        "bosver",
+        "boşver ya",
+        "bosver ya",
+        "geç boşver",
+        "gec bosver"
+    ],
+    answer:
+        "Tamam knk 😎"
+},
+
+{
+    words: [
+        "dur",
+        "durrr",
+        "bi dur",
+        "bir dur",
+        "dur bak",
+        "dur bi",
+        "dur biraz",
+        "bekle",
+        "bekleee",
+        "bir saniye"
+    ],
+    answer:
+        "Tamam 😎"
+},
+
+{
+    words: [
+        "bak şimdi",
+        "bak simdi",
+        "şimdi bak",
+        "simdi bak",
+        "bak sana ne dicem",
+        "bak ne oldu",
+        "sana ne anlatcam",
+        "sana ne anlatacağım"
+    ],
+    answer:
+        "Dinliyorum knk 👀"
+},
+
+{
+    words: [
+        "ne diyorsun",
+        "ne diyosun",
+        "ne diyon",
+        "ne diyon ya",
+        "ne anlatıyorsun",
+        "ne anlatiyorsun",
+        "ne anlatıyon",
+        "ne anlatiyon"
+    ],
+    answer:
+        "😂 Ben de sana anlatıyorum işte knk."
+},
+
+{
+    words: [
+        "şaka gibi",
+        "saka gibi",
+        "şaka resmen",
+        "saka resmen",
+        "inanılmaz",
+        "inanilmaz",
+        "inanılmaz ya",
+        "inanilmaz ya",
+        "çok garip",
+        "cok garip"
+    ],
+    answer:
+        "Harbi bayağı ilginç 😳"
+},
+
+{
+    words: [
+        "garip",
+        "garip ya",
+        "çok garip",
+        "cok garip",
+        "tuhaf",
+        "tuhaf ya",
+        "değişik",
+        "degisik",
+        "çok değişik",
+        "cok degisik"
+    ],
+    answer:
+        "Harbi biraz değişikmiş 😂"
+},
+
+{
+    words: [
+        "iyi",
+        "iyiii",
+        "iyiiii",
+        "çok iyi",
+        "cok iyi",
+        "süper",
+        "super",
+        "süperrr",
+        "harika",
+        "harikaa"
+    ],
+    answer:
+        "🔥😎"
+},
+
+{
+    words: [
+        "kötü",
+        "kotu",
+        "çok kötü",
+        "cok kotu",
+        "kötü ya",
+        "kotu ya",
+        "berbat",
+        "berbat ya",
+        "hiç iyi değil",
+        "hic iyi degil"
+    ],
+    answer:
+        "Umarım düzelir knk 🤝"
+},
+
+{
+    words: [
+        "çok iyi olmuş",
+        "cok iyi olmus",
+        "çok güzel olmuş",
+        "cok guzel olmus",
+        "efsane olmuş",
+        "efsane olmus",
+        "harika olmuş",
+        "harika olmus",
+        "mükemmel olmuş",
+        "mukemmel olmus"
+    ],
+    answer:
+        "🔥🔥 Beğenmene sevindim knk!"
+},
+
+{
+    words: [
+        "ben yaptım",
+        "ben yaptim",
+        "kendim yaptım",
+        "kendim yaptim",
+        "kendim yaptım knk",
+        "kendim yaptim knk",
+        "ben yaptım sonunda",
+        "ben yaptim sonunda"
+    ],
+    answer:
+        "Helal knk 😎🔥"
+},
+
+{
+    words: [
+        "denedim",
+        "denedim olmadı",
+        "denedim olmadi",
+        "bir daha denedim",
+        "tekrar denedim",
+        "deniyorum",
+        "deniyom",
+        "denicem",
+        "deneyeceğim",
+        "deneyecegim"
+    ],
+    answer:
+        "Aynen knk, denemeye devam 😎💪"
+},
+
+{
+    words: [
+        "olur mu",
+        "olurmu",
+        "sence olur mu",
+        "sence olurmu",
+        "böyle olur mu",
+        "boyle olur mu",
+        "bunu yapabilir miyim",
+        "bunu yapabilir miyim knk"
+    ],
+    answer:
+        "Bence deneyebiliriz 😎"
+},
+
+{
+    words: [
+        "yaparım",
+        "yaparim",
+        "yaparım knk",
+        "yaparim knk",
+        "yapabilirim",
+        "yapabilirim knk",
+        "hallederim",
+        "hallederim knk",
+        "denerim",
+        "denerim knk"
+    ],
+    answer:
+        "İşte bu 😎🔥"
+},
+
+{
+    words: [
+        "yapamam",
+        "yapamam ya",
+        "yapamıyorum",
+        "yapamiyorum",
+        "beceremem",
+        "beceremiyorum",
+        "zor geliyor",
+        "zor geliyo",
+        "yetiştiremiyorum",
+        "yetistiremiyorum"
+    ],
+    answer:
+        "Sorun yok knk, adım adım gideriz 😎"
+},
+
+{
+    words: [
+        "bir dakika",
+        "bi dakika",
+        "bir dk",
+        "bi dk",
+        "1 dakika",
+        "1 dk",
+        "az bekle",
+        "biraz bekle",
+        "hemen geliyorum",
+        "hemen gelcem"
+    ],
+    answer:
+        "Tamam knk 👍"
+},
+
+{
+    words: [
+        "burdayım",
+        "burdayim",
+        "buradayım",
+        "buradayim",
+        "geldim",
+        "geldimmm",
+        "geri geldim",
+        "yeniden geldim",
+        "tekrar geldim"
+    ],
+    answer:
+        "Tekrar hoş geldin knk 😎🔥"
+},
+
+{
+    words: [
+        "gidiyorum",
+        "gidiyom",
+        "çıkıyorum",
+        "cikiyorum",
+        "kaçıyorum",
+        "kaciyorum",
+        "ben kaçtım",
+        "ben kactim",
+        "çıkmam lazım",
+        "cikmam lazim"
+    ],
+    answer:
+        "Tamam knk, görüşürüz 👋😎"
+},
+
+{
+    words: [
+        "sonra konuşuruz",
+        "sonra konusuruz",
+        "sonra yazarım",
+        "sonra yazarim",
+        "sonra gelirim",
+        "sonra gelicem",
+        "birazdan konuşuruz",
+        "birazdan konusuruz"
+    ],
+    answer:
+        "Tamam knk, sonra görüşürüz 😎👋"
+},
+
+{
+    words: [
+        "sana güveniyorum",
+        "sana guveniyorum",
+        "güveniyorum",
+        "guveniyorum",
+        "sana güveniyorum knk",
+        "sana guveniyorum knk"
+    ],
+    answer:
+        "Eyvallah knk 😎🤝"
+},
+
+{
+    words: [
+        "helal",
+        "helal olsun",
+        "helal knk",
+        "aferin",
+        "aferin knk",
+        "bravo",
+        "bravooo",
+        "bravo knk",
+        "tebrikler",
+        "tebrik ederim"
+    ],
+    answer:
+        "Eyvallah knk 😎🔥"
+},
+
+{
+    words: [
+        "kralsın",
+        "kralsin",
+        "kralsın knk",
+        "kralsin knk",
+        "adamsın",
+        "adamsin",
+        "efsanesin",
+        "efsanesin knk",
+        "çok iyisin",
+        "cok iyisin"
+    ],
+    answer:
+        "Eyvallah knk 😎🔥"
+},
+
+{
+    words: [
+        "ben de",
+        "bende",
+        "bende öyle",
+        "bende oyle",
+        "ben de öyle",
+        "ben de oyle",
+        "aynı",
+        "ayni",
+        "aynı bende",
+        "ayni bende"
+    ],
+    answer:
+        "😎🤝 Aynen."
+},
+
+{
+    words: [
+        "gerçekten",
+        "gercekten",
+        "harbiden",
+        "harbi",
+        "cidden",
+        "cidden ya",
+        "gerçekten ya",
+        "gercekten ya"
+    ],
+    answer:
+        "Harbi 😎"
+},
+
+{
+    words: [
+        "neden",
+        "niye",
+        "niye ya",
+        "neden ya",
+        "neden ki",
+        "neden ki ya",
+        "niye ki",
+        "niye ki ya"
+    ],
+    answer:
+        "🤔 Bazen ben de merak ediyorum knk."
+},
+
+{
+    words: [
+        "nasıl yani",
+        "nasil yani",
+        "nası yani",
+        "nasi yani",
+        "ne demek",
+        "ne demek ya",
+        "yani nasıl",
+        "yani nasil"
+    ],
+    answer:
+        "Yani biraz daha açıklayayım 😎"
+},
+
+{
+    words: [
+        "tam olarak",
+        "tam olarak ne",
+        "tam olarak nasıl",
+        "tam olarak nasil",
+        "aynen ama nasıl",
+        "aynen ama nasil",
+        "biraz daha açıkla",
+        "biraz daha acikla"
+    ],
+    answer:
+        "Tabii knk, daha açık anlatırım 😎"
+},
+
+{
+    words: [
+        "tamam anladım",
+        "tamam anladim",
+        "he tamam",
+        "hee tamam",
+        "haa tamam",
+        "tamamdır anladım",
+        "tamamdir anladim",
+        "şimdi anladım",
+        "simdi anladim"
+    ],
+    answer:
+        "Süper 😎👍"
+},
+
+{
+    words: [
+        "unutma",
+        "unutma knk",
+        "bunu unutma",
+        "bunu unutma knk",
+        "aklında tut",
+        "aklinda tut",
+        "hatırla",
+        "hatirla"
+    ],
+    answer:
+        "Tamam knk 👍"
+},
+
+{
+    words: [
+        "çok sağ ol",
+        "cok sag ol",
+        "çok teşekkürler",
+        "cok tesekkurler",
+        "çok teşekkür ederim",
+        "cok tesekkur ederim",
+        "teşekkür ederim knk",
+        "tesekkur ederim knk"
+    ],
+    answer:
+        "Ne demek knk 😎🤝"
+},
+    {
+    words: [
+        "bende iyiyim",
+        "ben de iyiyim",
+        "bende iyi",
+        "ben de iyi",
+        "bende gayet iyiyim",
+        "ben de gayet iyiyim",
+        "bende çok iyiyim",
+        "ben de çok iyiyim",
+        "bende fena değilim",
+        "ben de fena değilim",
+        "bende iyiyim knk",
+        "ben de iyiyim knk",
+        "iyiyim bende",
+        "iyiyim ben de"
+    ],
+    answer:
+        "Süper knk 😎🔥"
+},
+
+{
+    words: [
+        "bende iyiyim sen",
+        "ben de iyiyim sen",
+        "bende iyiyim sen nasılsın",
+        "ben de iyiyim sen nasılsın",
+        "iyiyim sen",
+        "iyiyim sende",
+        "iyiyim sen nasılsın",
+        "iyiyim sende nasılsın"
+    ],
+    answer:
+        "Ben de iyiyim knk 😎"
+},
+
+{
+    words: [
+        "iyiyim sağ ol",
+        "iyiyim sag ol",
+        "iyiyim teşekkürler",
+        "iyiyim tesekkurler",
+        "iyiyim teşekkür ederim",
+        "iyiyim tesekkur ederim",
+        "gayet iyiyim sağ ol",
+        "gayet iyiyim sag ol",
+        "fena değil sağ ol",
+        "fena degil sag ol"
+    ],
+    answer:
+        "Ne demek knk 😎👍"
+},
+
+{
+    words: [
+        "sen nasılsın",
+        "sen nasilsin",
+        "peki sen",
+        "peki ya sen",
+        "ya sen",
+        "sen",
+        "sende nasılsın",
+        "sende nasilsin",
+        "sen nasılsın knk",
+        "sen nasilsin knk"
+    ],
+    answer:
+        "Ben de iyiyim knk 😎"
+},
+
+{
+    words: [
+        "çok iyiyim",
+        "cok iyiyim",
+        "aşırı iyiyim",
+        "asiri iyiyim",
+        "müthişim",
+        "muthisim",
+        "harikayım",
+        "harikayim",
+        "süperim",
+        "superim",
+        "keyfim yerinde",
+        "keyfim yerinde knk"
+    ],
+    answer:
+        "Ooo süper knk 🔥😎"
+},
+
+{
+    words: [
+        "fena değil",
+        "fena degil",
+        "fena değilim",
+        "fena degilim",
+        "idare eder",
+        "idare ediyorum",
+        "şimdilik iyi",
+        "simdilik iyi",
+        "şimdilik iyiyim",
+        "simdilik iyiyim"
+    ],
+    answer:
+        "İyi bari knk 😎👍"
+},
+
+{
+    words: [
+        "uykum var",
+        "çok uykum var",
+        "cok uykum var",
+        "uykum geldi",
+        "uykum geldi ya",
+        "uyuyacağım",
+        "uyuyacagim",
+        "uyumaya gidiyorum",
+        "uyumaya gidiyom"
+    ],
+    answer:
+        "O zaman biraz dinlen knk 😴"
+},
+
+{
+    words: [
+        "acım",
+        "acim",
+        "çok acıktım",
+        "cok aciktim",
+        "acıktım",
+        "aciktim",
+        "karnım acıktı",
+        "karnim acikti",
+        "yemek yiyeceğim",
+        "yemek yiyecegim"
+    ],
+    answer:
+        "😂 Yemek zamanı gelmiş knk."
+},
+
+{
+    words: [
+        "susadım",
+        "susadim",
+        "çok susadım",
+        "cok susadim",
+        "susuyorum",
+        "su içeceğim",
+        "su icecegim",
+        "su içmem lazım",
+        "su icmem lazim"
+    ],
+    answer:
+        "Biraz su iç knk 💧😎"
+},
+
+{
+    words: [
+        "evdeyim",
+        "evdeyim knk",
+        "evdeyim ya",
+        "dışarıdayım",
+        "disaridayim",
+        "dışardayım",
+        "disardayim",
+        "okuldayım",
+        "okuldayim"
+    ],
+    answer:
+        "Tamam knk 😎"
+},
+
+{
+    words: [
+        "ders çalışıyorum",
+        "ders calisiyorum",
+        "ders yapıyorum",
+        "ders yapiyorum",
+        "ödev yapıyorum",
+        "odev yapiyorum",
+        "ödev yapcam",
+        "odev yapcam",
+        "ders çalışcam",
+        "ders caliscam"
+    ],
+    answer:
+        "Kolay gelsin knk 📚😎"
+},
+
+{
+    words: [
+        "okuldan geldim",
+        "okuldan geldim knk",
+        "okul bitti",
+        "okul bitti knk",
+        "dersten geldim",
+        "dersten geldim knk",
+        "ders bitti",
+        "ders bitti knk"
+    ],
+    answer:
+        "Hoş geldin knk 😎"
+},
+
+{
+    words: [
+        "çok yoruldum",
+        "cok yoruldum",
+        "yoruldum",
+        "yoruldum ya",
+        "çok yoruldum ya",
+        "cok yoruldum ya",
+        "yorgunum",
+        "çok yorgunum",
+        "cok yorgunum"
+    ],
+    answer:
+        "Biraz dinlen knk 😌"
+},
+
+{
+    words: [
+        "işim bitti",
+        "isim bitti",
+        "işlerim bitti",
+        "islerim bitti",
+        "sonunda bitti",
+        "sonunda bitti ya",
+        "bitirdim",
+        "bitirdim knk",
+        "hallettim",
+        "hallettiğim işi"
+    ],
+    answer:
+        "OHHH sonunda 😎🔥"
+},
+
+{
+    words: [
+        "ne yapıyorsun",
+        "ne yapiyorsun",
+        "napıyorsun",
+        "napıyosun",
+        "napıyon",
+        "napiyon",
+        "ne yapıyon",
+        "ne yapiyon",
+        "ne yapıyosun knk",
+        "napıyosun knk"
+    ],
+    answer:
+        "Seninle konuşuyorum knk 😎"
+},
+
+{
+    words: [
+        "şimdi ne yapıyoruz",
+        "simdi ne yapiyoruz",
+        "şimdi napıyoruz",
+        "simdi napiyoruz",
+        "ne yapıyoruz",
+        "ne yapiyoruz",
+        "napıyoruz",
+        "napiyoruz"
+    ],
+    answer:
+        "Sen söyle knk 😎🔥"
+},
+
+{
+    words: [
+        "sıkıldım",
+        "sikildim",
+        "çok sıkıldım",
+        "cok sikildim",
+        "canım sıkılıyor",
+        "canim sikiliyor",
+        "canım sıkıldı",
+        "canim sikildi",
+        "çok sıkılıyorum",
+        "cok sikiliyorum"
+    ],
+    answer:
+        "Bir şeyler yapalım knk 😎🎮"
+},
+
+{
+    words: [
+        "mutluyum",
+        "çok mutluyum",
+        "cok mutluyum",
+        "aşırı mutluyum",
+        "asiri mutluyum",
+        "keyfim çok iyi",
+        "keyfim cok iyi",
+        "çok sevindim",
+        "cok sevindim"
+    ],
+    answer:
+        "Ooo çok iyi! 😎🔥"
+},
+
+{
+    words: [
+        "üzgünüm",
+        "uzgunum",
+        "çok üzgünüm",
+        "cok uzgunum",
+        "moralim bozuk",
+        "keyfim yok",
+        "canım sıkkın",
+        "canim sikkin",
+        "moralim hiç yok",
+        "moralim hic yok"
+    ],
+    answer:
+        "Umarım birazdan daha iyi hissedersin 🤝"
+},
+
+{
+    words: [
+        "sinirliyim",
+        "sinirliyim ya",
+        "çok sinirliyim",
+        "cok sinirliyim",
+        "sinir oldum",
+        "sinir oldum ya",
+        "sinirleniyorum",
+        "çok sinirlendim",
+        "cok sinirlendim"
+    ],
+    answer:
+        "Sakin ol knk 😅 Biraz nefes al."
+},
+
+{
+    words: [
+        "heyecanlıyım",
+        "heyecanliyim",
+        "çok heyecanlıyım",
+        "cok heyecanliyim",
+        "heyecanlandım",
+        "heyecanlandim",
+        "çok heyecanlandım",
+        "cok heyecanlandim"
+    ],
+    answer:
+        "Ooo heyecan başladı 😎🔥"
+},
+
+{
+    words: [
+        "şimdi geldim",
+        "simdi geldim",
+        "az önce geldim",
+        "az once geldim",
+        "yeni geldim",
+        "yeni geldim knk",
+        "daha yeni geldim"
+    ],
+    answer:
+        "Hoş geldin knk 😎"
+},
+
+{
+    words: [
+        "birazdan gelicem",
+        "birazdan geleceğim",
+        "birazdan gelecegim",
+        "sonra gelicem",
+        "sonra geleceğim",
+        "sonra gelecegim",
+        "az sonra gelicem",
+        "az sonra geleceğim"
+    ],
+    answer:
+        "Tamam knk, görüşürüz sonra 😎"
+},
+
+{
+    words: [
+        "bilmiyorum",
+        "bilmiyom",
+        "bilmiyorum ya",
+        "bilmiyom ya",
+        "hiç bilmiyorum",
+        "hic bilmiyorum",
+        "emin değilim",
+        "emin degilim",
+        "kararsızım",
+        "kararsizim"
+    ],
+    answer:
+        "Sorun değil knk 😎 Birlikte bakarız."
+},
+
+{
+    words: [
+        "bence evet",
+        "bence hayır",
+        "bence hayir",
+        "sanırım evet",
+        "sanirim evet",
+        "sanırım hayır",
+        "sanirim hayir",
+        "galiba evet",
+        "galiba hayır",
+        "galiba hayir"
+    ],
+    answer:
+        "Olabilir knk 🤔"
+},
+
+{
+    words: [
+        "haklısın",
+        "haklisin",
+        "haklısın knk",
+        "haklisin knk",
+        "doğru diyorsun",
+        "dogru diyorsun",
+        "doğru diyosun",
+        "dogru diyosun",
+        "aynen doğru"
+    ],
+    answer:
+        "😎🤝"
+},
+
+{
+    words: [
+        "yanlış",
+        "yanlis",
+        "yanlış olmuş",
+        "yanlis olmus",
+        "yanlış söyledin",
+        "yanlis soyledin",
+        "yanlış anladın",
+        "yanlis anladin"
+    ],
+    answer:
+        "Tamam knk, düzeltebiliriz 😄"
+},
+{
+    words: [
+        "slmmm",
+        "slmmmm",
+        "slmmmmm",
+        "selammm",
+        "selammmm",
+        "selammmmm",
+        "selam knk",
+        "selam kanka",
+        "selam reis",
+        "selam bro",
+        "selam broo",
+        "selam dostum",
+        "selamlarrr",
+        "selamlarrrr"
+    ],
+    answer:
+        "Selam knk 😎👋"
+},
+
+{
+    words: [
+        "mrb",
+        "mrbb",
+        "mrbbb",
+        "mrb knk",
+        "mrb kanka",
+        "mrb reis",
+        "mrb bro",
+        "merhabaa",
+        "merhabaaa",
+        "merhabaaaa",
+        "merhabalar",
+        "merhabalarrr"
+    ],
+    answer:
+        "Merhaba knk 😎👋"
+},
+
+{
+    words: [
+        "saaa",
+        "saaaa",
+        "sa knk",
+        "sa kanka",
+        "sa reis",
+        "sa bro",
+        "sa aga",
+        "sa agaa",
+        "s.a",
+        "s.a.a",
+        "s.a knk"
+    ],
+    answer:
+        "Selam 😎👋"
+},
+
+{
+    words: [
+        "heyyy",
+        "heyyyy",
+        "heyyyyy",
+        "hey knk",
+        "hey kanka",
+        "hey bro",
+        "heyoo",
+        "heyooo",
+        "heyoooo",
+        "heyo",
+        "heyoo knk"
+    ],
+    answer:
+        "Heyyy 😎👋"
+},
+
+{
+    words: [
+        "naberrr",
+        "naberrrr",
+        "naberrrrr",
+        "naber knk",
+        "naber kanka",
+        "naber reis",
+        "naber bro",
+        "naber aga",
+        "ne haber knk",
+        "ne haber kanka",
+        "naber ya"
+    ],
+    answer:
+        "İyi knk 😎 Senden naber?"
+},
+
+{
+    words: [
+        "napıyonn",
+        "napıyosunn",
+        "napıyosun",
+        "napıyon",
+        "napiyon",
+        "napıyon knk",
+        "napıyosun knk",
+        "napıyon aga",
+        "ne yapıyon",
+        "ne yapiyon",
+        "ne yapıyosun",
+        "ne yapiyosun"
+    ],
+    answer:
+        "Seninle konuşuyorum knk 😎"
+},
+
+{
+    words: [
+        "nasılsınnn",
+        "nasılsınnnn",
+        "nasilsinnn",
+        "nasilsinnnn",
+        "nasılsın knk",
+        "nasilsin knk",
+        "nasılsın kanka",
+        "nasilsin kanka",
+        "nasılsın bro",
+        "nasılsın ya"
+    ],
+    answer:
+        "İyiyim knk 😎 Sen nasılsın?"
+},
+
+{
+    words: [
+        "bende iyiyim",
+        "bende iyiyimmm",
+        "bende iyiyim knk",
+        "ben de iyiyim",
+        "ben de iyiyimmm",
+        "ben de iyiyim knk",
+        "bende iyi",
+        "ben de iyi",
+        "iyiyim bende",
+        "iyiyim ben de",
+        "bende gayet iyiyim",
+        "ben de gayet iyiyim"
+    ],
+    answer:
+        "Süper knk 😎🔥"
+},
+
+{
+    words: [
+        "iyiyimmm",
+        "iyiyimmmm",
+        "iyiyimmmmm",
+        "çok iyiyim",
+        "cok iyiyim",
+        "cok iyi",
+        "çok iyi",
+        "gayet iyiyim",
+        "gayet iyi",
+        "fena değil",
+        "fena degil",
+        "idare eder"
+    ],
+    answer:
+        "Ooo süper 😎🔥"
+},
+
+{
+    words: [
+        "iyisin",
+        "iyisin dimi",
+        "iyisin değil mi",
+        "iyisin degil mi",
+        "iyi misin",
+        "iyi misinnn",
+        "iyi misin knk",
+        "iyi misin kanka",
+        "iyi misin bro"
+    ],
+    answer:
+        "İyiyim knk 😎"
+},
+
+{
+    words: [
+        "napıyım",
+        "napayım",
+        "napayim",
+        "ne yapayım",
+        "ne yapayim",
+        "ne yapcam",
+        "ne yapacağım",
+        "ne yapacagim",
+        "napcaz",
+        "ne yapcaz"
+    ],
+    answer:
+        "Bilmem knk 😂 Sen ne yapmak istiyorsun?"
+},
+
+{
+    words: [
+        "ne yapalım",
+        "ne yapalim",
+        "napalım",
+        "napalim",
+        "napcaz",
+        "ne yapcaz",
+        "şimdi ne yapalım",
+        "simdi ne yapalim",
+        "ne yapıyoruz",
+        "ne yapiyoruz"
+    ],
+    answer:
+        "Sen seç knk 😎🎮"
+},
+
+{
+    words: [
+        "canım sıkıldı",
+        "canim sikildi",
+        "canım sıkılıyor",
+        "canim sikiliyor",
+        "sıkıldım",
+        "sikildim",
+        "çok sıkıldım",
+        "cok sikildim",
+        "sıkılıyorum",
+        "sikiliyorum"
+    ],
+    answer:
+        "O zaman eğlenceli bir şey yapalım 😎🎮"
+},
+
+{
+    words: [
+        "boşum",
+        "bosum",
+        "boş boş duruyorum",
+        "bos bos duruyorum",
+        "yapacak bir şey yok",
+        "yapacak bisey yok",
+        "hiçbir şey yapmıyorum",
+        "hicbir sey yapmiyorum",
+        "öyle duruyorum",
+        "oyle duruyorum"
+    ],
+    answer:
+        "😂 O zaman birlikte bir şey bulalım."
+},
+
+{
+    words: [
+        "çok iyi",
+        "cok iyi",
+        "çok güzel",
+        "cok guzel",
+        "mükemmel",
+        "mukemmel",
+        "harika",
+        "harikaa",
+        "harikaaa",
+        "efsane",
+        "efsanee",
+        "efsaneee"
+    ],
+    answer:
+        "🔥😎 Aynen!"
+},
+
+{
+    words: [
+        "vay be",
+        "vay beee",
+        "vay be knk",
+        "oha",
+        "ohaa",
+        "ohaaa",
+        "yuh",
+        "yuuh",
+        "yuhhh",
+        "vay",
+        "vayyy"
+    ],
+    answer:
+        "😂🔥 Harbi!"
+},
+
+{
+    words: [
+        "cidden mi",
+        "cidden mi ya",
+        "gerçekten mi",
+        "gercekten mi",
+        "harbi mi",
+        "harbi mi ya",
+        "harbi",
+        "harbiden",
+        "şaka mı",
+        "saka mi"
+    ],
+    answer:
+        "Harbi knk 😂"
+},
+
+{
+    words: [
+        "aynen",
+        "aynenn",
+        "aynen ya",
+        "aynen knk",
+        "aynen kanka",
+        "aynen reis",
+        "aynen bro",
+        "kesinlikle",
+        "kesinlikle knk",
+        "doğru",
+        "dogru"
+    ],
+    answer:
+        "Aynen 😎👍"
+},
+
+{
+    words: [
+        "tamammmm",
+        "tamammm",
+        "tamam knk",
+        "tamam kanka",
+        "tamam reis",
+        "tamam bro",
+        "tamamdır",
+        "tamamdir",
+        "okeyyy",
+        "okey",
+        "okay"
+    ],
+    answer:
+        "Tamamdır knk 😎👍"
+},
+
+{
+    words: [
+        "pekiii",
+        "peki knk",
+        "peki kanka",
+        "olurrr",
+        "olur knk",
+        "olur kanka",
+        "olur reis",
+        "olur bro",
+        "olabilir",
+        "olabilir knk"
+    ],
+    answer:
+        "Olur knk 😎👍"
+},
+
+{
+    words: [
+        "sağol",
+        "sagol",
+        "sağolll",
+        "sagolll",
+        "sağ ol knk",
+        "sag ol knk",
+        "eyvallah",
+        "eyvallahh",
+        "eyvallahhh",
+        "eyvallah knk",
+        "teşekkürler",
+        "tesekkurler"
+    ],
+    answer:
+        "Rica ederim knk 😎"
+},
+
+{
+    words: [
+        "özür dilerim",
+        "ozur dilerim",
+        "özür",
+        "ozur",
+        "pardon",
+        "pardon ya",
+        "kusura bakma",
+        "kusura bakma knk",
+        "affedersin",
+        "affet"
+    ],
+    answer:
+        "Sorun yok knk 😄"
+},
+
+{
+    words: [
+        "anladım",
+        "anladim",
+        "anladım knk",
+        "anladim knk",
+        "anladım ya",
+        "anladim ya",
+        "anladım tamam",
+        "anladim tamam",
+        "şimdi anladım",
+        "simdi anladim"
+    ],
+    answer:
+        "Aynen knk 😎👍"
+},
+
+{
+    words: [
+        "anlamadım",
+        "anlamadim",
+        "anlamadım ya",
+        "anlamadim ya",
+        "hiç anlamadım",
+        "hic anlamadim",
+        "anlamadım knk",
+        "anlamadim knk",
+        "anlamıyorum",
+        "anlamiyorum"
+    ],
+    answer:
+        "Sorun değil knk, tekrar anlatayım 😎"
+},
+
+{
+    words: [
+        "bilmiyorum",
+        "bilmiyom",
+        "bilmiyom ya",
+        "bilmiyorum ya",
+        "hiç bilmiyorum",
+        "hic bilmiyorum",
+        "emin değilim",
+        "emin degilim",
+        "bilemedim",
+        "bilemedim ya"
+    ],
+    answer:
+        "😂 Olsun knk, birlikte buluruz."
+},
+
+{
+    words: [
+        "bekle",
+        "bekleee",
+        "bekle biraz",
+        "bir dakika",
+        "bi dakika",
+        "dur",
+        "durrr",
+        "dur biraz",
+        "bir saniye",
+        "bi saniye"
+    ],
+    answer:
+        "Tamam knk 😎"
+},
+
+{
+    words: [
+        "geldim",
+        "geldimmm",
+        "geldimmmm",
+        "buradayım",
+        "burdayım",
+        "buradayim",
+        "burdayim",
+        "geri geldim",
+        "geri geldim knk"
+    ],
+    answer:
+        "Hoş geldin knk 😎🔥"
+},
+
+{
+    words: [
+        "görüşürüz",
+        "gorusuruz",
+        "görüşürüz knk",
+        "gorusuruz knk",
+        "bye",
+        "byee",
+        "byeee",
+        "bye bye",
+        "bay bay",
+        "bb",
+        "bb knk"
+    ],
+    answer:
+        "Görüşürüz knk 👋😎"
+},
+
+{
+    words: [
+        "iyi geceler",
+        "iyi gecelerr",
+        "iyi gecelerrr",
+        "hayırlı geceler",
+        "hayirli geceler",
+        "yatıyorum",
+        "yatiyorum",
+        "uyumaya gidiyorum",
+        "uyuyorum",
+        "uyucam"
+    ],
+    answer:
+        "İyi geceler knk 🌙😴"
+},
+
+{
+    words: [
+        "günaydın",
+        "gunaydin",
+        "günaydınnn",
+        "gunaydinnn",
+        "sabah oldu",
+        "sabah oldu knk",
+        "uyandım",
+        "uyandim",
+        "yeni uyandım",
+        "yeni uyandim"
+    ],
+    answer:
+        "Günaydın knk ☀️😎"
+},
+
+{
+    words: [
+        "iyi akşamlar",
+        "iyi aksamlar",
+        "iyi akşamlarrr",
+        "iyi aksamlarrr",
+        "akşam oldu",
+        "aksam oldu",
+        "akşamlar",
+        "aksamlar"
+    ],
+    answer:
+        "İyi akşamlar knk 😎🌆"
+},
+{
+    words: [
+        "ne var",
+        "ne var ne yok",
+        "ne oluyor",
+        "noluyor",
+        "ne oluyo",
+        "noluyo",
+        "neler oluyor",
+        "neler oluyo",
+        "ne dönüyor",
+        "ne donuyor"
+    ],
+    answer:
+        "Her şey yolunda knk 😎 Sende ne var?"
+},
+
+{
+    words: [
+        "nasıl gidiyor",
+        "nasil gidiyor",
+        "nasıl gidiyo",
+        "nasil gidiyo",
+        "nasıl geçiyor",
+        "nasil geciyor",
+        "hayat nasıl",
+        "hayat nasil",
+        "işler nasıl",
+        "isler nasil"
+    ],
+    answer:
+        "İyi gidiyor knk 😎"
+},
+
+{
+    words: [
+        "ne düşünüyorsun",
+        "ne dusunuyorsun",
+        "ne düşünüyosun",
+        "ne dusunuyosun",
+        "aklında ne var",
+        "aklinda ne var",
+        "ne düşünüyorsun knk"
+    ],
+    answer:
+        "Şu an seninle sohbet ediyorum 😎"
+},
+
+{
+    words: [
+        "sence",
+        "sence ne",
+        "sence nasıl",
+        "sence nasil",
+        "sence olur mu",
+        "sence olurmu",
+        "sen ne düşünüyorsun",
+        "sen ne dusunuyorsun"
+    ],
+    answer:
+        "Bence biraz daha konuşalım 😎"
+},
+
+{
+    words: [
+        "doğru mu",
+        "dogru mu",
+        "gerçek mi",
+        "gercek mi",
+        "emin misin",
+        "eminmisin",
+        "kesin mi",
+        "kesinmi",
+        "cidden",
+        "cidden mi"
+    ],
+    answer:
+        "Evet knk 😎"
+},
+
+{
+    words: [
+        "şaka yaptım",
+        "saka yaptim",
+        "şaka yapıyorum",
+        "saka yapiyorum",
+        "şaka ya",
+        "saka ya",
+        "şakaydı",
+        "sakaydi",
+        "şaka şaka",
+        "saka saka"
+    ],
+    answer:
+        "😂 Tamam knk, anladım."
+},
+
+{
+    words: [
+        "şaka yapma",
+        "saka yapma",
+        "şaka yapıyorsun",
+        "saka yapiyorsun",
+        "dalga mı geçiyorsun",
+        "dalga mi geciyorsun",
+        "dalga geçme",
+        "dalga gecme"
+    ],
+    answer:
+        "😂 Tamam tamam."
+},
+
+{
+    words: [
+        "ciddiyim",
+        "ciddiyim knk",
+        "gerçekten söylüyorum",
+        "gercekten soyluyorum",
+        "şaka değil",
+        "saka degil",
+        "harbiden diyorum",
+        "harbiden diyorum ya"
+    ],
+    answer:
+        "Tamam, ciddiye aldım 😎"
+},
+
+{
+    words: [
+        "çok komik",
+        "cok komik",
+        "komikmiş",
+        "komikmis",
+        "komik ya",
+        "çok güldüm",
+        "cok guldum",
+        "güldüm",
+        "guldum",
+        "kahkaha attım"
+    ],
+    answer:
+        "😂😂 Eyvallah knk!"
+},
+
+{
+    words: [
+        "güldürme",
+        "guldurme",
+        "beni güldürme",
+        "beni guldurme",
+        "öldüm gülmekten",
+        "oldum gulmekten",
+        "koptum",
+        "koptum ya",
+        "çok iyi ya"
+    ],
+    answer:
+        "😂😂😂"
+},
+
+{
+    words: [
+        "şaşırdım",
+        "sasirdim",
+        "çok şaşırdım",
+        "cok sasirdim",
+        "inanamadım",
+        "inanamadim",
+        "inanamıyorum",
+        "inanamiyorum",
+        "şok oldum",
+        "sok oldum"
+    ],
+    answer:
+        "Harbi şaşırtıcıymış 😮"
+},
+
+{
+    words: [
+        "korktum",
+        "korktum ya",
+        "çok korktum",
+        "cok korktum",
+        "korkuyorum",
+        "korkuyom",
+        "ödüm koptu",
+        "odum koptu",
+        "gerildim",
+        "gerildim ya"
+    ],
+    answer:
+        "😅 Sakin ol knk."
+},
+
+{
+    words: [
+        "heyecanlandım",
+        "heyecanlandim",
+        "çok heyecanlandım",
+        "cok heyecanlandim",
+        "heyecanlıyım",
+        "heyecanliyim",
+        "çok heyecanlıyım",
+        "cok heyecanliyim"
+    ],
+    answer:
+        "Ooo heyecan yükseldi 😎🔥"
+},
+
+{
+    words: [
+        "şaşırma",
+        "sasirma",
+        "inanma",
+        "inanma ya",
+        "inanamazsın",
+        "inanamazsin",
+        "biliyor musun",
+        "biliyor musun knk",
+        "biliyor musun ya"
+    ],
+    answer:
+        "Ne oldu knk? 👀"
+},
+
+{
+    words: [
+        "bir şey diyeceğim",
+        "bir sey diyecegim",
+        "bi şey dicem",
+        "bi sey dicem",
+        "bişey dicem",
+        "bisey dicem",
+        "bir şey dicem",
+        "birsey diyeceğim"
+    ],
+    answer:
+        "De bakalım knk 😎"
+},
+
+{
+    words: [
+        "sana bir şey sorcam",
+        "sana bi şey sorcam",
+        "sana bisey sorcam",
+        "bir şey soracağım",
+        "bir sey soracagim",
+        "bi şey sorcam",
+        "bi sey sorcam",
+        "bir soru sorcam"
+    ],
+    answer:
+        "Sor knk 😎"
+},
+
+{
+    words: [
+        "sana bişey anlatcam",
+        "sana bir şey anlatacağım",
+        "sana bi şey anlatcam",
+        "bir şey anlatacağım",
+        "bir sey anlatacagim",
+        "bişey anlatcam",
+        "bisey anlatcam"
+    ],
+    answer:
+        "Anlat knk, dinliyorum 👀"
+},
+
+{
+    words: [
+        "dinle",
+        "beni dinle",
+        "bir dinle",
+        "bi dinle",
+        "bak şimdi",
+        "bak simdi",
+        "bak sana",
+        "şimdi bak",
+        "simdi bak"
+    ],
+    answer:
+        "Dinliyorum knk 👀"
+},
+
+{
+    words: [
+        "bak",
+        "baksana",
+        "baksana knk",
+        "bak bi",
+        "bi baksana",
+        "şuna bak",
+        "suna bak",
+        "buraya bak"
+    ],
+    answer:
+        "Bakıyorum knk 👀"
+},
+
+{
+    words: [
+        "tahmin et",
+        "tahmin etsene",
+        "bir tahmin yap",
+        "bi tahmin yap",
+        "sence kaç",
+        "sence kac",
+        "sence ne oldu",
+        "sence ne olmuş"
+    ],
+    answer:
+        "Hmm 🤔 Bir tahmin yapayım..."
+},
+
+{
+    words: [
+        "buldum",
+        "buldumm",
+        "buldum knk",
+        "çözdüm",
+        "cozdum",
+        "hallettiğim",
+        "hallettim",
+        "çözdüm knk",
+        "cozdum knk"
+    ],
+    answer:
+        "Ooo helal knk 😎🔥"
+},
+
+{
+    words: [
+        "başardım",
+        "basardim",
+        "başardım knk",
+        "yaptım",
+        "yaptim",
+        "yaptım sonunda",
+        "yaptim sonunda",
+        "sonunda yaptım",
+        "sonunda yaptim"
+    ],
+    answer:
+        "Helal knk! 🔥😎"
+},
+
+{
+    words: [
+        "oldu",
+        "oldu knk",
+        "oldu sonunda",
+        "çalıştı",
+        "calisti",
+        "çalışıyor",
+        "calisiyor",
+        "düzeldi",
+        "duzeldi",
+        "halletti"
+    ],
+    answer:
+        "OHHH 😎🔥 Süper!"
+},
+
+{
+    words: [
+        "olmadı",
+        "olmadi",
+        "olmadı ya",
+        "olmadi ya",
+        "çalışmadı",
+        "calismadi",
+        "çalışmıyor",
+        "calismiyor",
+        "bozuldu",
+        "bozuldu ya"
+    ],
+    answer:
+        "Tamam knk, birlikte çözeriz 😎"
+},
+
+{
+    words: [
+        "yardım lazım",
+        "yardim lazim",
+        "yardıma ihtiyacım var",
+        "yardima ihtiyacim var",
+        "yardım eder misin",
+        "yardim eder misin",
+        "yardım etsene",
+        "yardim etsene",
+        "bana yardım et",
+        "bana yardim et"
+    ],
+    answer:
+        "Tabii knk 😎 Ne oldu?"
+},
+
+{
+    words: [
+        "nasıl yapacağım",
+        "nasil yapacagim",
+        "nasıl yapcam",
+        "nasil yapcam",
+        "bunu nasıl yaparım",
+        "bunu nasil yaparim",
+        "ne yapmam lazım",
+        "ne yapmam lazim"
+    ],
+    answer:
+        "Anlat knk, beraber hallederiz 😎"
+},
+
+{
+    words: [
+        "çok zor",
+        "cok zor",
+        "zor ya",
+        "çok zor ya",
+        "cok zor ya",
+        "yapamıyorum",
+        "yapamiyorum",
+        "olmuyor",
+        "olmuyo",
+        "beceremiyorum"
+    ],
+    answer:
+        "Pes etmek yok knk 😎 Birlikte deneyelim."
+},
+
+{
+    words: [
+        "çok kolay",
+        "cok kolay",
+        "kolaymış",
+        "kolaymis",
+        "çok basit",
+        "cok basit",
+        "basitmiş",
+        "basitmis",
+        "bunu biliyorum",
+        "biliyorum bunu"
+    ],
+    answer:
+        "Aynen knk 😎🔥"
+},
+
+{
+    words: [
+        "unutmuşum",
+        "unutmusum",
+        "unuttum",
+        "unuttum ya",
+        "aklımdan çıktı",
+        "aklimdan cikti",
+        "hatırlamıyorum",
+        "hatirlamiyorum",
+        "hatırlamadım",
+        "hatirlamadim"
+    ],
+    answer:
+        "Olur öyle knk 😂"
+},
+
+{
+    words: [
+        "hatırladım",
+        "hatirladim",
+        "hatırlıyorum",
+        "hatirliyorum",
+        "şimdi hatırladım",
+        "simdi hatirladim",
+        "aklıma geldi",
+        "aklima geldi"
+    ],
+    answer:
+        "Heh tamam 😎"
+},
+
+{
+    words: [
+        "çok güzel",
+        "cok guzel",
+        "güzelmiş",
+        "guzelmis",
+        "çok iyi olmuş",
+        "cok iyi olmus",
+        "iyi olmuş",
+        "iyi olmus",
+        "mükemmel olmuş",
+        "mukemmel olmus"
+    ],
+    answer:
+        "🔥😎 Beğenmene sevindim!"
+},
+
+{
+    words: [
+        "beğenmedim",
+        "begenmedim",
+        "sevmedim",
+        "hoşuma gitmedi",
+        "hosuma gitmedi",
+        "iyi değil",
+        "iyi degil",
+        "güzel değil",
+        "guzel degil"
+    ],
+    answer:
+        "Tamam knk 😄 Daha iyisini deneyelim."
+},
+
+{
+    words: [
+        "çok iyi fikir",
+        "cok iyi fikir",
+        "güzel fikir",
+        "guzel fikir",
+        "mantıklı",
+        "mantikli",
+        "mantıklı fikir",
+        "mantikli fikir",
+        "olabilir aslında",
+        "olabilir aslinda"
+    ],
+    answer:
+        "Aynen knk 😎🔥"
+},
+
+{
+    words: [
+        "ne dersin",
+        "ne diyorsun",
+        "ne diyosun",
+        "sence ne yapalım",
+        "sence ne yapalim",
+        "sen seç",
+        "sen sec",
+        "sen karar ver",
+        "kararı sen ver",
+        "karari sen ver"
+    ],
+    answer:
+        "Tamam, seçimi bana bıraktın 😎"
+},
+
+{
+    words: [
+        "ben hazırım",
+        "ben hazirim",
+        "hazırım",
+        "hazirim",
+        "hazırım knk",
+        "hazirim knk",
+        "başlayalım",
+        "baslayalim",
+        "başlayabiliriz",
+        "baslayabiliriz"
+    ],
+    answer:
+        "Hadi başlayalım knk 🔥😎"
+},
+
+{
+    words: [
+        "hazır değilim",
+        "hazir degilim",
+        "daha hazır değilim",
+        "daha hazir degilim",
+        "bekle",
+        "biraz bekle",
+        "daha değil",
+        "daha degil"
+    ],
+    answer:
+        "Tamam knk, acele yok 😎"
+},
+
+{
+    words: [
+        "çok yoruldum",
+        "cok yoruldum",
+        "yorgunum",
+        "yorgunum ya",
+        "bitkinim",
+        "çok yoruldum ya",
+        "cok yoruldum ya",
+        "enerjim yok",
+        "enerjim kalmadı",
+        "enerjim kalmadi"
+    ],
+    answer:
+        "Biraz dinlen knk 😌"
+},
+
+{
+    words: [
+        "acıkıyorum",
+        "acikiyorum",
+        "acıktım",
+        "aciktim",
+        "karnım acıktı",
+        "karnim acikti",
+        "çok acıktım",
+        "cok aciktim",
+        "yemek istiyorum",
+        "bir şeyler yiyeceğim"
+    ],
+    answer:
+        "😂 Afiyet olsun şimdiden knk!"
+},
+
+{
+    words: [
+        "susadım",
+        "susadim",
+        "çok susadım",
+        "cok susadim",
+        "su içmem lazım",
+        "su icmem lazim",
+        "su içeceğim",
+        "su icecegim",
+        "su içiyorum",
+        "su iciyorum"
+    ],
+    answer:
+        "💧 Bir bardak su iyi gider knk."
+},
+
+{
+    words: [
+        "uykum var",
+        "çok uykum var",
+        "cok uykum var",
+        "uykum geldi",
+        "uykum geldi ya",
+        "uyuyacağım",
+        "uyuyacagim",
+        "uyuycam",
+        "uyucam",
+        "uyumam lazım"
+    ],
+    answer:
+        "😴 O zaman dinlenme zamanı knk."
+},
+
+{
+    words: [
+        "ne oynayalım",
+        "ne oynayalim",
+        "hangi oyunu oynayalım",
+        "hangi oyunu oynayalim",
+        "oyun oynayalım",
+        "oyun oynayalim",
+        "oynayalım mı",
+        "oynayalim mi",
+        "oynayak mı",
+        "oynayak mi"
+    ],
+    answer:
+        "🎮 Sen seç knk, ben hazırım!"
+},
+
+{
+    words: [
+        "oyun oynuyorum",
+        "oyun oynuyom",
+        "oynuyorum",
+        "oynuyom",
+        "oyuna girdim",
+        "oyuna girdim knk",
+        "oyundayım",
+        "oyundayim",
+        "oyun açtım",
+        "oyun actim"
+    ],
+    answer:
+        "🔥 İyi oyunlar knk!"
+},
+
+{
+    words: [
+        "kazandım",
+        "kazandim",
+        "kazandım knk",
+        "kazandım sonunda",
+        "kazandim sonunda",
+        "win aldım",
+        "win aldim",
+        "yendim",
+        "yendim knk"
+    ],
+    answer:
+        "OOO 🔥🔥 Helal knk!"
+},
+
+{
+    words: [
+        "kaybettim",
+        "kaybettim ya",
+        "kaybettim knk",
+        "yenildim",
+        "yenildim ya",
+        "maçı kaybettim",
+        "maci kaybettim",
+        "oyunu kaybettim"
+    ],
+    answer:
+        "Canın sağ olsun knk 😎 Bir dahaki maç senin!"
+},
+
+{
+    words: [
+        "çok sinirliyim",
+        "cok sinirliyim",
+        "sinirliyim",
+        "sinir oldum",
+        "sinir oldum ya",
+        "çok sinirlendim",
+        "cok sinirlendim",
+        "sinirlendim",
+        "moralim bozuldu"
+    ],
+    answer:
+        "Sakin ol knk 😅 Biraz ara vermek iyi gelebilir."
+},
+
+{
+    words: [
+        "mutluyum",
+        "çok mutluyum",
+        "cok mutluyum",
+        "sevindim",
+        "çok sevindim",
+        "cok sevindim",
+        "keyfim yerinde",
+        "keyfim çok iyi",
+        "keyfim cok iyi"
+    ],
+    answer:
+        "Ooo süper knk! 😎🔥"
+},
+
+{
+    words: [
+        "üzgünüm",
+        "uzgunum",
+        "çok üzgünüm",
+        "cok uzgunum",
+        "moralim bozuk",
+        "moralim bozuk ya",
+        "keyfim yok",
+        "canım sıkkın",
+        "canim sikkin"
+    ],
+    answer:
+        "Umarım birazdan daha iyi olursun knk 🤝"
+},
+
+{
+    words: [
+        "tekrar söyle",
+        "tekrar soyle",
+        "bir daha söyle",
+        "bir daha soyle",
+        "tekrar anlat",
+        "bir daha anlat",
+        "yeniden anlat",
+        "anlatır mısın",
+        "anlatir misin"
+    ],
+    answer:
+        "Tabii knk 😎 Tekrar anlatayım."
+},
+
+{
+    words: [
+        "yavaş",
+        "yavas",
+        "biraz yavaş",
+        "biraz yavas",
+        "anlamadım",
+        "anlamadim",
+        "çok hızlı",
+        "cok hizli",
+        "daha yavaş anlat",
+        "daha yavas anlat"
+    ],
+    answer:
+        "Tamam knk 😎 Daha açık anlatayım."
+},
+
+{
+    words: [
+        "iyi geceler",
+        "iyi gecelerr",
+        "iyi gecelerrr",
+        "iyi geceler knk",
+        "hayırlı geceler",
+        "hayirli geceler",
+        "yatıyorum",
+        "yatiyorum",
+        "uyuyorum",
+        "uyucam"
+    ],
+    answer:
+        "İyi geceler knk 🌙😴"
+},
+
+{
+    words: [
+        "günaydın",
+        "gunaydin",
+        "günaydınnn",
+        "gunaydinnn",
+        "günaydın knk",
+        "gunaydin knk",
+        "uyandım",
+        "uyandim",
+        "yeni uyandım",
+        "yeni uyandim"
+    ],
+    answer:
+        "Günaydın knk ☀️😎"
+},
+
+{
+    words: [
+        "iyi akşamlar",
+        "iyi aksamlar",
+        "iyi akşamlarrr",
+        "iyi aksamlarrr",
+        "akşamlar",
+        "aksamlar",
+        "iyi akşamlar knk"
+    ],
+    answer:
+        "İyi akşamlar knk 😎🌆"
+},
+
+{
+    words: [
+        "hoş geldin",
+        "hos geldin",
+        "hoşgeldin",
+        "hosgeldin",
+        "hoş geldinn",
+        "hos geldinn",
+        "geldim",
+        "geldimmm"
+    ],
+    answer:
+        "Hoş bulduk knk 😎"
+},
+
+{
+    words: [
+        "hoş bulduk",
+        "hos bulduk",
+        "hoşbulduk",
+        "hosbulduk",
+        "hoş buldum",
+        "hos buldum"
+    ],
+    answer:
+        "😎👋"
+},
+
+{
+    words: [
+        "görüşürüz",
+        "gorusuruz",
+        "sonra görüşürüz",
+        "sonra gorusuruz",
+        "bye",
+        "byee",
+        "byeee",
+        "bye bye",
+        "bb",
+        "bay bay"
+    ],
+    answer:
+        "Görüşürüz knk 👋😎"
+},
+{
+    words: [
+        "tekrar söyle",
+        "tekrar soyle",
+        "bir daha söyle",
+        "bir daha soyle",
+        "tekrar anlat",
+        "bir daha anlat",
+        "yeniden anlat",
+        "anlatır mısın",
+        "anlatir misin"
+    ],
+    answer:
+        "Tabii knk 😎"
+},
+
+{
+    words: [
+        "bekle biraz",
+        "biraz bekle",
+        "az bekle",
+        "dur biraz",
+        "bir dakika bekle",
+        "bi dakika bekle",
+        "hemen geliyorum",
+        "hemen gelcem"
+    ],
+    answer:
+        "Tamamdır 😎"
+},
+
+{
+    words: [
+        "geldim",
+        "geldimmm",
+        "geldimmmm",
+        "buradayım",
+        "burdayım",
+        "buradayim",
+        "burdayim",
+        "geri geldim",
+        "geri geldim knk"
+    ],
+    answer:
+        "Hoş geldin knk 😎🔥"
+},
+
+{
+    words: [
+        "güle güle",
+        "gule gule",
+        "kendine iyi bak",
+        "kendine iyi bak knk",
+        "iyi bak kendine",
+        "sonra konuşuruz",
+        "sonra konusuruz",
+        "yarın konuşuruz",
+        "yarin konusuruz"
+    ],
+    answer:
+        "Tamam knk, görüşürüz 👋😎"
+},
+    {
+    words: [
         "nasıl gidiyor",
         "nasil gidiyor",
         "nasıl gidiyo",
