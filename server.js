@@ -4659,8 +4659,6 @@ const localRules = [
         "ne",
         "neee",
         "neee?",
-        "nasıl",
-        "nasil",
         "nasıl yani",
         "nasil yani",
         "ne diyorsun",
