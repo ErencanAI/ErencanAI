@@ -199,7 +199,70 @@ function saveKnowledge(knowledge) {
         return false;
     }
 }
+function saveKnowledgeItem(question, answer) {
+    const cleanQuestion =
+        String(question || "").trim();
 
+    const cleanAnswer =
+        String(answer || "").trim();
+
+    if (!cleanQuestion || !cleanAnswer) {
+        return false;
+    }
+
+    const exists = knowledge.some(
+        item =>
+            item &&
+            typeof item.question === "string" &&
+            item.question.toLowerCase() ===
+                cleanQuestion.toLowerCase()
+    );
+
+    if (exists) {
+        return false;
+    }
+
+    knowledge.push({
+        question: cleanQuestion,
+        answer: cleanAnswer,
+        source: "Groq",
+        time: new Date().toISOString()
+    });
+
+    return saveKnowledge(knowledge);
+    function saveKnowledgeItem(question, answer) {
+    const cleanQuestion =
+        String(question || "").trim();
+
+    const cleanAnswer =
+        String(answer || "").trim();
+
+    if (!cleanQuestion || !cleanAnswer) {
+        return false;
+    }
+
+    const exists = knowledge.some(
+        item =>
+            item &&
+            typeof item.question === "string" &&
+            item.question.toLowerCase() ===
+                cleanQuestion.toLowerCase()
+    );
+
+    if (exists) {
+        return false;
+    }
+
+    knowledge.push({
+        question: cleanQuestion,
+        answer: cleanAnswer,
+        source: "Groq",
+        time: new Date().toISOString()
+    });
+
+    return saveKnowledge(knowledge);
+}
+}
 
 let knowledge =
     loadKnowledge();
@@ -6085,7 +6148,13 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
                 cleanReply(
                     reply
                 );
-
+console.log(
+    "BİLGİ HAFIZASI TEST:",
+    saveKnowledgeItem(
+        message,
+        reply
+    )
+);
             if (
                 !reply
             ) {
