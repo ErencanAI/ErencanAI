@@ -131,7 +131,78 @@ const MEMORY_FILE =
         __dirname,
         "memory.json"
     );
+const KNOWLEDGE_FILE =
+    path.join(
+        __dirname,
+        "knowledge.json"
+    );
+    function loadKnowledge() {
+    try {
+        if (!fs.existsSync(KNOWLEDGE_FILE)) {
+            fs.writeFileSync(
+                KNOWLEDGE_FILE,
+                "[]",
+                "utf8"
+            );
 
+            return [];
+        }
+
+        const content =
+            fs.readFileSync(
+                KNOWLEDGE_FILE,
+                "utf8"
+            );
+
+        if (!content.trim()) {
+            return [];
+        }
+
+        const data =
+            JSON.parse(content);
+
+        return Array.isArray(data)
+            ? data
+            : [];
+
+    } catch (error) {
+        console.error(
+            "BİLGİ HAFIZASI OKUMA HATASI:",
+            error.message
+        );
+
+        return [];
+    }
+}
+
+
+function saveKnowledge(knowledge) {
+    try {
+        fs.writeFileSync(
+            KNOWLEDGE_FILE,
+            JSON.stringify(
+                knowledge,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "BİLGİ HAFIZASI KAYDETME HATASI:",
+            error.message
+        );
+
+        return false;
+    }
+}
+
+
+let knowledge =
+    loadKnowledge();
 const MAX_MEMORY_MESSAGES =
     400;
 
