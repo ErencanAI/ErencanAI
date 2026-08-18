@@ -32,10 +32,9 @@ function speakText(text) {
             String(text)
         );
 
-    utterance.lang = "tr-TR";
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.volume = 1;
+ utterance.rate = 0.9;
+utterance.pitch = 1.8;
+utterance.volume = 1;
 
     window.speechSynthesis.speak(
         utterance
