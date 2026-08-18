@@ -1,4 +1,15 @@
 "use strict";
+
+/* =====================================================
+   ERENCANAI PRO 9.00
+   SOHBET + HAFIZA + İNTERNET ARAŞTIRMASI + SES
+===================================================== */
+
+
+/* =====================================================
+   SESLENDİRME
+===================================================== */
+
 function speakText(text) {
 
     if (!text) {
@@ -6,35 +17,64 @@ function speakText(text) {
     }
 
     if (!("speechSynthesis" in window)) {
-        console.warn("Seslendirme desteklenmiyor.");
+
+        console.warn(
+            "Bu tarayıcı seslendirmeyi desteklemiyor."
+        );
+
         return;
     }
 
     window.speechSynthesis.cancel();
 
     const utterance =
-        new SpeechSynthesisUtterance(text);
+        new SpeechSynthesisUtterance(
+            String(text)
+        );
 
     utterance.lang = "tr-TR";
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
 
-    window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.speak(
+        utterance
+    );
 }
 
+
 /* =====================================================
-ERENCANAI PRO 9.00
-SOHBET + HAFIZA + İNTERNET ARAŞTIRMASI
+   API ADRESLERİ
 ===================================================== */
 
-const API_URL = "/api/chat";
-const MEMORY_API_URL = "/api/user-memory";
-const RESEARCH_API_URL = "/api/research";
+const API_URL =
+    "/api/chat";
 
-const STORAGE_KEY = "erencanai_pro_chats_v1";
-const USER_ID_KEY = "erencanai_pro_user_id_v1";
-const SETTINGS_KEY = "erencanai_pro_settings_v1";
+const MEMORY_API_URL =
+    "/api/user-memory";
+
+const RESEARCH_API_URL =
+    "/api/research";
+
+
+/* =====================================================
+   LOCAL STORAGE
+===================================================== */
+
+const STORAGE_KEY =
+    "erencanai_pro_chats_v1";
+
+const USER_ID_KEY =
+    "erencanai_pro_user_id_v1";
+
+const SETTINGS_KEY =
+    "erencanai_pro_settings_v1";
+
+
+/* =====================================================
+   VARSAYILAN AYARLAR
+===================================================== */
+
 const DEFAULT_SETTINGS = {
 
     memory: true,
@@ -57,6 +97,10 @@ const DEFAULT_SETTINGS = {
 
 };
 
+
+/* =====================================================
+   AYARLARI YÜKLE
+===================================================== */
 
 function loadSettings() {
 
@@ -93,31 +137,68 @@ function loadSettings() {
 }
 
 
+/* =====================================================
+   AYARLARI KAYDET
+===================================================== */
+
 function saveSettings(settings) {
 
-    localStorage.setItem(
-        SETTINGS_KEY,
-        JSON.stringify(settings)
-    );
+    try {
+
+        localStorage.setItem(
+            SETTINGS_KEY,
+            JSON.stringify(settings)
+        );
+
+    } catch (error) {
+
+        console.error(
+            "AYARLAR KAYDEDİLEMEDİ:",
+            error
+        );
+    }
 }
-const ErencanAI = {
-    isThinking: false,
-    chats: [],
-    currentChatId: null,
-    userId: null,
-    lastAIReply: "",
-    settings: loadSettings()
-};
-const elements = {};
+
 
 /* =====================================================
-KULLANICI ID
+   ERENCANAI ANA NESNESİ
+===================================================== */
+
+const ErencanAI = {
+
+    isThinking: false,
+
+    chats: [],
+
+    currentChatId: null,
+
+    userId: null,
+
+    lastAIReply: "",
+
+    settings:
+        loadSettings()
+
+};
+
+
+/* =====================================================
+   DOM ELEMENTLERİ
+===================================================== */
+
+const elements = {};
+
+
+/* =====================================================
+   KULLANICI ID
 ===================================================== */
 
 function getUserId() {
 
     let userId =
-        localStorage.getItem(USER_ID_KEY);
+        localStorage.getItem(
+            USER_ID_KEY
+        );
 
     if (!userId) {
 
@@ -138,64 +219,142 @@ function getUserId() {
     return userId;
 }
 
+
 /* =====================================================
-BAŞLANGIÇ
+   BAŞLANGIÇ
 ===================================================== */
 
 function init() {
 
+    /* =================================================
+       USER ID
+    ================================================= */
+
     ErencanAI.userId =
         getUserId();
 
+
+    /* =================================================
+       ELEMENTLER
+    ================================================= */
+
     elements.chatContainer =
-        document.getElementById("chatContainer");
+        document.getElementById(
+            "chatContainer"
+        );
 
     elements.chatArea =
-        document.getElementById("chatArea");
+        document.getElementById(
+            "chatArea"
+        );
 
     elements.messageInput =
-        document.getElementById("messageInput");
+        document.getElementById(
+            "messageInput"
+        );
 
     elements.sendButton =
-        document.getElementById("sendButton");
-elements.voiceButton =
-    document.getElementById("voiceButton");
+        document.getElementById(
+            "sendButton"
+        );
+
+    elements.voiceButton =
+        document.getElementById(
+            "voiceButton"
+        );
+
     elements.welcome =
-        document.getElementById("welcome");
+        document.getElementById(
+            "welcome"
+        );
 
     elements.newChatButton =
-        document.getElementById("newChatButton");
+        document.getElementById(
+            "newChatButton"
+        );
 
     elements.clearChatButton =
-        document.getElementById("clearChatButton");
+        document.getElementById(
+            "clearChatButton"
+        );
 
     elements.chatHistory =
-        document.getElementById("chatHistory");
+        document.getElementById(
+            "chatHistory"
+        );
 
     elements.menuButton =
-        document.getElementById("menuButton");
+        document.getElementById(
+            "menuButton"
+        );
 
     elements.sidebar =
-        document.getElementById("sidebar");
+        document.getElementById(
+            "sidebar"
+        );
 
     elements.searchButton =
-        document.getElementById("searchButton");
+        document.getElementById(
+            "searchButton"
+        );
 
     elements.settingsButton =
-        document.getElementById("settingsButton");
+        document.getElementById(
+            "settingsButton"
+        );
 
     elements.deleteHistoryButton =
-        document.getElementById("deleteHistoryButton");
+        document.getElementById(
+            "deleteHistoryButton"
+        );
 
     elements.researchButton =
-        document.getElementById("researchToolButton");
+        document.getElementById(
+            "researchToolButton"
+        );
+
+    elements.weatherButton =
+        document.getElementById(
+            "weatherToolButton"
+        );
 
     elements.memoryButton =
-        document.getElementById("memoryToolButton");
-e
+        document.getElementById(
+            "memoryToolButton"
+        );
+
+    elements.topSettingsButton =
+        document.getElementById(
+            "topSettingsButton"
+        );
+
+    elements.accountButton =
+        document.getElementById(
+            "accountButton"
+        );
+
+    elements.chatSearchInput =
+        document.getElementById(
+            "chatSearchInput"
+        );
+
+    elements.searchResults =
+        document.getElementById(
+            "searchResults"
+        );
+
+
+    /* =================================================
+       SOHBETLERİ YÜKLE
+    ================================================= */
+
     loadChats();
 
-    if (ErencanAI.chats.length === 0) {
+
+    if (
+        ErencanAI.chats.length ===
+        0
+    ) {
 
         createNewChat(false);
 
@@ -204,11 +363,14 @@ e
         const lastChat =
             ErencanAI.chats[0];
 
-        openChat(lastChat.id);
+        openChat(
+            lastChat.id
+        );
     }
 
+
     /* =================================================
-    GÖNDER
+       GÖNDER BUTONU
     ================================================= */
 
     if (elements.sendButton) {
@@ -219,8 +381,38 @@ e
         );
     }
 
+
     /* =================================================
-    ENTER
+       SES BUTONU
+    ================================================= */
+
+    if (elements.voiceButton) {
+
+        elements.voiceButton.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    !ErencanAI.lastAIReply
+                ) {
+
+                    showToastMessage(
+                        "Henüz seslendirilecek bir cevap yok."
+                    );
+
+                    return;
+                }
+
+                speakText(
+                    ErencanAI.lastAIReply
+                );
+            }
+        );
+    }
+
+
+    /* =================================================
+       ENTER
     ================================================= */
 
     if (elements.messageInput) {
@@ -230,7 +422,8 @@ e
             function (event) {
 
                 if (
-                    event.key === "Enter" &&
+                    event.key ===
+                        "Enter" &&
                     !event.shiftKey
                 ) {
 
@@ -241,14 +434,16 @@ e
             }
         );
 
+
         elements.messageInput.addEventListener(
             "input",
             autoResizeInput
         );
     }
 
+
     /* =================================================
-    YENİ SOHBET
+       YENİ SOHBET
     ================================================= */
 
     if (elements.newChatButton) {
@@ -262,23 +457,22 @@ e
         );
     }
 
+
     /* =================================================
-    SOHBET TEMİZLE
+       SOHBET TEMİZLE
     ================================================= */
 
     if (elements.clearChatButton) {
 
         elements.clearChatButton.addEventListener(
             "click",
-            function () {
-
-                clearCurrentChat();
-            }
+            clearCurrentChat
         );
     }
 
+
     /* =================================================
-    MOBİL MENÜ
+       MOBİL MENÜ
     ================================================= */
 
     if (elements.menuButton) {
@@ -287,7 +481,9 @@ e
             "click",
             function () {
 
-                if (elements.sidebar) {
+                if (
+                    elements.sidebar
+                ) {
 
                     elements.sidebar.classList.toggle(
                         "open"
@@ -297,8 +493,9 @@ e
         );
     }
 
+
     /* =================================================
-    ARAMA
+       ARAMA
     ================================================= */
 
     if (elements.searchButton) {
@@ -309,19 +506,50 @@ e
         );
     }
 
+
     /* =================================================
-    AYARLAR
+       AYARLAR - SIDEBAR
     ================================================= */
 
     if (elements.settingsButton) {
 
         elements.settingsButton.addEventListener(
             "click",
+            openSettings
+        );
+    }
+
+
+    /* =================================================
+       AYARLAR - TOPBAR
+    ================================================= */
+
+    if (
+        elements.topSettingsButton
+    ) {
+
+        elements.topSettingsButton.addEventListener(
+            "click",
+            openSettings
+        );
+    }
+
+
+    /* =================================================
+       HESAP
+    ================================================= */
+
+    if (
+        elements.accountButton
+    ) {
+
+        elements.accountButton.addEventListener(
+            "click",
             function () {
 
                 const modal =
                     document.getElementById(
-                        "settingsModal"
+                        "googleLoginModal"
                     );
 
                 if (modal) {
@@ -334,11 +562,14 @@ e
         );
     }
 
+
     /* =================================================
-    TÜM GEÇMİŞİ SİL
+       TÜM GEÇMİŞİ SİL
     ================================================= */
 
-    if (elements.deleteHistoryButton) {
+    if (
+        elements.deleteHistoryButton
+    ) {
 
         elements.deleteHistoryButton.addEventListener(
             "click",
@@ -346,11 +577,14 @@ e
         );
     }
 
+
     /* =================================================
-    İNTERNET ARAŞTIRMASI BUTONU
+       ARAŞTIRMA BUTONU
     ================================================= */
 
-    if (elements.researchButton) {
+    if (
+        elements.researchButton
+    ) {
 
         elements.researchButton.addEventListener(
             "click",
@@ -358,11 +592,29 @@ e
         );
     }
 
+
     /* =================================================
-    HAFIZA BUTONU
+       HAVA DURUMU BUTONU
     ================================================= */
 
-    if (elements.memoryButton) {
+    if (
+        elements.weatherButton
+    ) {
+
+        elements.weatherButton.addEventListener(
+            "click",
+            startWeather
+        );
+    }
+
+
+    /* =================================================
+       HAFIZA BUTONU
+    ================================================= */
+
+    if (
+        elements.memoryButton
+    ) {
 
         elements.memoryButton.addEventListener(
             "click",
@@ -370,12 +622,15 @@ e
         );
     }
 
+
     /* =================================================
-    ÖNERİLER
+       ÖNERİLER
     ================================================= */
 
     document
-        .querySelectorAll(".suggestion")
+        .querySelectorAll(
+            ".suggestion"
+        )
         .forEach(
             function (button) {
 
@@ -384,27 +639,37 @@ e
                     function () {
 
                         const prompt =
-                            button.dataset.prompt || "";
+                            button.dataset.prompt ||
+                            "";
 
-                        if (!prompt) {
+                        if (
+                            !prompt ||
+                            !elements.messageInput
+                        ) {
+
                             return;
                         }
 
                         elements.messageInput.value =
                             prompt;
 
-                        sendMessage();
+                        autoResizeInput();
+
+                        elements.messageInput.focus();
                     }
                 );
             }
         );
 
+
     /* =================================================
-    MODAL KAPATMA
+       MODAL KAPATMA
     ================================================= */
 
     document
-        .querySelectorAll("[data-close]")
+        .querySelectorAll(
+            "[data-close]"
+        )
         .forEach(
             function (button) {
 
@@ -416,7 +681,9 @@ e
                             button.dataset.close;
 
                         const modal =
-                            document.getElementById(id);
+                            document.getElementById(
+                                id
+                            );
 
                         if (modal) {
 
@@ -429,12 +696,15 @@ e
             }
         );
 
+
     /* =================================================
-    MODAL DIŞINA TIKLAMA
+       MODAL DIŞINA TIKLAMA
     ================================================= */
 
     document
-        .querySelectorAll(".modal")
+        .querySelectorAll(
+            ".modal"
+        )
         .forEach(
             function (modal) {
 
@@ -443,7 +713,8 @@ e
                     function (event) {
 
                         if (
-                            event.target === modal
+                            event.target ===
+                            modal
                         ) {
 
                             modal.classList.remove(
@@ -455,7 +726,20 @@ e
             }
         );
 
+
+    /* =================================================
+       AYAR SWITCH'LERİ
+    ================================================= */
+
+    setupSettings();
+
+
+    /* =================================================
+       GEÇMİŞİ GÖSTER
+    ================================================= */
+
     renderChatHistory();
+
 
     console.log(
         "ERENCANAI PRO 9.00 HAZIR"
@@ -467,8 +751,112 @@ e
     );
 }
 
+
 /* =====================================================
-SOHBETLERİ YÜKLE
+   AYARLARI BAĞLA
+===================================================== */
+
+function setupSettings() {
+
+    const memorySwitch =
+        document.getElementById(
+            "memorySwitch"
+        );
+
+    const animationSwitch =
+        document.getElementById(
+            "animationSwitch"
+        );
+
+    const researchSwitch =
+        document.getElementById(
+            "researchSwitch"
+        );
+
+
+    if (memorySwitch) {
+
+        memorySwitch.checked =
+            ErencanAI.settings.memory;
+
+        memorySwitch.addEventListener(
+            "change",
+            function () {
+
+                ErencanAI.settings.memory =
+                    memorySwitch.checked;
+
+                saveSettings(
+                    ErencanAI.settings
+                );
+            }
+        );
+    }
+
+
+    if (animationSwitch) {
+
+        animationSwitch.checked =
+            ErencanAI.settings.animations;
+
+        animationSwitch.addEventListener(
+            "change",
+            function () {
+
+                ErencanAI.settings.animations =
+                    animationSwitch.checked;
+
+                saveSettings(
+                    ErencanAI.settings
+                );
+            }
+        );
+    }
+
+
+    if (researchSwitch) {
+
+        researchSwitch.checked =
+            ErencanAI.settings.research;
+
+        researchSwitch.addEventListener(
+            "change",
+            function () {
+
+                ErencanAI.settings.research =
+                    researchSwitch.checked;
+
+                saveSettings(
+                    ErencanAI.settings
+                );
+            }
+        );
+    }
+}
+
+
+/* =====================================================
+   AYARLARI AÇ
+===================================================== */
+
+function openSettings() {
+
+    const modal =
+        document.getElementById(
+            "settingsModal"
+        );
+
+    if (modal) {
+
+        modal.classList.add(
+            "active"
+        );
+    }
+}
+
+
+/* =====================================================
+   SOHBETLERİ YÜKLE
 ===================================================== */
 
 function loadChats() {
@@ -490,9 +878,12 @@ function loadChats() {
         const data =
             JSON.parse(saved);
 
-        if (Array.isArray(data)) {
+        if (
+            Array.isArray(data)
+        ) {
 
-            ErencanAI.chats = data;
+            ErencanAI.chats =
+                data;
 
         } else {
 
@@ -510,8 +901,9 @@ function loadChats() {
     }
 }
 
+
 /* =====================================================
-SOHBETLERİ KAYDET
+   SOHBETLERİ KAYDET
 ===================================================== */
 
 function saveChats() {
@@ -534,11 +926,14 @@ function saveChats() {
     }
 }
 
+
 /* =====================================================
-YENİ SOHBET
+   YENİ SOHBET
 ===================================================== */
 
-function createNewChat(showToast) {
+function createNewChat(
+    showToast
+) {
 
     const chat = {
 
@@ -562,10 +957,19 @@ function createNewChat(showToast) {
             Date.now()
     };
 
-    ErencanAI.chats.unshift(chat);
+
+    ErencanAI.chats.unshift(
+        chat
+    );
+
 
     ErencanAI.currentChatId =
         chat.id;
+
+
+    ErencanAI.lastAIReply =
+        "";
+
 
     saveChats();
 
@@ -573,9 +977,11 @@ function createNewChat(showToast) {
 
     renderCurrentChat();
 
+
     if (
         showToast &&
-        typeof showToastMessage === "function"
+        typeof showToastMessage ===
+            "function"
     ) {
 
         showToastMessage(
@@ -583,14 +989,18 @@ function createNewChat(showToast) {
         );
     }
 
-    if (elements.messageInput) {
+
+    if (
+        elements.messageInput
+    ) {
 
         elements.messageInput.focus();
     }
 }
 
+
 /* =====================================================
-SOHBET AÇ
+   SOHBET AÇ
 ===================================================== */
 
 function openChat(chatId) {
@@ -599,36 +1009,97 @@ function openChat(chatId) {
         ErencanAI.chats.find(
             function (item) {
 
-                return item.id === chatId;
+                return (
+                    item.id ===
+                    chatId
+                );
             }
         );
 
+
     if (!chat) {
+
         return;
     }
 
+
     ErencanAI.currentChatId =
         chat.id;
+
+
+    /* Son AI cevabını bul */
+
+    ErencanAI.lastAIReply =
+        "";
+
+
+    if (
+        Array.isArray(
+            chat.messages
+        )
+    ) {
+
+        for (
+            let i =
+                chat.messages.length -
+                1;
+
+            i >= 0;
+
+            i--
+        ) {
+
+            const message =
+                chat.messages[i];
+
+            if (
+                message.type &&
+                message.type.includes(
+                    "ai"
+                ) &&
+                !message.type.includes(
+                    "thinking"
+                )
+            ) {
+
+                ErencanAI.lastAIReply =
+                    String(
+                        message.content ||
+                        ""
+                    );
+
+                break;
+            }
+        }
+    }
+
 
     renderChatHistory();
 
     renderCurrentChat();
 
-    if (elements.sidebar) {
+
+    if (
+        elements.sidebar
+    ) {
 
         elements.sidebar.classList.remove(
             "open"
         );
     }
 
-    if (elements.messageInput) {
+
+    if (
+        elements.messageInput
+    ) {
 
         elements.messageInput.focus();
     }
 }
 
+
 /* =====================================================
-BAŞLIK
+   BAŞLIK
 ===================================================== */
 
 function createTitle(text) {
@@ -638,33 +1109,49 @@ function createTitle(text) {
             .replace(/\s+/g, " ")
             .trim();
 
+
     if (!title) {
 
         return "Yeni sohbet";
     }
 
-    if (title.length > 38) {
+
+    if (
+        title.length > 38
+    ) {
 
         title =
-            title.substring(0, 38)
+            title
+                .substring(
+                    0,
+                    38
+                )
                 .trim() +
             "...";
     }
 
+
     return title;
 }
 
+
 /* =====================================================
-GEÇMİŞİ GÖSTER
+   GEÇMİŞİ GÖSTER
 ===================================================== */
 
 function renderChatHistory() {
 
-    if (!elements.chatHistory) {
+    if (
+        !elements.chatHistory
+    ) {
+
         return;
     }
 
-    elements.chatHistory.innerHTML = "";
+
+    elements.chatHistory.innerHTML =
+        "";
+
 
     ErencanAI.chats.forEach(
         function (chat) {
@@ -674,10 +1161,14 @@ function renderChatHistory() {
                     "button"
                 );
 
-            button.type = "button";
+
+            button.type =
+                "button";
+
 
             button.className =
                 "history-item";
+
 
             if (
                 chat.id ===
@@ -689,21 +1180,27 @@ function renderChatHistory() {
                 );
             }
 
+
             button.textContent =
                 chat.title ||
                 "Yeni sohbet";
+
 
             button.title =
                 chat.title ||
                 "Yeni sohbet";
 
+
             button.addEventListener(
                 "click",
                 function () {
 
-                    openChat(chat.id);
+                    openChat(
+                        chat.id
+                    );
                 }
             );
+
 
             elements.chatHistory.appendChild(
                 button
@@ -712,24 +1209,32 @@ function renderChatHistory() {
     );
 }
 
+
 /* =====================================================
-MEVCUT SOHBETİ GÖSTER
+   MEVCUT SOHBETİ GÖSTER
 ===================================================== */
 
 function renderCurrentChat() {
 
-    if (!elements.chatContainer) {
+    if (
+        !elements.chatContainer
+    ) {
+
         return;
     }
 
+
     elements.chatContainer
-        .querySelectorAll(".message")
+        .querySelectorAll(
+            ".message"
+        )
         .forEach(
             function (message) {
 
                 message.remove();
             }
         );
+
 
     const chat =
         ErencanAI.chats.find(
@@ -742,9 +1247,12 @@ function renderCurrentChat() {
             }
         );
 
+
     if (!chat) {
+
         return;
     }
+
 
     if (
         chat.messages &&
@@ -752,6 +1260,7 @@ function renderCurrentChat() {
     ) {
 
         hideWelcome();
+
 
         chat.messages.forEach(
             function (message) {
@@ -767,18 +1276,22 @@ function renderCurrentChat() {
 
     } else {
 
-        if (elements.welcome) {
+        if (
+            elements.welcome
+        ) {
 
             elements.welcome.style.display =
                 "";
         }
     }
 
+
     scrollBottom();
 }
 
+
 /* =====================================================
-MESAJ EKLE
+   MESAJ EKLE
 ===================================================== */
 
 function addMessage(
@@ -795,6 +1308,11 @@ function addMessage(
     );
 }
 
+
+/* =====================================================
+   MESAJI EKRANA EKLE
+===================================================== */
+
 function addMessageToScreen(
     name,
     text,
@@ -802,17 +1320,23 @@ function addMessageToScreen(
     save
 ) {
 
-    if (!elements.chatContainer) {
+    if (
+        !elements.chatContainer
+    ) {
+
         return null;
     }
+
 
     const message =
         document.createElement(
             "div"
         );
 
+
     message.className =
         "message";
+
 
     if (type) {
 
@@ -832,13 +1356,16 @@ function addMessageToScreen(
             );
     }
 
+
     const avatar =
         document.createElement(
             "div"
         );
 
+
     avatar.className =
         "avatar";
+
 
     if (
         type &&
@@ -862,35 +1389,44 @@ function addMessageToScreen(
             "E";
     }
 
+
     const body =
         document.createElement(
             "div"
         );
 
+
     body.className =
         "message-body";
+
 
     const nameElement =
         document.createElement(
             "div"
         );
 
+
     nameElement.className =
         "message-name";
 
+
     nameElement.textContent =
         name;
+
 
     const textElement =
         document.createElement(
             "div"
         );
 
+
     textElement.className =
         "message-content";
 
+
     textElement.textContent =
         text;
+
 
     body.appendChild(
         nameElement
@@ -900,6 +1436,7 @@ function addMessageToScreen(
         textElement
     );
 
+
     message.appendChild(
         avatar
     );
@@ -908,9 +1445,11 @@ function addMessageToScreen(
         body
     );
 
+
     elements.chatContainer.appendChild(
         message
     );
+
 
     if (save) {
 
@@ -925,6 +1464,7 @@ function addMessageToScreen(
                 }
             );
 
+
         if (chat) {
 
             if (
@@ -935,6 +1475,7 @@ function addMessageToScreen(
 
                 chat.messages = [];
             }
+
 
             chat.messages.push({
 
@@ -951,19 +1492,26 @@ function addMessageToScreen(
                     Date.now()
             });
 
+
             chat.updatedAt =
                 Date.now();
 
+
             if (
                 chat.title ===
-                "Yeni sohbet" &&
+                    "Yeni sohbet" &&
                 type &&
-                type.includes("user")
+                type.includes(
+                    "user"
+                )
             ) {
 
                 chat.title =
-                    createTitle(text);
+                    createTitle(
+                        text
+                    );
             }
+
 
             saveChats();
 
@@ -971,7 +1519,9 @@ function addMessageToScreen(
         }
     }
 
+
     scrollBottom();
+
 
     return {
 
@@ -983,34 +1533,47 @@ function addMessageToScreen(
     };
 }
 
+
 /* =====================================================
-ANA AI MESAJI
+   ANA AI MESAJI
 ===================================================== */
 
 async function sendMessage() {
 
-    if (ErencanAI.isThinking) {
+    if (
+        ErencanAI.isThinking
+    ) {
+
         return;
     }
+
 
     const input =
         elements.messageInput;
 
+
     if (!input) {
+
         return;
     }
+
 
     const text =
         input.value.trim();
 
+
     if (!text) {
+
         return;
     }
+
 
     ErencanAI.isThinking =
         true;
 
+
     hideWelcome();
+
 
     addMessage(
         "Sen",
@@ -1018,10 +1581,13 @@ async function sendMessage() {
         "user"
     );
 
-    input.value = "";
+
+    input.value =
+        "";
 
     input.style.height =
         "auto";
+
 
     const thinking =
         addMessage(
@@ -1029,6 +1595,7 @@ async function sendMessage() {
             "Düşünüyor...",
             "ai thinking"
         );
+
 
     try {
 
@@ -1061,10 +1628,14 @@ async function sendMessage() {
                 }
             );
 
+
         const rawText =
             await response.text();
 
-        if (!response.ok) {
+
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
                 "Sunucu hatası (" +
@@ -1074,7 +1645,9 @@ async function sendMessage() {
             );
         }
 
+
         let data;
+
 
         try {
 
@@ -1090,6 +1663,7 @@ async function sendMessage() {
             );
         }
 
+
         if (!data) {
 
             throw new Error(
@@ -1097,7 +1671,10 @@ async function sendMessage() {
             );
         }
 
-        if (data.ok === false) {
+
+        if (
+            data.ok === false
+        ) {
 
             throw new Error(
                 data.reply ||
@@ -1106,7 +1683,10 @@ async function sendMessage() {
             );
         }
 
-        let reply = "";
+
+        let reply =
+            "";
+
 
         if (
             typeof data.reply ===
@@ -1117,6 +1697,7 @@ async function sendMessage() {
                 data.reply.trim();
         }
 
+
         if (
             !reply &&
             typeof data.response ===
@@ -1126,6 +1707,7 @@ async function sendMessage() {
             reply =
                 data.response.trim();
         }
+
 
         if (
             !reply &&
@@ -1141,6 +1723,7 @@ async function sendMessage() {
                     data.message.trim();
             }
 
+
             if (
                 typeof data.message ===
                     "object" &&
@@ -1153,6 +1736,7 @@ async function sendMessage() {
             }
         }
 
+
         if (!reply) {
 
             throw new Error(
@@ -1160,17 +1744,32 @@ async function sendMessage() {
             );
         }
 
+
         if (thinking) {
 
             thinking.message.remove();
         }
+
 
         addMessage(
             "ErencanAI",
             reply,
             "ai"
         );
-ErencanAI.lastAIReply = reply;
+
+
+        /* Son cevabı hafızada tut */
+
+        ErencanAI.lastAIReply =
+            reply;
+
+
+        console.log(
+            "ERENCANAI CEVAP:",
+            reply
+        );
+
+
     } catch (error) {
 
         console.error(
@@ -1178,10 +1777,12 @@ ErencanAI.lastAIReply = reply;
             error
         );
 
+
         if (thinking) {
 
             thinking.message.remove();
         }
+
 
         addMessage(
             "ErencanAI",
@@ -1195,10 +1796,12 @@ ErencanAI.lastAIReply = reply;
             "error"
         );
 
+
     } finally {
 
         ErencanAI.isThinking =
             false;
+
 
         if (input) {
 
@@ -1208,7 +1811,10 @@ ErencanAI.lastAIReply = reply;
             input.focus();
         }
 
-        if (elements.sendButton) {
+
+        if (
+            elements.sendButton
+        ) {
 
             elements.sendButton.disabled =
                 false;
@@ -1216,17 +1822,23 @@ ErencanAI.lastAIReply = reply;
     }
 }
 
+
 /* =====================================================
-🧠 HAFIZA BUTONU
+   🧠 HAFIZA BUTONU
 ===================================================== */
 
 async function showUserMemory() {
 
-    if (ErencanAI.isThinking) {
+    if (
+        ErencanAI.isThinking
+    ) {
+
         return;
     }
 
+
     hideWelcome();
+
 
     const thinking =
         addMessage(
@@ -1234,6 +1846,7 @@ async function showUserMemory() {
             "🧠 Hafızam kontrol ediliyor...",
             "ai thinking"
         );
+
 
     try {
 
@@ -1256,10 +1869,14 @@ async function showUserMemory() {
                 }
             );
 
+
         const rawText =
             await response.text();
 
-        if (!response.ok) {
+
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
                 "Hafıza sunucu hatası (" +
@@ -1268,7 +1885,9 @@ async function showUserMemory() {
             );
         }
 
+
         let data;
+
 
         try {
 
@@ -1284,6 +1903,7 @@ async function showUserMemory() {
             );
         }
 
+
         if (
             !data ||
             data.ok !== true
@@ -1297,17 +1917,25 @@ async function showUserMemory() {
             );
         }
 
+
         const messages =
-            Array.isArray(data.messages)
+            Array.isArray(
+                data.messages
+            )
                 ? data.messages
                 : [];
+
 
         if (thinking) {
 
             thinking.message.remove();
         }
 
-        if (messages.length === 0) {
+
+        if (
+            messages.length ===
+            0
+        ) {
 
             addMessage(
                 "ErencanAI",
@@ -1318,36 +1946,39 @@ async function showUserMemory() {
             return;
         }
 
-        /*
-         * Son 20 hafıza mesajını göster.
-         * Böylece butona basınca ekran aşırı
-         * uzun bir mesajla dolmaz.
-         */
 
         const recent =
             messages.slice(-20);
+
 
         let memoryText =
             "🧠 Hafızamda " +
             messages.length +
             " kayıt bulunuyor.\n\n";
 
+
         recent.forEach(
             function (item) {
 
                 const role =
-                    item.role === "assistant"
+                    item.role ===
+                    "assistant"
                         ? "ErencanAI"
                         : "Sen";
 
+
                 const content =
                     String(
-                        item.content || ""
+                        item.content ||
+                        ""
                     ).trim();
 
+
                 if (!content) {
+
                     return;
                 }
+
 
                 memoryText +=
                     role +
@@ -1357,11 +1988,13 @@ async function showUserMemory() {
             }
         );
 
+
         addMessage(
             "ErencanAI",
             memoryText.trim(),
             "ai"
         );
+
 
     } catch (error) {
 
@@ -1370,10 +2003,12 @@ async function showUserMemory() {
             error
         );
 
+
         if (thinking) {
 
             thinking.message.remove();
         }
+
 
         addMessage(
             "ErencanAI",
@@ -1387,36 +2022,36 @@ async function showUserMemory() {
     }
 }
 
+
 /* =====================================================
-🔎 İNTERNET ARAŞTIRMASI
+   🔎 İNTERNET ARAŞTIRMASI
 ===================================================== */
 
 async function startResearch() {
 
-    if (ErencanAI.isThinking) {
+    if (
+        ErencanAI.isThinking
+    ) {
+
         return;
     }
+
 
     const input =
         elements.messageInput;
 
+
     if (!input) {
+
         return;
     }
 
-    const query =
-        input.value
-            .trim();
 
-    /*
-     * Butona basıldığında kutu boşsa
-     * kullanıcıdan konu ister.
-     */
+    const query =
+        input.value.trim();
+
 
     if (!query) {
-
-        input.value =
-            "";
 
         input.placeholder =
             "Araştırılacak konuyu yaz...";
@@ -1426,10 +2061,13 @@ async function startResearch() {
         return;
     }
 
+
     ErencanAI.isThinking =
         true;
 
+
     hideWelcome();
+
 
     addMessage(
         "Sen",
@@ -1437,10 +2075,13 @@ async function startResearch() {
         "user"
     );
 
-    input.value = "";
+
+    input.value =
+        "";
 
     input.style.height =
         "auto";
+
 
     const thinking =
         addMessage(
@@ -1448,6 +2089,7 @@ async function startResearch() {
             "🔎 İnternette araştırıyor...",
             "ai thinking"
         );
+
 
     try {
 
@@ -1477,10 +2119,14 @@ async function startResearch() {
                 }
             );
 
+
         const rawText =
             await response.text();
 
-        if (!response.ok) {
+
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
                 "Araştırma sunucu hatası (" +
@@ -1489,7 +2135,9 @@ async function startResearch() {
             );
         }
 
+
         let data;
+
 
         try {
 
@@ -1505,6 +2153,7 @@ async function startResearch() {
             );
         }
 
+
         if (
             !data ||
             data.ok !== true
@@ -1518,10 +2167,12 @@ async function startResearch() {
             );
         }
 
+
         if (thinking) {
 
             thinking.message.remove();
         }
+
 
         let researchText =
             String(
@@ -1530,23 +2181,24 @@ async function startResearch() {
                 ""
             ).trim();
 
+
         if (!researchText) {
 
             researchText =
                 "Araştırma sonucu bulunamadı.";
         }
 
-        /*
-         * Kaynaklar varsa cevabın sonuna ekle.
-         */
 
         if (
-            Array.isArray(data.sources) &&
+            Array.isArray(
+                data.sources
+            ) &&
             data.sources.length > 0
         ) {
 
             researchText +=
                 "\n\nKaynaklar:";
+
 
             data.sources
                 .slice(0, 6)
@@ -1554,22 +2206,27 @@ async function startResearch() {
                     function (source) {
 
                         if (!source) {
+
                             return;
                         }
+
 
                         const title =
                             source.title ||
                             source.name ||
                             "Kaynak";
 
+
                         const url =
                             source.url ||
                             source.link ||
                             "";
 
+
                         researchText +=
                             "\n• " +
                             title;
+
 
                         if (url) {
 
@@ -1581,11 +2238,17 @@ async function startResearch() {
                 );
         }
 
+
         addMessage(
             "ErencanAI",
             researchText,
             "ai"
         );
+
+
+        ErencanAI.lastAIReply =
+            researchText;
+
 
     } catch (error) {
 
@@ -1594,10 +2257,12 @@ async function startResearch() {
             error
         );
 
+
         if (thinking) {
 
             thinking.message.remove();
         }
+
 
         addMessage(
             "ErencanAI",
@@ -1609,10 +2274,12 @@ async function startResearch() {
             "error"
         );
 
+
     } finally {
 
         ErencanAI.isThinking =
             false;
+
 
         if (input) {
 
@@ -1624,8 +2291,44 @@ async function startResearch() {
     }
 }
 
+
 /* =====================================================
-SOHBET TEMİZLE
+   🌤️ HAVA DURUMU BUTONU
+===================================================== */
+
+function startWeather() {
+
+    if (
+        ErencanAI.isThinking
+    ) {
+
+        return;
+    }
+
+
+    const input =
+        elements.messageInput;
+
+
+    if (!input) {
+
+        return;
+    }
+
+
+    input.value =
+        "Güncel hava durumunu araştır ve bana bildir. Konum: ";
+
+
+    input.focus();
+
+
+    autoResizeInput();
+}
+
+
+/* =====================================================
+   SOHBET TEMİZLE
 ===================================================== */
 
 function clearCurrentChat() {
@@ -1641,32 +2344,47 @@ function clearCurrentChat() {
             }
         );
 
+
     if (!chat) {
+
         return;
     }
 
+
     chat.messages = [];
+
 
     chat.title =
         "Yeni sohbet";
 
+
     chat.updatedAt =
         Date.now();
 
+
+    ErencanAI.lastAIReply =
+        "";
+
+
     saveChats();
+
 
     renderChatHistory();
 
     renderCurrentChat();
 
-    if (elements.messageInput) {
+
+    if (
+        elements.messageInput
+    ) {
 
         elements.messageInput.focus();
     }
 }
 
+
 /* =====================================================
-TÜM GEÇMİŞİ SİL
+   TÜM GEÇMİŞİ SİL
 ===================================================== */
 
 function deleteAllChats() {
@@ -1676,28 +2394,40 @@ function deleteAllChats() {
             "Tüm sohbet geçmişi silinsin mi?"
         );
 
+
     if (!confirmed) {
+
         return;
     }
 
+
     ErencanAI.chats = [];
+
 
     ErencanAI.currentChatId =
         null;
+
+
+    ErencanAI.lastAIReply =
+        "";
+
 
     localStorage.removeItem(
         STORAGE_KEY
     );
 
+
     createNewChat(false);
+
 
     renderChatHistory();
 
     renderCurrentChat();
 }
 
+
 /* =====================================================
-SOHBETLERDE ARA
+   SOHBETLERDE ARA
 ===================================================== */
 
 function searchChats() {
@@ -1707,14 +2437,18 @@ function searchChats() {
             "Sohbetlerde ne aramak istiyorsun?"
         );
 
+
     if (search === null) {
+
         return;
     }
+
 
     const query =
         search
             .trim()
             .toLowerCase();
+
 
     if (!query) {
 
@@ -1723,12 +2457,18 @@ function searchChats() {
         return;
     }
 
-    if (!elements.chatHistory) {
+
+    if (
+        !elements.chatHistory
+    ) {
+
         return;
     }
 
+
     elements.chatHistory.innerHTML =
         "";
+
 
     ErencanAI.chats
         .filter(
@@ -1736,17 +2476,25 @@ function searchChats() {
 
                 const title =
                     String(
-                        chat.title || ""
+                        chat.title ||
+                        ""
                     ).toLowerCase();
+
 
                 const messages =
                     JSON.stringify(
-                        chat.messages || []
+                        chat.messages ||
+                        []
                     ).toLowerCase();
 
+
                 return (
-                    title.includes(query) ||
-                    messages.includes(query)
+                    title.includes(
+                        query
+                    ) ||
+                    messages.includes(
+                        query
+                    )
                 );
             }
         )
@@ -1758,11 +2506,14 @@ function searchChats() {
                         "button"
                     );
 
+
                 button.type =
                     "button";
 
+
                 button.className =
                     "history-item";
+
 
                 if (
                     chat.id ===
@@ -1774,17 +2525,22 @@ function searchChats() {
                     );
                 }
 
+
                 button.textContent =
                     chat.title ||
                     "Yeni sohbet";
+
 
                 button.addEventListener(
                     "click",
                     function () {
 
-                        openChat(chat.id);
+                        openChat(
+                            chat.id
+                        );
                     }
                 );
+
 
                 elements.chatHistory.appendChild(
                     button
@@ -1793,21 +2549,25 @@ function searchChats() {
         );
 }
 
+
 /* =====================================================
-HOŞ GELDİN
+   HOŞ GELDİN EKRANI
 ===================================================== */
 
 function hideWelcome() {
 
-    if (elements.welcome) {
+    if (
+        elements.welcome
+    ) {
 
         elements.welcome.style.display =
             "none";
     }
 }
 
+
 /* =====================================================
-INPUT BOYUTU
+   INPUT BOYUTU
 ===================================================== */
 
 function autoResizeInput() {
@@ -1815,12 +2575,16 @@ function autoResizeInput() {
     const input =
         elements.messageInput;
 
+
     if (!input) {
+
         return;
     }
 
+
     input.style.height =
         "auto";
+
 
     input.style.height =
         Math.min(
@@ -1830,15 +2594,20 @@ function autoResizeInput() {
         "px";
 }
 
+
 /* =====================================================
-SCROLL
+   SCROLL
 ===================================================== */
 
 function scrollBottom() {
 
-    if (!elements.chatArea) {
+    if (
+        !elements.chatArea
+    ) {
+
         return;
     }
+
 
     requestAnimationFrame(
         function () {
@@ -1849,25 +2618,32 @@ function scrollBottom() {
     );
 }
 
+
 /* =====================================================
-BİLDİRİM
+   BİLDİRİM
 ===================================================== */
 
-function showToastMessage(text) {
+function showToastMessage(
+    text
+) {
 
     const toast =
         document.getElementById(
             "toast"
         );
 
+
     const toastText =
         document.getElementById(
             "toastText"
         );
 
+
     if (!toast) {
+
         return;
     }
+
 
     if (toastText) {
 
@@ -1875,9 +2651,11 @@ function showToastMessage(text) {
             text;
     }
 
+
     toast.classList.add(
         "active"
     );
+
 
     setTimeout(
         function () {
@@ -1891,41 +2669,14 @@ function showToastMessage(text) {
     );
 }
 
+
 /* =====================================================
-BAŞLAT
+   BAŞLAT
 ===================================================== */
 
-function speakText(text) {
-
-    if (!text) {
-        return;
-    }
-
-    if (!("speechSynthesis" in window)) {
-        console.warn(
-            "Bu tarayıcı seslendirmeyi desteklemiyor."
-        );
-        return;
-    }
-
-    window.speechSynthesis.cancel();
-
-    const utterance =
-        new SpeechSynthesisUtterance(text);
-
-    utterance.lang = "tr-TR";
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    window.speechSynthesis.speak(
-        utterance
-    );
-}
-
-
 if (
-    document.readyState === "loading"
+    document.readyState ===
+    "loading"
 ) {
 
     document.addEventListener(
