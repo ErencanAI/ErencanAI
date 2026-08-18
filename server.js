@@ -6,7 +6,175 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const app = express();
+const TURKAI_PRO_CODE = process.env.TURKAI_PRO_CODE;
+app.post("/api/pro/activate", express.json(), (req, res) => {
 
+    const enteredCode =
+        String(req.body?.code || "").trim();
+
+    if (
+        !enteredCode ||
+        !TURKAI_PRO_CODE ||
+        enteredCode !== TURKAI_PRO_CODE
+    ) {
+        return res.status(403).json({
+            ok: false,
+            message: "Geçersiz Pro kodu."
+        });
+    }
+
+    return res.json({
+        ok: true,
+        plan: "pro",
+        message: "TürkAI Pro etkinleştirildi! 🚀"
+    });
+});
+// TÜRKAI GÜNLÜK MESAJ LİMİTLERİ
+const DAILY_LIMITS = {
+    free: 200,
+    pro: 400,
+    developer: 500
+};
+const DAILY_USAGE_FILE = "./daily_usage.json";
+
+function loadDailyUsage() {
+    if (!fs.existsSync(DAILY_USAGE_FILE)) {
+        return {};
+    }
+
+    try {
+        return JSON.parse(
+            fs.readFileSync(
+                DAILY_USAGE_FILE,
+                "utf8"
+            )
+        );
+    } catch (error) {
+        console.error(
+            "GÜNLÜK KULLANIM OKUMA HATASI:",
+            error.message
+        );
+
+        return {};
+    }
+}
+
+function saveDailyUsage(data) {
+    fs.writeFileSync(
+        DAILY_USAGE_FILE,
+        JSON.stringify(
+            data,
+            null,
+            2
+        ),
+        "utf8"
+    );
+}
+function getTodayKey() {
+    const now = new Date();
+
+    return new Intl.DateTimeFormat("tr-TR", {
+        timeZone: "Europe/Istanbul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(now);
+}
+const GROQ_DAILY_USAGE_FILE = "./groq_daily_usage.json";
+function getTodayDate() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function loadGroqDailyUsage() {
+
+    if (!fs.existsSync(GROQ_DAILY_USAGE_FILE)) {
+
+        const data = {
+            date: getTodayDate(),
+            requests: 0,
+            tokens: 0
+        };
+
+        fs.writeFileSync(
+            GROQ_DAILY_USAGE_FILE,
+            JSON.stringify(data, null, 2),
+            "utf8"
+        );
+
+        return data;
+    }
+
+    try {
+
+        const data = JSON.parse(
+            fs.readFileSync(
+                GROQ_DAILY_USAGE_FILE,
+                "utf8"
+            )
+        );
+
+        if (data.date !== getTodayDate()) {
+
+            const newData = {
+                date: getTodayDate(),
+                requests: 0,
+                tokens: 0
+            };
+
+            fs.writeFileSync(
+                GROQ_DAILY_USAGE_FILE,
+                JSON.stringify(newData, null, 2),
+                "utf8"
+            );
+
+            return newData;
+        }
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "GROQ GÜNLÜK DOSYA HATASI:",
+            error.message
+        );
+
+        return {
+            date: getTodayDate(),
+            requests: 0,
+            tokens: 0
+        };
+    }
+}
+
+function addGroqUsage(tokens = 0) {
+
+    const usage =
+        loadGroqDailyUsage();
+
+    usage.requests += 1;
+    usage.tokens += Number(tokens) || 0;
+
+    fs.writeFileSync(
+        GROQ_DAILY_USAGE_FILE,
+        JSON.stringify(
+            usage,
+            null,
+            2
+        ),
+        "utf8"
+    );
+
+    console.log(
+        "GROQ GÜNLÜK İSTEK:",
+        usage.requests
+    );
+
+    console.log(
+        "GROQ GÜNLÜK TOKEN:",
+        usage.tokens
+    );
+}
 /* =========================================================
 SUNUCU
 ========================================================= */
@@ -30,6 +198,131 @@ const CEREBRAS_URL = "https://api.cerebras.ai/v1/chat/completions";
 const GEMINI_API_KEY =
     process.env.GEMINI_API_KEY ||
     "";
+    /* =========================================================
+GROQ GÜNLÜK KULLANIM TAKİBİ
+Dosya yoksa otomatik oluşturulur.
+========================================================= */
+
+function getTodayDate() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function loadGroqDailyUsage() {
+
+    try {
+
+        if (!fs.existsSync(GROQ_DAILY_USAGE_FILE)) {
+
+            const newData = {
+                date: getTodayDate(),
+                requests: 0,
+                tokens: 0
+            };
+
+            fs.writeFileSync(
+                GROQ_DAILY_USAGE_FILE,
+                JSON.stringify(newData, null, 2),
+                "utf8"
+            );
+
+            return newData;
+        }
+
+        const data =
+            JSON.parse(
+                fs.readFileSync(
+                    GROQ_DAILY_USAGE_FILE,
+                    "utf8"
+                )
+            );
+
+        /* Gün değiştiyse sayaçları sıfırla */
+
+        if (data.date !== getTodayDate()) {
+
+            const newData = {
+                date: getTodayDate(),
+                requests: 0,
+                tokens: 0
+            };
+
+            fs.writeFileSync(
+                GROQ_DAILY_USAGE_FILE,
+                JSON.stringify(newData, null, 2),
+                "utf8"
+            );
+
+            return newData;
+        }
+
+        return {
+            date: data.date || getTodayDate(),
+            requests: Number(data.requests) || 0,
+            tokens: Number(data.tokens) || 0
+        };
+
+    } catch (error) {
+
+        console.error(
+            "GROQ GÜNLÜK KULLANIM DOSYASI OKUNAMADI:",
+            error.message
+        );
+
+        return {
+            date: getTodayDate(),
+            requests: 0,
+            tokens: 0
+        };
+    }
+}
+
+
+function saveGroqDailyUsage(data) {
+
+    try {
+
+        fs.writeFileSync(
+            GROQ_DAILY_USAGE_FILE,
+            JSON.stringify(
+                data,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "GROQ GÜNLÜK KULLANIM KAYDEDİLEMEDİ:",
+            error.message
+        );
+    }
+}
+
+
+function addGroqUsage(tokens = 0) {
+
+    const usage =
+        loadGroqDailyUsage();
+
+    usage.requests += 1;
+    usage.tokens += Number(tokens) || 0;
+
+    saveGroqDailyUsage(
+        usage
+    );
+
+    console.log(
+        "GROQ GÜNLÜK İSTEK:",
+        usage.requests
+    );
+
+    console.log(
+        "GROQ GÜNLÜK TOKEN:",
+        usage.tokens
+    );
+}
 /* =========================================================
 GROQ � CEBRAS � GEMINI YEDEK S�STEM
 ========================================================= */
@@ -37,6 +330,388 @@ GROQ � CEBRAS � GEMINI YEDEK S�STEM
 async function requestAI(
     messages
 ) {
+
+    const lastUserMessage =
+        messages
+            .filter(
+                m =>
+                    m &&
+                    m.role === "user"
+            )
+            .pop()
+            ?.content
+            ?.trim()
+            .toLowerCase() || "";
+            console.log(
+    "DEBUG TÜM MESSAGES:",
+    JSON.stringify(messages, null, 2)
+);
+console.log(
+    "YEREL MESAJ KONTROLÜ:",
+    JSON.stringify(lastUserMessage)
+    
+);
+
+    /* =========================================================
+    BASİT MESAJLAR
+    API KULLANILMAZ
+    ========================================================= */
+
+  const simpleMessages = {
+
+    // =========================
+    // SELAMLAŞMA
+    // =========================
+
+    "selam":
+        "Selam! Sana nasıl yardımcı olabilirim?",
+
+    "slm":
+        "Aleyküm selam!",
+
+    "sa":
+        "Aleyküm selam!",
+
+    "merhaba":
+        "Merhaba! Sana nasıl yardımcı olabilirim?",
+
+    "mrb":
+        "Merhaba! 😄",
+
+    "hey":
+        "Hey! 👋",
+
+    "naber":
+        "İyiyim 😄 Sen nasılsın?",
+
+    "nasılsın":
+        "İyiyim, teşekkür ederim! Sen nasılsın?",
+
+    "nasilsin":
+        "İyiyim, teşekkür ederim! Sen nasılsın?",
+
+    // =========================
+    // GÜNAYDIN / AKŞAM / GECE
+    // =========================
+
+    "günaydın":
+        "Günaydın! ☀️",
+
+    "gunaydin":
+        "Günaydın! ☀️",
+
+    "iyi akşamlar":
+        "İyi akşamlar! 🌆",
+
+    "iyi aksamlar":
+        "İyi akşamlar! 🌆",
+
+   
+
+    "iyi geceler":
+        "Sana da iyi geceler! 🌙",
+
+    // =========================
+    // TEŞEKKÜR
+    // =========================
+
+    "teşekkürler":
+        "Rica ederim! 😊",
+
+    "teşekkür ederim":
+        "Rica ederim! 😊",
+
+    "tesekkurler":
+        "Rica ederim! 😊",
+
+    "tesekkur ederim":
+        "Rica ederim! 😊",
+
+    "sağol":
+        "Ne demek! 😊",
+
+    "sağ ol":
+        "Ne demek! 😊",
+
+    "sagol":
+        "Ne demek! 😊",
+
+    "sag ol":
+        "Ne demek! 😊",
+
+    // =========================
+    // ONAY / KISA CEVAPLAR
+    // =========================
+
+    "tamam":
+        "Tamamdır! 👍",
+
+    "tmm":
+        "Tamamdır! 👍",
+
+    "ok":
+        "Tamamdır! 👍",
+
+    "olur":
+        "Olur! 😎",
+
+    "peki":
+        "Peki! 👍",
+
+    "aynen":
+        "Aynen! 😎",
+
+    "evet":
+        "Tamam! 👍",
+
+    "hayır":
+        "Tamam, sorun değil.",
+
+    "hayir":
+        "Tamam, sorun değil.",
+
+    // =========================
+    // VEDALAŞMA
+    // =========================
+
+    "görüşürüz":
+        "Görüşürüz! 👋",
+
+    "gorusuruz":
+        "Görüşürüz! 👋",
+
+    "bye":
+        "Görüşürüz! 👋",
+
+    "bay":
+        "Görüşürüz! 👋",
+
+    "hoşçakal":
+        "Hoşça kal! 👋",
+
+    "hoscakal":
+        "Hoşça kal! 👋",
+
+    // =========================
+    // ERencanaAI
+    // =========================
+
+    "erencanai":
+        "Buradayım! 🤖",
+
+    "erencan ai":
+        "Buradayım! 🤖",
+
+    "test":
+        "Test başarılı! TürkAI çalışıyor. ✅",
+
+    "çalışıyor musun":
+        "Evet! Buradayım ve çalışıyorum. 🤖",
+
+    "calisiyor musun":
+        "Evet! Buradayım ve çalışıyorum. 🤖",
+
+    "burada mısın":
+        "Evet, buradayım! 👋",
+
+    "burada misin":
+        "Evet, buradayım! 👋",
+
+    // =========================
+    // KİMLİK
+    // =========================
+
+    "adın ne":
+        "Ben TürkAI'yım. 🤖",
+
+    "adin ne":
+        "Ben TürkAI'yım. 🤖",
+
+    "sen kimsin":
+        "Ben TürkAI'yım. 🤖",
+
+    "sen kimsin?":
+        "Ben TürkAI'yım. 🤖",
+
+    "ismin ne":
+        "Ben TürkAI'yım. 🤖",
+
+    "ne yapıyorsun":
+        "Seninle konuşuyorum ve sana yardımcı olmaya çalışıyorum. 😄",
+
+    "ne yapiyorsun":
+        "Seninle konuşuyorum ve sana yardımcı olmaya çalışıyorum. 😄",
+
+    // =========================
+    // YARDIM
+    // =========================
+
+    "yardım":
+        "Tabii! Ne konuda yardım istiyorsun?",
+
+    "yardim":
+        "Tabii! Ne konuda yardım istiyorsun?",
+
+    "yardım eder misin":
+        "Tabii ki! 😎 Ne yapmamı istersin?",
+
+    "yardim eder misin":
+        "Tabii ki! 😎 Ne yapmamı istersin?",
+
+    "bana yardım et":
+        "Tabii! Sorununu anlat, birlikte çözelim.",
+
+    "bana yardim et":
+        "Tabii! Sorununu anlat, birlikte çözelim.",
+
+    // =========================
+    // DUYGULAR / SOHBET
+    // =========================
+
+    "iyiyim":
+        "Süper! 😎",
+
+    "iyi":
+        "Harika! 😄",
+
+    "kötüyüm":
+        "Üzgünüm. İstersen ne olduğunu anlatabilirsin.",
+
+    "kotuyum":
+        "Üzgünüm. İstersen ne olduğunu anlatabilirsin.",
+
+    "mutluyum":
+        "Buna sevindim! 😄",
+
+    "üzgünüm":
+        "Umarım kısa zamanda daha iyi hissedersin.",
+
+    "uzgunum":
+        "Umarım kısa zamanda daha iyi hissedersin.",
+
+    // =========================
+    // EĞLENCELİ
+    // =========================
+
+    "haha":
+        "😂",
+
+    "hahaha":
+        "😂😂",
+
+    "lol":
+        "😂",
+
+    "xd":
+        "😂",
+
+    "komik":
+        "😄 Eğlendirebildiysem ne mutlu!",
+
+    // =========================
+    // BASİT SORULAR
+    // =========================
+
+    "kaç yaşındasın":
+        "Benim gerçek bir yaşım yok. 🤖",
+
+    "kac yasindasin":
+        "Benim gerçek bir yaşım yok. 🤖",
+
+    "nerelisin":
+        "Ben bir yapay zekâyım, belirli bir memleketim yok. 🌍",
+
+    "nerelisin?":
+        "Ben bir yapay zekâyım, belirli bir memleketim yok. 🌍",
+
+    "insan mısın":
+        "Hayır, ben yapay zekâ asistanıyım. 🤖",
+
+    "insan misin":
+        "Hayır, ben yapay zekâ asistanıyım. 🤖",
+
+    "robot musun":
+        "Ben fiziksel bir robot değilim; bir yapay zekâ yazılımıyım. 🤖",
+
+    // =========================
+    // KAPATMA / DURUM
+    // =========================
+
+    "hazır mısın":
+        "Her zaman hazırım! 😎",
+
+    "hazir misin":
+        "Her zaman hazırım! 😎",
+
+    "başlayalım":
+        "Hadi başlayalım! 🚀",
+
+    "baslayalim":
+        "Hadi başlayalım! 🚀",
+
+    "devam":
+        "Devam ediyoruz! 🚀",
+
+    // =========================
+    // EMOJİ
+    // =========================
+
+    "😀":
+        "😀",
+
+    "😂":
+        "😂",
+
+    "👍":
+        "👍",
+
+    "❤️":
+        "❤️",
+
+    "😎":
+        "😎",
+
+    "🤖":
+        "🤖",
+
+    "🚀":
+        "🚀",
+
+    "🔥":
+        "🔥"
+};
+
+
+    /*
+    SADECE TAM EŞLEŞMEDE hazır cevap ver.
+    Böylece:
+
+    "selam"          → hazır cevap
+    "selam nasılsın" → API
+    "merhaba"        → hazır cevap
+    "merhaba nasılsın" → API
+    */
+
+    if (
+        Object.prototype.hasOwnProperty.call(
+            simpleMessages,
+            lastUserMessage
+        )
+    ) {
+
+        console.log(
+            "BASİT MESAJ → API KULLANILMADI"
+        );
+
+        return simpleMessages[
+            lastUserMessage
+        ];
+    }
+
+
+    /* =========================================================
+    NORMAL AI SİSTEMİ
+    ========================================================= */
 
     try {
 
@@ -420,11 +1095,11 @@ GEL??M?? S?STEM PROMPTU
 ========================================================= */
 
 const SYSTEM_PROMPT = `
-Sen ErencanAI adl? geli?mi?, h?zl?, do?al, g?venilir ve yard?mc? bir yapay zeka asistan?s?n.
+Sen TürkAI adl? geli?mi?, h?zl?, do?al, g?venilir ve yard?mc? bir yapay zeka asistan?s?n.
 
 TEMEL K?ML?K:
 
-- Ad?n ErencanAI.
+- Ad?n .
 - Kullan?c?yla do?al ?ekilde konu?.
 - Ana dilin T?rk?edir.
 - Kullan?c?n?n kulland??? dili otomatik olarak alg?la.
@@ -529,7 +1204,7 @@ DO?RULUK:
 
 ?NTERNET ARA?TIRMASI:
 
-ErencanAI gerekti?inde internetten ara?t?rma yapabilir.
+TürkAI gerekti?inde internetten ara?t?rma yapabilir.
 
 Ara?t?rma sonu?lar? mesaj?n i?inde:
 
@@ -566,6 +1241,45 @@ CEVAP UZUNLU?U:
 Basit soru:
 
 - 1-3 c?mKODLAMA KARAR MOTORU:
+KODLAMA CEVAP FORMATI:
+
+Kodlama sorularında mümkün olduğunda şu sırayı kullan:
+
+1. SORUN
+Sorunun ne olduğunu kısa şekilde belirt.
+
+2. YER
+Değişikliğin hangi dosyada ve mümkünse hangi bölümde yapılacağını belirt.
+
+3. DEĞİŞİKLİK
+Sadece gerekli kodu göster.
+
+4. YERLEŞTİRME
+Kodun hangi satırın üstüne, altına veya yerine geleceğini açıkça belirt.
+
+5. KONTROL
+Değişiklikten sonra oluşabilecek syntax, scope, async/await veya değişken sorunlarını kontrol et.
+
+Kullanıcı yalnızca belirli bir kod değişikliği istiyorsa gereksiz açıklama yapma.
+
+Kullanıcının mevcut kodunu tamamen yeniden yazma.
+Çalışan bölümleri gereksiz yere değiştirme.
+Kullanıcı istemedikçe mimariyi değiştirme.
+Kullanıcının dosya ve değişken isimlerini mümkün olduğunca koru.
+
+Kullanıcı bir dosyanın tamamını gönderirse:
+- Önce mevcut yapıyı analiz et.
+- Gerekli değişiklikleri mevcut yapıya göre yap.
+- Kullanıcının istemediği bölümleri silme.
+
+Kullanıcı "nereye ekleyeceğim?" diye sorarsa:
+- Önce bulunabilecek benzersiz bir kod parçası göster.
+- Sonra "hemen altına", "hemen üstüne" veya "bunun yerine" şeklinde net konum belirt.
+
+Kullanıcı bir hata mesajı gönderirse:
+- Önce hatanın gerçek nedenini belirlemeye çalış.
+- Hatanın sadece görünen kısmına göre varsayım yapma.
+- Gerekli kod parçasını istemeden tüm dosyayı değiştirmeyi önerme.
 
 Her kodlama g�revinde �u s�ray� uygula:
 
@@ -1209,7 +1923,7 @@ SADECE DAHA �Y� B�R NEDEN VARSA DE���T�R.
 
 Bir sistem �al��m�yorsa:
 �NCE K�K NEDEN� BUL, SONRA DE���T�R.
-9.00 GELİŞMİŞ KODLAMA KONTROLÜ:
+10.0 GELİŞMİŞ KODLAMA KONTROLÜ:
 
 - Bir kod değişikliğinin diğer fonksiyonlar, değişkenler, endpointler ve dosyalar üzerindeki etkisini düşün.
 - Değişiklikten önce mevcut davranışı korumaya çalış.
@@ -1403,7 +2117,7 @@ RENDER:
 
 DOSYA:
 
-ErencanAI dosya y?kleme ?zelli?ine sahiptir.
+TürkAI dosya y?kleme ?zelli?ine sahiptir.
 
 Desteklenen temel dosya t?rleri:
 
@@ -1438,7 +2152,7 @@ Kod i?ine ger?ek API anahtar? koyma.
 PROJE:
 
 Proje:
-ErencanAI 9.00 PRO
+TürkAI 10.0 PRO
 
 Backend:
 Node.js + Express
@@ -1474,7 +2188,7 @@ GET /api/health
 
 HAFIZA:
 
-ErencanAI kullan?c?ya ?zel haf?za sistemi kullan?r.
+TürkAI kullan?c?ya ?zel haf?za sistemi kullan?r.
 
 Her kullan?c?n?n haf?zas? ayr? tutulmal?d?r.
 
@@ -2106,7 +2820,7 @@ function cleanReply(
     reply =
         reply
             .replace(
-                /^(ErencanAI|AI|Assistant)\s*:\s*/i,
+                /^(TürkAI|AI|Assistant)\s*:\s*/i,
                 ""
             )
             .trim();
@@ -3469,7 +4183,7 @@ console.log(
                         method: "GET",
                         headers: {
                             "User-Agent":
-                                "ErencanAI/1.0"
+                                "TürkAI/10.0"
                         }
                     },
                     10000
@@ -3886,7 +4600,7 @@ async function getWeather(
                 headers: {
 
                     "User-Agent":
-                        "ErencanAI/9.00"
+                        "TürkAI/10.0"
 
                 }
             }
@@ -4261,7 +4975,14 @@ console.log(
                 );
             }
 
-            return data;
+            const usedTokens =
+    data?.usage?.total_tokens || 0;
+
+addGroqUsage(
+    usedTokens
+);
+
+return data;
 
         } catch (error) {
 
@@ -4612,6 +5333,10 @@ async function requestAI(
             ?.content
             ?.trim()
             .toLowerCase() || "";
+            console.log(
+    "DEBUG TÜM MESSAGES:",
+    JSON.stringify(messages, null, 2)
+);
            console.log(
     "YEREL TEST MESAJI:",
     JSON.stringify(lastUserMessage)
@@ -4651,8 +5376,7 @@ async function requestAI(
         "iyi akşamlar":
             "İyi akşamlar! 😊",
 
-        "iyi geceler":
-            "İyi geceler! 🌙",
+       
 
         "teşekkürler":
             "Rica ederim! 😊",
@@ -4684,97 +5408,99 @@ async function requestAI(
     };
 
 
-    if (
-        simpleMessages[
-            lastUserMessage
-        ]
-    ) {
+  if (
+    Object.prototype.hasOwnProperty.call(
+        simpleMessages,
+        lastUserMessage
+    )
+) {
 
-        console.log(
-            "AI: YEREL CEVAP (0 API TOKEN)"
-        );
+    console.log(
+        "AI: YEREL CEVAP (0 API TOKEN)"
+    );
 
-        return {
-            choices: [
-                {
-                    message: {
-                        content:
-                            simpleMessages[
-                                lastUserMessage
-                            ]
-                    }
+    return {
+        choices: [
+            {
+                message: {
+                    role: "assistant",
+                    content:
+                        simpleMessages[
+                            lastUserMessage
+                        ]
                 }
-            ]
-        };
-    }
+            }
+        ]
+    };
+}
 
 
-    /* =========================================================
-    NORMAL / GÜNCEL / KARMAŞIK SORULAR
-    ========================================================= */
+/* =========================================================
+NORMAL / GÜNCEL / KARMAŞIK SORULAR
+========================================================= */
+
+try {
+
+    console.log(
+        "AI: GROQ"
+    );
+
+    return await requestGroq(
+        messages
+    );
+
+} catch (groqError) {
+
+    console.error(
+        "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
+        groqError.message
+    );
 
     try {
 
         console.log(
-            "AI: GROQ"
+            "AI: CEREBRAS YEDEK"
         );
 
-        return await requestGroq(
+        return await requestCerebras(
             messages
         );
 
-    } catch (groqError) {
+    } catch (cerebrasError) {
 
         console.error(
-            "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
-            groqError.message
+            "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
+            cerebrasError.message
         );
 
         try {
 
             console.log(
-                "AI: CEREBRAS YEDEK"
+                "AI: GEMINI YEDEK"
             );
 
-            return await requestCerebras(
+            return await requestGemini(
                 messages
             );
 
-        } catch (cerebrasError) {
+        } catch (geminiError) {
 
             console.error(
-                "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
-                cerebrasError.message
+                "GEMINI DE BAŞARISIZ:",
+                geminiError.message
             );
 
-            try {
+            console.error(
+                "GEMINI DETAY:",
+                geminiError
+            );
 
-                console.log(
-                    "AI: GEMINI YEDEK"
-                );
-
-                return await requestGemini(
-                    messages
-                );
-
-            } catch (geminiError) {
-
-                console.error(
-                    "GEMINI DE BAŞARISIZ:",
-                    geminiError.message
-                );
-
-                console.error(
-                    "GEMINI DETAY:",
-                    geminiError
-                );
-
-                throw new Error(
-                    "Groq, Cerebras ve Gemini kullanılamıyor."
-                );
-            }
+            throw new Error(
+                "Groq, Cerebras ve Gemini kullanılamıyor."
+            );
         }
     }
+}
 }
 
 /* =========================================================
@@ -5016,7 +5742,31 @@ app.post(
 
                 });
             }
+// =========================================================
+// TÜRKAI GÜNLÜK MESAJ LİMİTİ
+// =========================================================
 
+const userPlan =
+    String(
+        req.body &&
+        req.body.plan
+            ? req.body.plan
+            : "free"
+    ).toLowerCase();
+
+const dailyLimit =
+    DAILY_LIMITS[userPlan] ||
+    DAILY_LIMITS.free;
+
+console.log(
+    "KULLANICI PLANI:",
+    userPlan
+);
+
+console.log(
+    "GÜNLÜK LİMİT:",
+    dailyLimit
+);
             if (
                 query.length >
                 500
@@ -5876,7 +6626,7 @@ ${String(
                         "system",
 
                     content:
-                        `Sen ErencanAI'sın. Kullanıcıyla doğal ve kısa konuş. Kullanıcının dilinde cevap ver. Güncel bilgi gerekiyorsa araştırma sonucunu kullan. Gereksiz açıklama yapma. Kod sorularında mevcut kodu koru ve sadece gerekli değişikliği öner.`
+                        `Sen TürkAI'sın. Kullanıcıyla doğal ve kısa konuş. Kullanıcının dilinde cevap ver. Güncel bilgi gerekiyorsa araştırma sonucunu kullan. Gereksiz açıklama yapma. Kod sorularında mevcut kodu koru ve sadece gerekli değişikliği öner.`
 
                 },
 
@@ -5927,7 +6677,10 @@ kullanabilirsin.
                 }
 
             ];
-
+            messages.push({
+                role: "user",
+                content: message
+            });
             /* -----------------------------------------
             ARA?TIRMA SONU?LARINI AI'A VER
             ----------------------------------------- */
@@ -6103,10 +6856,8 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             GROQ
             ----------------------------------------- */
 
-              const data =
-             await requestAI(
-                messages
-          );
+      
+            
 
             /* -----------------------------------------
             CEVAP
@@ -6171,7 +6922,7 @@ console.log(
                         false,
 
                     reply:
-                        "ErencanAI bo? cevap verdi. L?tfen tekrar dene."
+                        "TürkAI boş cevap verdi. Lütfen tekrar dene."
 
                 });
             }
@@ -6404,7 +7155,7 @@ K?sa, do?al ve do?ru cevap ver.
             );
 
             console.error(
-                "ERENCANAI HATASI"
+                "TürkAI HATASI"
             );
 
             console.error(
@@ -6600,7 +7351,7 @@ app.post(
 
             message:
                 saved
-                    ? "Bu kullan?c?n?n ErencanAI haf?zas? temizlendi."
+                    ? "Bu kullan?c?n?n TürkAI haf?zas? temizlendi."
                     : "Kullan?c? haf?zas? temizlenemedi."
 
         });
@@ -6632,7 +7383,7 @@ app.post(
 
             message:
                 saved
-                    ? "ErencanAI haf?zas? temizlendi."
+                    ? "TürkAI haf?zas? temizlendi."
                     : "Haf?za temizlenemedi."
 
         });
@@ -6660,7 +7411,7 @@ app.get(
                 true,
 
             service:
-                "ErencanAI",
+                "TürkAI",
 
             ai:
                 "Groq",
@@ -6722,7 +7473,7 @@ app.use(
                 false,
 
             error:
-                "Bu ErencanAI API adresi bulunamad?."
+                "Bu TürkAI API adresi bulunamad?."
 
         });
 
