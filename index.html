@@ -14,16 +14,12 @@
 
 <link rel="stylesheet" href="/style.css">
 
+
 <!-- =====================================================
      MOBİL ARAÇ BUTONLARI
      ===================================================== -->
 
 <style>
-
-    /*
-     * MOBİLDE ARAŞTIR / HAVA DURUMU / HAFIZA
-     * BUTONLARININ GÖRÜNMESİNİ GARANTİLE
-     */
 
     @media (max-width: 800px) {
 
@@ -50,10 +46,7 @@
             width: 100% !important;
             height: auto !important;
             min-height: 46px;
-
-            /* TUŞLARI BİRAZ YUKARI AL */
             margin-top: -3px !important;
-
             padding: 0 4px 8px !important;
             overflow: visible !important;
         }
@@ -121,25 +114,29 @@
             opacity: 1 !important;
         }
 
+        /*
+         * SES + GÖNDER BUTONLARI
+         */
+
+        #voiceButton,
+        #sendButton {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            flex-shrink: 0 !important;
+        }
+
     }
 
-
-    /*
-     * DAHA DAR TELEFONLAR
-     */
 
     @media (max-width: 500px) {
 
         .composer-wrapper {
-            padding:
-                8px 8px 7px !important;
+            padding: 8px 8px 7px !important;
         }
 
         .composer-tools {
-            padding:
-                0 2px 7px !important;
-
-            /* DAR EKRANDA DA BİRAZ YUKARIDA */
+            padding: 0 2px 7px !important;
             margin-top: -3px !important;
         }
 
@@ -149,35 +146,52 @@
 
         .quick-tool-static {
             min-height: 38px !important;
-            padding:
-                7px 4px !important;
+            padding: 7px 4px !important;
             font-size: 9px !important;
         }
 
     }
 
 
-    /*
-     * ÇOK DAR EKRANLAR
-     */
-
     @media (max-width: 360px) {
 
         .quick-tool-static {
             font-size: 8px !important;
-            padding:
-                7px 2px !important;
+            padding: 7px 2px !important;
         }
 
+    }
+
+
+    /*
+     * SES BUTONU
+     */
+
+    #voiceButton {
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+
+    /*
+     * GÖNDER BUTONU
+     */
+
+    #sendButton {
+        cursor: pointer;
+        flex-shrink: 0;
     }
 
 </style>
 
 </head>
 
+
 <body>
 
+
 <div class="app">
+
 
 <!-- =====================================================
      SIDEBAR
@@ -214,7 +228,7 @@
     <div class="pro-status-card">
 
         <div class="pro-status-icon">
-            ★
+            ⭐
         </div>
 
         <div>
@@ -245,7 +259,7 @@
     >
 
         <span>
-            ＋
+            ➕
         </span>
 
         Yeni Sohbet
@@ -407,7 +421,7 @@
                 type="button"
                 aria-label="Ayarlar"
             >
-                ⚙
+                ⚙️
             </button>
 
         </div>
@@ -447,7 +461,7 @@
 
 
                 <div class="pro-welcome-badge">
-                    ★ ERENCANAI PRO 9.00
+                    ⭐ ERENCANAI PRO 9.00
                 </div>
 
 
@@ -468,10 +482,14 @@
                 </p>
 
 
-                <!-- ÖNERİLER -->
+                <!-- =================================================
+                     ÖNERİLER
+                     ================================================= -->
 
                 <div class="suggestions">
 
+
+                    <!-- PROJE -->
 
                     <button
                         class="suggestion"
@@ -498,6 +516,8 @@
                     </button>
 
 
+                    <!-- KODLAMA -->
+
                     <button
                         class="suggestion"
                         type="button"
@@ -523,6 +543,8 @@
                     </button>
 
 
+                    <!-- ARAŞTIRMA -->
+
                     <button
                         class="suggestion"
                         type="button"
@@ -547,6 +569,8 @@
 
                     </button>
 
+
+                    <!-- HAVA DURUMU -->
 
                     <button
                         class="suggestion"
@@ -575,157 +599,171 @@
 
                 </div>
 
+
             </div>
 
+
         </div>
+
+
+        <!-- =====================================================
+             MESAJ GÖNDERME
+             ===================================================== -->
+
+        <div class="composer-wrapper">
+
+            <div class="composer">
+
+
+                <!-- =================================================
+                     GİRİŞ SATIRI
+                     ================================================= -->
+
+                <div class="input-row">
+
+
+                    <!-- DOSYA -->
+
+                    <input
+                        type="file"
+                        id="fileInput"
+                        hidden
+                        multiple
+                        accept=".txt,.json,.js,.html,.css,.py,.cs,.md,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp"
+                    >
+
+
+                    <!-- ATAÇ -->
+
+                    <button
+                        class="attach-button"
+                        id="attachButton"
+                        type="button"
+                        aria-label="Dosya ekle"
+                        title="Dosya ekle"
+                    >
+                        📎
+                    </button>
+
+
+                    <!-- MESAJ -->
+
+                    <textarea
+                        id="messageInput"
+                        rows="1"
+                        placeholder="ErencanAI'ye bir şey sor..."
+                        autocomplete="off"
+                    ></textarea>
+
+
+                    <!-- SES -->
+
+                    <button
+                        class="send-button"
+                        id="voiceButton"
+                        type="button"
+                        aria-label="Son cevabı seslendir"
+                        title="Son cevabı seslendir"
+                    >
+                        🔊
+                    </button>
+
+
+                    <!-- GÖNDER -->
+
+                    <button
+                        class="send-button"
+                        id="sendButton"
+                        type="button"
+                        aria-label="Gönder"
+                        title="Gönder"
+                    >
+                        ➤
+                    </button>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     ARAŞTIR / HAVA / HAFIZA
+                     ================================================= -->
+
+                <div
+                    class="composer-tools"
+                    id="composerTools"
+                >
+
+                    <div class="tool-group">
+
+
+                        <!-- ARAŞTIR -->
+
+                        <button
+                            class="quick-tool-static"
+                            type="button"
+                            id="researchToolButton"
+                            aria-label="İnternet araştırması"
+                        >
+                            🔎 Araştır
+                        </button>
+
+
+                        <!-- HAVA -->
+
+                        <button
+                            class="quick-tool-static"
+                            type="button"
+                            id="weatherToolButton"
+                            aria-label="Hava durumu"
+                        >
+                            🌤️ Hava Durumu
+                        </button>
+
+
+                        <!-- HAFIZA -->
+
+                        <button
+                            class="quick-tool-static"
+                            type="button"
+                            id="memoryToolButton"
+                            aria-label="Hafıza"
+                        >
+                            🧠 Hafıza
+                        </button>
+
+
+                    </div>
+
+
+                    <div class="composer-info">
+
+                        Enter: Gönder · Shift + Enter: Yeni satır
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="footer-warning">
+
+                ErencanAI bazen hata yapabilir.
+                Önemli bilgileri kontrol et.
+
+            </div>
+
+
+        </div>
+
 
     </section>
 
 
-    <!-- =====================================================
-         MESAJ GÖNDERME
-         ===================================================== -->
-
-    <div class="composer-wrapper">
-
-        <div class="composer">
-
-
-            <!-- GİRİŞ SATIRI -->
-
-            <div class="input-row">
-
-
-                <!-- DOSYA -->
-
-                <input
-                    type="file"
-                    id="fileInput"
-                    hidden
-                    multiple
-                    accept=".txt,.json,.js,.html,.css,.py,.cs,.md,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp"
-                >
-
-
-                <!-- ATAÇ -->
-
-                <button
-                    class="attach-button"
-                    id="attachButton"
-                    type="button"
-                    aria-label="Dosya ekle"
-                    title="Dosya ekle"
-                >
-                    📎
-                </button>
-
-
-                <!-- MESAJ -->
-
-                <textarea
-                    id="messageInput"
-                    rows="1"
-                    placeholder="ErencanAI'ye bir şey sor..."
-                    autocomplete="off"
-                ></textarea>
-
-
-                <!-- GÖNDER -->
-
-                <button
-                    class="send-button"
-                    id="sendButton"
-                    type="button"
-                    aria-label="Gönder"
-                >
-                    ➤
-                </button>
-
-            </div>
-
-
-            <!-- SEÇİLEN DOSYALAR -->
-
-            <div
-                class="selected-files"
-                id="selectedFiles"
-                style="display:none;"
-            ></div>
-
-
-            <!-- =================================================
-                 ARAŞTIR / HAVA / HAFIZA
-                 ================================================= -->
-
-            <div
-                class="composer-tools"
-                id="composerTools"
-            >
-
-                <div class="tool-group">
-
-
-                    <!-- ARAŞTIR -->
-
-                    <button
-                        class="quick-tool-static"
-                        type="button"
-                        id="researchToolButton"
-                        aria-label="İnternet araştırması"
-                    >
-                        🔎 Araştır
-                    </button>
-
-
-                    <!-- HAVA -->
-
-                    <button
-                        class="quick-tool-static"
-                        type="button"
-                        id="weatherToolButton"
-                        aria-label="Hava durumu"
-                    >
-                        🌤️ Hava Durumu
-                    </button>
-
-
-                    <!-- HAFIZA -->
-
-                    <button
-                        class="quick-tool-static"
-                        type="button"
-                        id="memoryToolButton"
-                        aria-label="Hafıza"
-                    >
-                        🧠 Hafıza
-                    </button>
-
-
-                </div>
-
-
-                <div class="composer-info">
-
-                    Enter: Gönder · Shift + Enter: Yeni satır
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        <div class="footer-warning">
-
-            ErencanAI bazen hata yapabilir.
-            Önemli bilgileri kontrol et.
-
-        </div>
-
-    </div>
-
 </main>
+
 
 </div>
 
@@ -1494,7 +1532,7 @@ document.addEventListener(
 
 
                             item.textContent =
-                                "📎 " +
+                                "📄 " +
                                 file.name +
                                 " (" +
                                 sizeMB +
@@ -1640,10 +1678,177 @@ document.addEventListener(
         }
 
 
+        /* =====================================================
+           SES BUTONU
+           ===================================================== */
+
+        const voiceButton =
+            document.getElementById(
+                "voiceButton"
+            );
+
+
+        if (voiceButton) {
+
+            voiceButton.addEventListener(
+                "click",
+                function () {
+
+                    /*
+                     * Tarayıcı seslendirme desteği
+                     */
+
+                    if (
+                        !(
+                            "speechSynthesis"
+                            in window
+                        )
+                    ) {
+
+                        console.warn(
+                            "Bu tarayıcı seslendirmeyi desteklemiyor."
+                        );
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Mevcut konuşmayı bul
+                     */
+
+                    if (
+                        typeof ErencanAI ===
+                        "undefined"
+                    ) {
+
+                        console.warn(
+                            "ErencanAI nesnesi bulunamadı."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !ErencanAI.chats ||
+                        !Array.isArray(
+                            ErencanAI.chats
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const chat =
+                        ErencanAI.chats.find(
+                            function (item) {
+
+                                return (
+                                    item.id ===
+                                    ErencanAI.currentChatId
+                                );
+
+                            }
+                        );
+
+
+                    if (
+                        !chat ||
+                        !chat.messages
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Son AI mesajını bul
+                     */
+
+                    const aiMessages =
+                        chat.messages.filter(
+                            function (message) {
+
+                                return (
+                                    message &&
+                                    message.type &&
+                                    message.type.includes(
+                                        "ai"
+                                    ) &&
+                                    message.content
+                                );
+
+                            }
+                        );
+
+
+                    if (
+                        aiMessages.length ===
+                        0
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const lastMessage =
+                        aiMessages[
+                            aiMessages.length - 1
+                        ];
+
+
+                    /*
+                     * Önceki konuşmayı durdur
+                     */
+
+                    window.speechSynthesis.cancel();
+
+
+                    /*
+                     * Son cevabı seslendir
+                     */
+
+                    const utterance =
+                        new SpeechSynthesisUtterance(
+                            lastMessage.content
+                        );
+
+
+                    utterance.lang =
+                        "tr-TR";
+
+                    utterance.rate =
+                        1;
+
+                    utterance.pitch =
+                        1;
+
+                    utterance.volume =
+                        1;
+
+
+                    window.speechSynthesis.speak(
+                        utterance
+                    );
+
+                }
+            );
+
+        }
+
+
     }
 );
 
 </script>
+
 
 </body>
 </html>
