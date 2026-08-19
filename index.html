@@ -372,6 +372,47 @@
                 <small id="accountPlanText">
     Free hesap
 </small>
+<script>
+function updatePlanAnimation(plan) {
+
+    const planText =
+        document.getElementById("accountPlanText");
+
+    if (!planText) return;
+
+    planText.classList.remove(
+        "plan-active",
+        "plan-plus",
+        "plan-pro"
+    );
+
+    if (plan === "plus") {
+
+        planText.textContent =
+            "✨ Plus hesap";
+
+        planText.classList.add(
+            "plan-active",
+            "plan-plus"
+        );
+
+    } else if (plan === "pro") {
+
+        planText.textContent =
+            "👑 Pro hesap";
+
+        planText.classList.add(
+            "plan-active",
+            "plan-pro"
+        );
+
+    } else {
+
+        planText.textContent =
+            "Free hesap";
+    }
+}
+</script>
 
             </div>
 
@@ -1202,6 +1243,38 @@
 document.addEventListener(
     "DOMContentLoaded",
     function () {
+                /* =====================================================
+           PLAN GÖSTERGESİ
+           ===================================================== */
+
+        const accountPlanText =
+            document.getElementById(
+                "accountPlanText"
+            );
+
+        if (accountPlanText) {
+
+            const savedPlan =
+                localStorage.getItem(
+                    "turkai_plan"
+                ) || "free";
+
+            if (savedPlan === "plus") {
+
+                accountPlanText.textContent =
+                    "Plus hesap";
+
+            } else if (savedPlan === "pro") {
+
+                accountPlanText.textContent =
+                    "Pro hesap";
+
+            } else {
+
+                accountPlanText.textContent =
+                    "Free hesap";
+            }
+        }
 
 
         /* =====================================================
