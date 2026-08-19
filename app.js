@@ -3025,11 +3025,6 @@ const buyProButton =
 const proPurchaseModal =
     document.getElementById("proPurchaseModal");
 
-const buyProButton =
-    document.getElementById("buyProButton");
-
-const proPurchaseModal =
-    document.getElementById("proPurchaseModal");
 
 const continueProPurchaseButton =
     document.getElementById(
