@@ -1,138 +1,284 @@
 "use strict";
-require("dotenv").config({
-    override: true
-});
+require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const app = express();
-const TURKAI_PRO_CODE =
-    process.env.TURKAI_PRO_CODE || "";
+const TURKAI_PRO_CODE = process.env.TURKAI_PRO_CODE || "";
+const TURKAI_PLUS_CODE =
+    process.env.TURKAI_PLUS_CODE || "";
+/* =========================================================
+TÜRKAI KULLANICI / PRO SİSTEMİ
+========================================================= */
 
-app.post(
-    "/api/pro/activate",
-    express.json(),
-    (req, res) => {
+const USERS_PLAN_FILE =
+    path.join(
+        __dirname,
+        "users_plan.json"
+    );
 
-        const enteredCode =
-
-            String(
-                req.body?.code || ""
-            ).trim();
-            console.log(
-    "PRO TEST:",
-    "gelen uzunluk =", enteredCode.length,
-    "beklenen uzunluk =", TURKAI_PRO_CODE.length
-);
-console.log(
-    "GELEN UZUNLUK:",
-    enteredCode.length
-);
-
-console.log(
-    "BEKLENEN UZUNLUK:",
-    TURKAI_PRO_CODE.length
-);
-        console.log(
-            "PRO AKTİVASYON DENEMESİ:",
-            enteredCode ? "KOD GİRİLDİ" : "KOD BOŞ"
-        );
-
-   console.log(
-    "PRO DURUM:",
-    "gelen uzunluk =", enteredCode.length,
-    "beklenen uzunluk =", TURKAI_PRO_CODE.length,
-    "gelen boş =", !enteredCode,
-    "beklenen boş =", !TURKAI_PRO_CODE
-);
-
-if (
-    !enteredCode ||
-    !TURKAI_PRO_CODE ||
-    enteredCode !== TURKAI_PRO_CODE
-) {
-            return res.status(403).json({
-                ok: false,
-                message:
-    "Geçersiz Pro kodu. Gelen: " +
-    enteredCode.length +
-    " / Beklenen: " +
-    TURKAI_PRO_CODE.length
-            });
-        }
-
-        return res.json({
-            ok: true,
-            plan: "pro",
-            message: "TürkAI Pro etkinleştirildi! 🚀"
-        });
-    }
-);
-
-
-app.post(
-    "/api/pro/activate",
-    express.json(),
-    (req, res) => {
-
-        const enteredCode =
-            String(
-                req.body?.code || ""
-            ).trim();
-            console.log(
-    "PRO TEST:",
-    "gelen uzunluk =", enteredCode.length,
-    "beklenen uzunluk =", TURKAI_PRO_CODE.length
-);
-
-        if (
-            !enteredCode ||
-            !TURKAI_PRO_CODE ||
-            enteredCode.toLowerCase() !==
-TURKAI_PRO_CODE.toLowerCase()
-        ) {
-
-            return res.status(403).json({
-                ok: false,
-               message:
-    "Geçersiz Pro kodu. Gelen: " +
-    enteredCode.length +
-    " / Beklenen: " +
-    TURKAI_PRO_CODE.length
-            });
-        }
-
-        return res.json({
-            ok: true,
-            plan: "pro",
-            message: "TürkAI Pro etkinleştirildi! 🚀"
-        });
-    }
-);
-
-// TÜRKAI GÜNLÜK MESAJ LİMİTLERİ
-const DAILY_LIMITS = {
-    free: 200,
-    pro: 400,
-    developer: 500
-};
-const DAILY_USAGE_FILE = "./daily_usage.json";
-
-function loadDailyUsage() {
-    if (!fs.existsSync(DAILY_USAGE_FILE)) {
-        return {};
-    }
+function loadUsersPlan() {
 
     try {
+
+        if (
+            !fs.existsSync(
+                USERS_PLAN_FILE
+            )
+        ) {
+
+            fs.writeFileSync(
+                USERS_PLAN_FILE,
+                JSON.stringify(
+                    {},
+                    null,
+                    2
+                ),
+                "utf8"
+            );
+
+            return {};
+        }
+
+        const data =
+            JSON.parse(
+                fs.readFileSync(
+                    USERS_PLAN_FILE,
+                    "utf8"
+                )
+            );
+
+        return (
+            data &&
+            typeof data === "object" &&
+            !Array.isArray(data)
+        )
+            ? data
+            : {};
+
+    } catch (error) {
+
+        console.error(
+            "KULLANICI PLAN DOSYASI OKUNAMADI:",
+            error.message
+        );
+
+        return {};
+    }
+}
+
+function saveUsersPlan(
+    users
+) {
+
+    try {
+
+        fs.writeFileSync(
+            USERS_PLAN_FILE,
+            JSON.stringify(
+                users,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "KULLANICI PLAN DOSYASI KAYDEDİLEMEDİ:",
+            error.message
+        );
+
+        return false;
+    }
+}
+
+let usersPlan =
+    loadUsersPlan();
+
+
+function createUserId() {
+
+    return crypto
+        .randomBytes(24)
+        .toString("hex");
+}
+
+
+function getUserIdFromRequest(
+    req
+) {
+
+    const cookieHeader =
+        req.headers.cookie || "";
+
+    const match =
+        cookieHeader.match(
+            /turkai_user_id=([^;]+)/
+        );
+
+    if (
+        match &&
+        match[1]
+    ) {
+
+        return match[1];
+    }
+
+    const userId =
+        createUserId();
+
+    if (
+        !usersPlan[userId]
+    ) {
+
+        usersPlan[userId] = {
+            plan: "free",
+            createdAt:
+                new Date().toISOString()
+        };
+
+        saveUsersPlan(
+            usersPlan
+        );
+    }
+
+    return userId;
+}
+
+
+/* Her istekte kullanıcı ID'sini belirle */
+
+app.use(
+    (req, res, next) => {
+
+        let userId =
+            getUserIdFromRequest(
+                req
+            );
+
+        const cookieHeader =
+            req.headers.cookie || "";
+
+        const hasCookie =
+            cookieHeader.includes(
+                "turkai_user_id="
+            );
+
+        if (!hasCookie) {
+
+            res.setHeader(
+                "Set-Cookie",
+                `turkai_user_id=${userId}; Path=/; HttpOnly; SameSite=Lax`
+            );
+        }
+
+        req.turkaiUserId =
+            userId;
+
+        next();
+    }
+);
+
+app.post(
+    "/api/pro/activate",
+    express.json(),
+    (req, res) => {
+
+        const enteredCode =
+            String(req.body?.code || "").trim();
+
+       const isPro =
+    TURKAI_PRO_CODE &&
+    enteredCode === TURKAI_PRO_CODE;
+
+const isPlus =
+    TURKAI_PLUS_CODE &&
+    enteredCode === TURKAI_PLUS_CODE;
+
+if (!isPro && !isPlus) {
+
+    return res.status(403).json({
+        ok: false,
+        message: "Geçersiz aktivasyon kodu."
+    });
+}
+
+        const userId =
+    req.turkaiUserId;
+
+usersPlan[userId] = {
+    ...(usersPlan[userId] || {}),
+    plan: isPlus ? "plus" : "pro",
+    activatedAt:
+        new Date().toISOString()
+};
+
+const saved =
+    saveUsersPlan(
+        usersPlan
+    );
+
+if (!saved) {
+
+    return res.status(500).json({
+        ok: false,
+        message:
+            "Pro aktivasyonu kaydedilemedi."
+    });
+}
+
+return res.json({
+    ok: true,
+    plan: isPlus ? "plus" : "pro",
+    userId: userId,
+    message:
+    isPlus
+        ? "TürkAI Plus etkinleştirildi! 🚀"
+        : "TürkAI Pro etkinleştirildi! 🚀"
+});
+    }
+);
+// TÜRKAI GÜNLÜK MESAJ LİMİTLERİ
+const DAILY_LIMITS = {
+   free: 50,
+pro: 200,
+plus: 300,
+developer: 400
+};
+const DAILY_USAGE_FILE =
+    path.join(
+        __dirname,
+        "daily_usage.json"
+    );
+
+function loadDailyUsage() {
+
+    try {
+
+        if (
+            !fs.existsSync(
+                DAILY_USAGE_FILE
+            )
+        ) {
+
+            return {};
+        }
+
         return JSON.parse(
             fs.readFileSync(
                 DAILY_USAGE_FILE,
                 "utf8"
             )
         );
+
     } catch (error) {
+
         console.error(
             "GÜNLÜK KULLANIM OKUMA HATASI:",
             error.message
@@ -142,16 +288,33 @@ function loadDailyUsage() {
     }
 }
 
-function saveDailyUsage(data) {
-    fs.writeFileSync(
-        DAILY_USAGE_FILE,
-        JSON.stringify(
-            data,
-            null,
-            2
-        ),
-        "utf8"
-    );
+function saveDailyUsage(
+    usage
+) {
+
+    try {
+
+        fs.writeFileSync(
+            DAILY_USAGE_FILE,
+            JSON.stringify(
+                usage,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "GÜNLÜK KULLANIM KAYDETME HATASI:",
+            error.message
+        );
+
+        return false;
+    }
 }
 function getTodayKey() {
     const now = new Date();
@@ -425,14 +588,9 @@ async function requestAI(
             ?.content
             ?.trim()
             .toLowerCase() || "";
-            console.log(
-    "DEBUG TÜM MESSAGES:",
-    JSON.stringify(messages, null, 2)
-);
 console.log(
     "YEREL MESAJ KONTROLÜ:",
     JSON.stringify(lastUserMessage)
-    
 );
 
     /* =========================================================
@@ -1039,11 +1197,7 @@ const USERS_MEMORY_FILE =
         __dirname,
         "users_memory.json"
     );
-const USERS_PRO_FILE =
-    path.join(
-        __dirname,
-        "users_pro.json"
-    );
+
 const MAX_USER_MEMORY_MESSAGES =
     400;
 
@@ -1328,45 +1482,6 @@ CEVAP UZUNLU?U:
 Basit soru:
 
 - 1-3 c?mKODLAMA KARAR MOTORU:
-KODLAMA CEVAP FORMATI:
-
-Kodlama sorularında mümkün olduğunda şu sırayı kullan:
-
-1. SORUN
-Sorunun ne olduğunu kısa şekilde belirt.
-
-2. YER
-Değişikliğin hangi dosyada ve mümkünse hangi bölümde yapılacağını belirt.
-
-3. DEĞİŞİKLİK
-Sadece gerekli kodu göster.
-
-4. YERLEŞTİRME
-Kodun hangi satırın üstüne, altına veya yerine geleceğini açıkça belirt.
-
-5. KONTROL
-Değişiklikten sonra oluşabilecek syntax, scope, async/await veya değişken sorunlarını kontrol et.
-
-Kullanıcı yalnızca belirli bir kod değişikliği istiyorsa gereksiz açıklama yapma.
-
-Kullanıcının mevcut kodunu tamamen yeniden yazma.
-Çalışan bölümleri gereksiz yere değiştirme.
-Kullanıcı istemedikçe mimariyi değiştirme.
-Kullanıcının dosya ve değişken isimlerini mümkün olduğunca koru.
-
-Kullanıcı bir dosyanın tamamını gönderirse:
-- Önce mevcut yapıyı analiz et.
-- Gerekli değişiklikleri mevcut yapıya göre yap.
-- Kullanıcının istemediği bölümleri silme.
-
-Kullanıcı "nereye ekleyeceğim?" diye sorarsa:
-- Önce bulunabilecek benzersiz bir kod parçası göster.
-- Sonra "hemen altına", "hemen üstüne" veya "bunun yerine" şeklinde net konum belirt.
-
-Kullanıcı bir hata mesajı gönderirse:
-- Önce hatanın gerçek nedenini belirlemeye çalış.
-- Hatanın sadece görünen kısmına göre varsayım yapma.
-- Gerekli kod parçasını istemeden tüm dosyayı değiştirmeyi önerme.
 
 Her kodlama g�revinde �u s�ray� uygula:
 
@@ -2746,29 +2861,17 @@ function findUserName(
     const value =
         String(
             text || ""
-        )
-        .trim()
-        .replace(/\s+/g, " ");
-
-    // Kısa selamlaşmaları asla isim olarak algılama
-    if (
-        /^(slm|selam|merhaba|mrb|sa|hey|nbr|naber|günaydın|iyi akşamlar|iyi geceler|nasılsın|iyi misin)$/iu.test(
-            value
-        )
-    ) {
-        return null;
-    }
+        );
 
     const match =
         value.match(
-            /(?:benim\s+ad[ıi]m|benim\s+ismim|ad[ıi]m|ismim)\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)\b/iu
+            /(?:benim\s+ad?m|benim\s+ismim|ad?m|ismim)\s+([A-Za-z????????????]+)\b/i
         );
 
     if (
-        match &&
-        match[1] &&
-        match[1].length >= 2
+        match
     ) {
+
         return match[1];
     }
 
@@ -5432,10 +5535,6 @@ async function requestAI(
             ?.content
             ?.trim()
             .toLowerCase() || "";
-            console.log(
-    "DEBUG TÜM MESSAGES:",
-    JSON.stringify(messages, null, 2)
-);
            console.log(
     "YEREL TEST MESAJI:",
     JSON.stringify(lastUserMessage)
@@ -5841,31 +5940,7 @@ app.post(
 
                 });
             }
-// =========================================================
-// TÜRKAI GÜNLÜK MESAJ LİMİTİ
-// =========================================================
 
-const userPlan =
-    String(
-        req.body &&
-        req.body.plan
-            ? req.body.plan
-            : "free"
-    ).toLowerCase();
-
-const dailyLimit =
-    DAILY_LIMITS[userPlan] ||
-    DAILY_LIMITS.free;
-
-console.log(
-    "KULLANICI PLANI:",
-    userPlan
-);
-
-console.log(
-    "GÜNLÜK LİMİT:",
-    dailyLimit
-);
             if (
                 query.length >
                 500
@@ -6336,6 +6411,48 @@ app.post(
                 getUserId(
                     req
                 );
+                const currentPlan =
+    usersPlan[userId]?.plan || "free";
+
+const todayKey =
+    getTodayKey();
+
+const usage =
+    loadDailyUsage();
+
+if (
+    !usage[userId] ||
+    usage[userId].date !== todayKey
+) {
+    usage[userId] = {
+        date: todayKey,
+        count: 0
+    };
+}
+
+const limit =
+    DAILY_LIMITS[currentPlan] ||
+    DAILY_LIMITS.free;
+
+if (
+    usage[userId].count >= limit
+) {
+
+    return res.status(429).json({
+        ok: false,
+        reply:
+            `Günlük ${currentPlan} mesaj limitine ulaştın. Limit: ${limit}`,
+        plan: currentPlan,
+        dailyLimit: limit,
+        used: usage[userId].count
+    });
+}
+
+usage[userId].count += 1;
+
+saveDailyUsage(
+    usage
+);
 
             let message =
                 String(
@@ -6537,45 +6654,24 @@ app.post(
             /* -----------------------------------------
             BA?LAM
             ----------------------------------------- */
-let recentMessages = [];
+
+        let recentMessages = [];
 
 const shortMessage =
-    message
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, " ");
-
-const casualPatterns = [
-    /^slm$/,
-    /^selam$/,
-    /^mrb$/,
-    /^merhaba$/,
-    /^sa$/,
-    /^hey$/,
-    /^nbr$/,
-    /^naber$/,
-    /^nas[ıi]ls[ıi]n$/,
-    /^iyi misin$/,
-    /^te[şs]ekk[uü]rler$/,
-    /^tesekkurler$/,
-    /^sa[ğg]ol$/,
-    /^sagol$/,
-    /^g[uü]nayd[ıi]n$/,
-    /^iyi akşamlar$/,
-    /^iyi geceler$/
-];
+    message.trim().toLowerCase();
 
 const isCasualMessage =
-    casualPatterns.some(
-        pattern =>
-            pattern.test(shortMessage)
+    /^(slm|selam|merhaba|mrb|sa|hey|nas[�i]ls[�i]n|iyi misin|naber|nbr|te�ekk�rler|tesekkurler|sa�ol|sagol)$/i.test(
+        shortMessage
     );
 
 if (!isCasualMessage) {
 
     recentMessages =
         userMemory
-            .slice(-2);
+            .slice(
+                -2
+            );
 
 }
         const cleanRecentMessages =
@@ -6739,6 +6835,7 @@ ${String(
             ----------------------------------------- */
 
             const messages = [
+                
 
                 {
 
@@ -6797,10 +6894,7 @@ kullanabilirsin.
                 }
 
             ];
-            messages.push({
-                role: "user",
-                content: message
-            });
+
             /* -----------------------------------------
             ARA?TIRMA SONU?LARINI AI'A VER
             ----------------------------------------- */
@@ -6971,10 +7065,7 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             console.log(
                 "GROQ ?STE?? G?NDER?L?YOR..."
             );
-const data =
-    await requestAI(
-        messages
-    );
+
             /* -----------------------------------------
             GROQ
             ----------------------------------------- */
@@ -7776,6 +7867,9 @@ app.listen(
 
     }
 );
+
+
+
 
 
 
