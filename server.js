@@ -1039,7 +1039,11 @@ const USERS_MEMORY_FILE =
         __dirname,
         "users_memory.json"
     );
-
+const USERS_PRO_FILE =
+    path.join(
+        __dirname,
+        "users_pro.json"
+    );
 const MAX_USER_MEMORY_MESSAGES =
     400;
 
