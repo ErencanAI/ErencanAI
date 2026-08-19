@@ -70,12 +70,7 @@ if (
         });
     }
 );
-const TURKAI_PRO_CODE =
-    process.env.TURKAI_PRO_CODE || "";
-    console.log(
-    "PRO KODU DURUMU:",
-    TURKAI_PRO_CODE ? "YÜKLENDİ" : "YÜKLENMEDİ"
-);
+
 
 app.post(
     "/api/pro/activate",
