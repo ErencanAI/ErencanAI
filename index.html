@@ -274,6 +274,12 @@
         </button>
 
         <div id="proCodeMessage"></div>
+        <button
+    id="buyProButton"
+    type="button"
+>
+    Pro Satın Al
+</button>
 
     </div>
 
@@ -1940,6 +1946,87 @@ if (data.ok) {
 <script>
 
 </script>
+<!-- =========================================================
+     TÜRKAI PRO SATIN ALMA MODALI
+     ========================================================= -->
 
+<div
+    class="modal"
+    id="proPurchaseModal"
+>
+
+    <div class="modal-box small pro-purchase-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>
+                    TürkAI Pro
+                </h2>
+
+                <p>
+                    TürkAI'nin gelişmiş özelliklerini aç.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="proPurchaseModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="pro-purchase-content">
+
+            <div class="pro-price">
+                <strong>
+                    200 TL
+                </strong>
+
+                <span>
+                    / ay
+                </span>
+            </div>
+
+
+            <div class="pro-features">
+
+                <div>
+                    ✓ Daha yüksek kullanım limiti
+                </div>
+
+                <div>
+                    ✓ Gelişmiş TürkAI özellikleri
+                </div>
+
+                <div>
+                    ✓ Pro hesap avantajları
+                </div>
+
+            </div>
+
+
+            <button
+                id="continueProPurchaseButton"
+                class="pro-purchase-button"
+                type="button"
+            >
+                200 TL / ay ile devam et
+            </button>
+
+
+            <small class="pro-payment-note">
+                Güvenli ödeme sağlayıcısı üzerinden ödeme yapılacaktır.
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
 </html>
