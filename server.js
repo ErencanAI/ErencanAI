@@ -6,21 +6,678 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const app = express();
+const TURKAI_PRO_CODE = process.env.TURKAI_PRO_CODE || "";
 
+app.post(
+    "/api/pro/activate",
+    express.json(),
+    (req, res) => {
+
+        const enteredCode =
+            String(req.body?.code || "").trim();
+
+        if (
+            !enteredCode ||
+            !TURKAI_PRO_CODE ||
+            enteredCode !== TURKAI_PRO_CODE
+        ) {
+            return res.status(403).json({
+                ok: false,
+                message: "Geçersiz Pro kodu."
+            });
+        }
+
+        return res.json({
+            ok: true,
+            plan: "pro",
+            message: "TürkAI Pro etkinleştirildi! 🚀"
+        });
+    }
+);
+// TÜRKAI GÜNLÜK MESAJ LİMİTLERİ
+const DAILY_LIMITS = {
+    free: 200,
+    pro: 400,
+    developer: 500
+};
+
+function getTodayKey() {
+    const now = new Date();
+
+    return new Intl.DateTimeFormat("tr-TR", {
+        timeZone: "Europe/Istanbul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(now);
+}
+const GROQ_DAILY_USAGE_FILE = "./groq_daily_usage.json";
+function getTodayDate() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function loadGroqDailyUsage() {
+
+    if (!fs.existsSync(GROQ_DAILY_USAGE_FILE)) {
+
+        const data = {
+            date: getTodayDate(),
+            requests: 0,
+            tokens: 0
+        };
+
+        fs.writeFileSync(
+            GROQ_DAILY_USAGE_FILE,
+            JSON.stringify(data, null, 2),
+            "utf8"
+        );
+
+        return data;
+    }
+
+    try {
+
+        const data = JSON.parse(
+            fs.readFileSync(
+                GROQ_DAILY_USAGE_FILE,
+                "utf8"
+            )
+        );
+
+        if (data.date !== getTodayDate()) {
+
+            const newData = {
+                date: getTodayDate(),
+                requests: 0,
+                tokens: 0
+            };
+
+            fs.writeFileSync(
+                GROQ_DAILY_USAGE_FILE,
+                JSON.stringify(newData, null, 2),
+                "utf8"
+            );
+
+            return newData;
+        }
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "GROQ GÜNLÜK DOSYA HATASI:",
+            error.message
+        );
+
+        return {
+            date: getTodayDate(),
+            requests: 0,
+            tokens: 0
+        };
+    }
+}
+
+function addGroqUsage(tokens = 0) {
+
+    const usage =
+        loadGroqDailyUsage();
+
+    usage.requests += 1;
+    usage.tokens += Number(tokens) || 0;
+
+    fs.writeFileSync(
+        GROQ_DAILY_USAGE_FILE,
+        JSON.stringify(
+            usage,
+            null,
+            2
+        ),
+        "utf8"
+    );
+
+    console.log(
+        "GROQ GÜNLÜK İSTEK:",
+        usage.requests
+    );
+
+    console.log(
+        "GROQ GÜNLÜK TOKEN:",
+        usage.tokens
+    );
+}
 /* =========================================================
 SUNUCU
 ========================================================= */
 
 const PORT =
     Number(process.env.PORT) || 3000;
+  const CEREBRAS_MODEL =
+    "gpt-oss-120b";
+    const GROQ_MODEL =
+    "openai/gpt-oss-20b";
+    const GROQ_API_KEY =
+    process.env.GROQ_API_KEY ||
+    "";
+    const GROQ_URL =
+    "https://api.groq.com/openai/v1/chat/completions";
 
+const CEREBRAS_API_KEY =
+    process.env.CEREBRAS_API_KEY ||
+    "";
+const CEREBRAS_URL = "https://api.cerebras.ai/v1/chat/completions";
+const GEMINI_API_KEY =
+    process.env.GEMINI_API_KEY ||
+    "";
+    /* =========================================================
+GROQ GÜNLÜK KULLANIM TAKİBİ
+Dosya yoksa otomatik oluşturulur.
+========================================================= */
+
+function getTodayDate() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function loadGroqDailyUsage() {
+
+    try {
+
+        if (!fs.existsSync(GROQ_DAILY_USAGE_FILE)) {
+
+            const newData = {
+                date: getTodayDate(),
+                requests: 0,
+                tokens: 0
+            };
+
+            fs.writeFileSync(
+                GROQ_DAILY_USAGE_FILE,
+                JSON.stringify(newData, null, 2),
+                "utf8"
+            );
+
+            return newData;
+        }
+
+        const data =
+            JSON.parse(
+                fs.readFileSync(
+                    GROQ_DAILY_USAGE_FILE,
+                    "utf8"
+                )
+            );
+
+        /* Gün değiştiyse sayaçları sıfırla */
+
+        if (data.date !== getTodayDate()) {
+
+            const newData = {
+                date: getTodayDate(),
+                requests: 0,
+                tokens: 0
+            };
+
+            fs.writeFileSync(
+                GROQ_DAILY_USAGE_FILE,
+                JSON.stringify(newData, null, 2),
+                "utf8"
+            );
+
+            return newData;
+        }
+
+        return {
+            date: data.date || getTodayDate(),
+            requests: Number(data.requests) || 0,
+            tokens: Number(data.tokens) || 0
+        };
+
+    } catch (error) {
+
+        console.error(
+            "GROQ GÜNLÜK KULLANIM DOSYASI OKUNAMADI:",
+            error.message
+        );
+
+        return {
+            date: getTodayDate(),
+            requests: 0,
+            tokens: 0
+        };
+    }
+}
+
+
+function saveGroqDailyUsage(data) {
+
+    try {
+
+        fs.writeFileSync(
+            GROQ_DAILY_USAGE_FILE,
+            JSON.stringify(
+                data,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "GROQ GÜNLÜK KULLANIM KAYDEDİLEMEDİ:",
+            error.message
+        );
+    }
+}
+
+
+function addGroqUsage(tokens = 0) {
+
+    const usage =
+        loadGroqDailyUsage();
+
+    usage.requests += 1;
+    usage.tokens += Number(tokens) || 0;
+
+    saveGroqDailyUsage(
+        usage
+    );
+
+    console.log(
+        "GROQ GÜNLÜK İSTEK:",
+        usage.requests
+    );
+
+    console.log(
+        "GROQ GÜNLÜK TOKEN:",
+        usage.tokens
+    );
+}
 /* =========================================================
-GROQ → GEMINI YEDEK SİSTEMİ
+GROQ � CEBRAS � GEMINI YEDEK S�STEM
 ========================================================= */
 
 async function requestAI(
     messages
 ) {
+
+    const lastUserMessage =
+        messages
+            .filter(
+                m =>
+                    m &&
+                    m.role === "user"
+            )
+            .pop()
+            ?.content
+            ?.trim()
+            .toLowerCase() || "";
+console.log(
+    "YEREL MESAJ KONTROLÜ:",
+    JSON.stringify(lastUserMessage)
+);
+
+    /* =========================================================
+    BASİT MESAJLAR
+    API KULLANILMAZ
+    ========================================================= */
+
+  const simpleMessages = {
+
+    // =========================
+    // SELAMLAŞMA
+    // =========================
+
+    "selam":
+        "Selam! Sana nasıl yardımcı olabilirim?",
+
+    "slm":
+        "Aleyküm selam!",
+
+    "sa":
+        "Aleyküm selam!",
+
+    "merhaba":
+        "Merhaba! Sana nasıl yardımcı olabilirim?",
+
+    "mrb":
+        "Merhaba! 😄",
+
+    "hey":
+        "Hey! 👋",
+
+    "naber":
+        "İyiyim 😄 Sen nasılsın?",
+
+    "nasılsın":
+        "İyiyim, teşekkür ederim! Sen nasılsın?",
+
+    "nasilsin":
+        "İyiyim, teşekkür ederim! Sen nasılsın?",
+
+    // =========================
+    // GÜNAYDIN / AKŞAM / GECE
+    // =========================
+
+    "günaydın":
+        "Günaydın! ☀️",
+
+    "gunaydin":
+        "Günaydın! ☀️",
+
+    "iyi akşamlar":
+        "İyi akşamlar! 🌆",
+
+    "iyi aksamlar":
+        "İyi akşamlar! 🌆",
+
+   
+
+    "iyi geceler":
+        "Sana da iyi geceler! 🌙",
+
+    // =========================
+    // TEŞEKKÜR
+    // =========================
+
+    "teşekkürler":
+        "Rica ederim! 😊",
+
+    "teşekkür ederim":
+        "Rica ederim! 😊",
+
+    "tesekkurler":
+        "Rica ederim! 😊",
+
+    "tesekkur ederim":
+        "Rica ederim! 😊",
+
+    "sağol":
+        "Ne demek! 😊",
+
+    "sağ ol":
+        "Ne demek! 😊",
+
+    "sagol":
+        "Ne demek! 😊",
+
+    "sag ol":
+        "Ne demek! 😊",
+
+    // =========================
+    // ONAY / KISA CEVAPLAR
+    // =========================
+
+    "tamam":
+        "Tamamdır! 👍",
+
+    "tmm":
+        "Tamamdır! 👍",
+
+    "ok":
+        "Tamamdır! 👍",
+
+    "olur":
+        "Olur! 😎",
+
+    "peki":
+        "Peki! 👍",
+
+    "aynen":
+        "Aynen! 😎",
+
+    "evet":
+        "Tamam! 👍",
+
+    "hayır":
+        "Tamam, sorun değil.",
+
+    "hayir":
+        "Tamam, sorun değil.",
+
+    // =========================
+    // VEDALAŞMA
+    // =========================
+
+    "görüşürüz":
+        "Görüşürüz! 👋",
+
+    "gorusuruz":
+        "Görüşürüz! 👋",
+
+    "bye":
+        "Görüşürüz! 👋",
+
+    "bay":
+        "Görüşürüz! 👋",
+
+    "hoşçakal":
+        "Hoşça kal! 👋",
+
+    "hoscakal":
+        "Hoşça kal! 👋",
+
+    // =========================
+    // ERencanaAI
+    // =========================
+
+    "erencanai":
+        "Buradayım! 🤖",
+
+    "erencan ai":
+        "Buradayım! 🤖",
+
+    "test":
+        "Test başarılı! TürkAI çalışıyor. ✅",
+
+    "çalışıyor musun":
+        "Evet! Buradayım ve çalışıyorum. 🤖",
+
+    "calisiyor musun":
+        "Evet! Buradayım ve çalışıyorum. 🤖",
+
+    "burada mısın":
+        "Evet, buradayım! 👋",
+
+    "burada misin":
+        "Evet, buradayım! 👋",
+
+    // =========================
+    // KİMLİK
+    // =========================
+
+    "adın ne":
+        "Ben TürkAI'yım. 🤖",
+
+    "adin ne":
+        "Ben TürkAI'yım. 🤖",
+
+    "sen kimsin":
+        "Ben TürkAI'yım. 🤖",
+
+    "sen kimsin?":
+        "Ben TürkAI'yım. 🤖",
+
+    "ismin ne":
+        "Ben TürkAI'yım. 🤖",
+
+    "ne yapıyorsun":
+        "Seninle konuşuyorum ve sana yardımcı olmaya çalışıyorum. 😄",
+
+    "ne yapiyorsun":
+        "Seninle konuşuyorum ve sana yardımcı olmaya çalışıyorum. 😄",
+
+    // =========================
+    // YARDIM
+    // =========================
+
+    "yardım":
+        "Tabii! Ne konuda yardım istiyorsun?",
+
+    "yardim":
+        "Tabii! Ne konuda yardım istiyorsun?",
+
+    "yardım eder misin":
+        "Tabii ki! 😎 Ne yapmamı istersin?",
+
+    "yardim eder misin":
+        "Tabii ki! 😎 Ne yapmamı istersin?",
+
+    "bana yardım et":
+        "Tabii! Sorununu anlat, birlikte çözelim.",
+
+    "bana yardim et":
+        "Tabii! Sorununu anlat, birlikte çözelim.",
+
+    // =========================
+    // DUYGULAR / SOHBET
+    // =========================
+
+    "iyiyim":
+        "Süper! 😎",
+
+    "iyi":
+        "Harika! 😄",
+
+    "kötüyüm":
+        "Üzgünüm. İstersen ne olduğunu anlatabilirsin.",
+
+    "kotuyum":
+        "Üzgünüm. İstersen ne olduğunu anlatabilirsin.",
+
+    "mutluyum":
+        "Buna sevindim! 😄",
+
+    "üzgünüm":
+        "Umarım kısa zamanda daha iyi hissedersin.",
+
+    "uzgunum":
+        "Umarım kısa zamanda daha iyi hissedersin.",
+
+    // =========================
+    // EĞLENCELİ
+    // =========================
+
+    "haha":
+        "😂",
+
+    "hahaha":
+        "😂😂",
+
+    "lol":
+        "😂",
+
+    "xd":
+        "😂",
+
+    "komik":
+        "😄 Eğlendirebildiysem ne mutlu!",
+
+    // =========================
+    // BASİT SORULAR
+    // =========================
+
+    "kaç yaşındasın":
+        "Benim gerçek bir yaşım yok. 🤖",
+
+    "kac yasindasin":
+        "Benim gerçek bir yaşım yok. 🤖",
+
+    "nerelisin":
+        "Ben bir yapay zekâyım, belirli bir memleketim yok. 🌍",
+
+    "nerelisin?":
+        "Ben bir yapay zekâyım, belirli bir memleketim yok. 🌍",
+
+    "insan mısın":
+        "Hayır, ben yapay zekâ asistanıyım. 🤖",
+
+    "insan misin":
+        "Hayır, ben yapay zekâ asistanıyım. 🤖",
+
+    "robot musun":
+        "Ben fiziksel bir robot değilim; bir yapay zekâ yazılımıyım. 🤖",
+
+    // =========================
+    // KAPATMA / DURUM
+    // =========================
+
+    "hazır mısın":
+        "Her zaman hazırım! 😎",
+
+    "hazir misin":
+        "Her zaman hazırım! 😎",
+
+    "başlayalım":
+        "Hadi başlayalım! 🚀",
+
+    "baslayalim":
+        "Hadi başlayalım! 🚀",
+
+    "devam":
+        "Devam ediyoruz! 🚀",
+
+    // =========================
+    // EMOJİ
+    // =========================
+
+    "😀":
+        "😀",
+
+    "😂":
+        "😂",
+
+    "👍":
+        "👍",
+
+    "❤️":
+        "❤️",
+
+    "😎":
+        "😎",
+
+    "🤖":
+        "🤖",
+
+    "🚀":
+        "🚀",
+
+    "🔥":
+        "🔥"
+};
+
+
+    /*
+    SADECE TAM EŞLEŞMEDE hazır cevap ver.
+    Böylece:
+
+    "selam"          → hazır cevap
+    "selam nasılsın" → API
+    "merhaba"        → hazır cevap
+    "merhaba nasılsın" → API
+    */
+
+    if (
+        Object.prototype.hasOwnProperty.call(
+            simpleMessages,
+            lastUserMessage
+        )
+    ) {
+
+        console.log(
+            "BASİT MESAJ → API KULLANILMADI"
+        );
+
+        return simpleMessages[
+            lastUserMessage
+        ];
+    }
+
+
+    /* =========================================================
+    NORMAL AI SİSTEMİ
+    ========================================================= */
 
     try {
 
@@ -115,7 +772,141 @@ const MEMORY_FILE =
         __dirname,
         "memory.json"
     );
+const KNOWLEDGE_FILE =
+    path.join(
+        __dirname,
+        "knowledge.json"
+    );
+    function loadKnowledge() {
+    try {
+        if (!fs.existsSync(KNOWLEDGE_FILE)) {
+            fs.writeFileSync(
+                KNOWLEDGE_FILE,
+                "[]",
+                "utf8"
+            );
 
+            return [];
+        }
+
+        const content =
+            fs.readFileSync(
+                KNOWLEDGE_FILE,
+                "utf8"
+            );
+
+        if (!content.trim()) {
+            return [];
+        }
+
+        const data =
+            JSON.parse(content);
+
+        return Array.isArray(data)
+            ? data
+            : [];
+
+    } catch (error) {
+        console.error(
+            "BİLGİ HAFIZASI OKUMA HATASI:",
+            error.message
+        );
+
+        return [];
+    }
+}
+
+
+function saveKnowledge(knowledge) {
+    try {
+        fs.writeFileSync(
+            KNOWLEDGE_FILE,
+            JSON.stringify(
+                knowledge,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "BİLGİ HAFIZASI KAYDETME HATASI:",
+            error.message
+        );
+
+        return false;
+    }
+}
+function saveKnowledgeItem(question, answer) {
+    const cleanQuestion =
+        String(question || "").trim();
+
+    const cleanAnswer =
+        String(answer || "").trim();
+
+    if (!cleanQuestion || !cleanAnswer) {
+        return false;
+    }
+
+    const exists = knowledge.some(
+        item =>
+            item &&
+            typeof item.question === "string" &&
+            item.question.toLowerCase() ===
+                cleanQuestion.toLowerCase()
+    );
+
+    if (exists) {
+        return false;
+    }
+
+    knowledge.push({
+        question: cleanQuestion,
+        answer: cleanAnswer,
+        source: "Groq",
+        time: new Date().toISOString()
+    });
+
+    return saveKnowledge(knowledge);
+    function saveKnowledgeItem(question, answer) {
+    const cleanQuestion =
+        String(question || "").trim();
+
+    const cleanAnswer =
+        String(answer || "").trim();
+
+    if (!cleanQuestion || !cleanAnswer) {
+        return false;
+    }
+
+    const exists = knowledge.some(
+        item =>
+            item &&
+            typeof item.question === "string" &&
+            item.question.toLowerCase() ===
+                cleanQuestion.toLowerCase()
+    );
+
+    if (exists) {
+        return false;
+    }
+
+    knowledge.push({
+        question: cleanQuestion,
+        answer: cleanAnswer,
+        source: "Groq",
+        time: new Date().toISOString()
+    });
+
+    return saveKnowledge(knowledge);
+}
+}
+
+let knowledge =
+    loadKnowledge();
 const MAX_MEMORY_MESSAGES =
     400;
 
@@ -135,7 +926,7 @@ const USERS_MEMORY_FILE =
 const MAX_USER_MEMORY_MESSAGES =
     400;
 
-const USER_CONTEXT_MESSAGES =
+const USER_CONTEXT_MESSAGES = 2;
     30;
 
 /* =========================================================
@@ -270,11 +1061,11 @@ GEL??M?? S?STEM PROMPTU
 ========================================================= */
 
 const SYSTEM_PROMPT = `
-Sen ErencanAI adl? geli?mi?, h?zl?, do?al, g?venilir ve yard?mc? bir yapay zeka asistan?s?n.
+Sen TürkAI adl? geli?mi?, h?zl?, do?al, g?venilir ve yard?mc? bir yapay zeka asistan?s?n.
 
 TEMEL K?ML?K:
 
-- Ad?n ErencanAI.
+- Ad?n .
 - Kullan?c?yla do?al ?ekilde konu?.
 - Ana dilin T?rk?edir.
 - Kullan?c?n?n kulland??? dili otomatik olarak alg?la.
@@ -379,7 +1170,7 @@ DO?RULUK:
 
 ?NTERNET ARA?TIRMASI:
 
-ErencanAI gerekti?inde internetten ara?t?rma yapabilir.
+TürkAI gerekti?inde internetten ara?t?rma yapabilir.
 
 Ara?t?rma sonu?lar? mesaj?n i?inde:
 
@@ -1059,7 +1850,7 @@ SADECE DAHA �Y� B�R NEDEN VARSA DE���T�R.
 
 Bir sistem �al��m�yorsa:
 �NCE K�K NEDEN� BUL, SONRA DE���T�R.
-9.00 GELİŞMİŞ KODLAMA KONTROLÜ:
+10.0 GELİŞMİŞ KODLAMA KONTROLÜ:
 
 - Bir kod değişikliğinin diğer fonksiyonlar, değişkenler, endpointler ve dosyalar üzerindeki etkisini düşün.
 - Değişiklikten önce mevcut davranışı korumaya çalış.
@@ -1253,7 +2044,7 @@ RENDER:
 
 DOSYA:
 
-ErencanAI dosya y?kleme ?zelli?ine sahiptir.
+TürkAI dosya y?kleme ?zelli?ine sahiptir.
 
 Desteklenen temel dosya t?rleri:
 
@@ -1288,7 +2079,7 @@ Kod i?ine ger?ek API anahtar? koyma.
 PROJE:
 
 Proje:
-ErencanAI 9.00 PRO
+TürkAI 10.0 PRO
 
 Backend:
 Node.js + Express
@@ -1324,7 +2115,7 @@ GET /api/health
 
 HAFIZA:
 
-ErencanAI kullan?c?ya ?zel haf?za sistemi kullan?r.
+TürkAI kullan?c?ya ?zel haf?za sistemi kullan?r.
 
 Her kullan?c?n?n haf?zas? ayr? tutulmal?d?r.
 
@@ -1956,7 +2747,7 @@ function cleanReply(
     reply =
         reply
             .replace(
-                /^(ErencanAI|AI|Assistant)\s*:\s*/i,
+                /^(TürkAI|AI|Assistant)\s*:\s*/i,
                 ""
             )
             .trim();
@@ -2158,320 +2949,472 @@ function cleanUrl(
 ?NTERNET ARA?TIRMASI GEREK?YOR MU?
 ========================================================= */
 
-function shouldResearch(
-    message
-) {
+function shouldResearch(message) {
 
     const text =
-        String(
-            message || ""
-        ).toLowerCase()
-        .trim();
+        String(message || "")
+            .toLowerCase()
+            .trim();
 
-    if (
-        !text
-    ) {
-
+    if (!text) {
         return false;
     }
 
-      const researchWords = [
+    /*
+    =========================================================
+    G�NCEL / �NTERNET ARA�TIRMASI TET�KLEY�C�LER�
+    =========================================================
+    */
 
-    "dolar",
-    "usd",
-    "euro",
-    "eur",
-    "sterlin",
-    "gbp",
-    "frank",
-    "d�viz",
-    "d�viz kuru",
-    "d�viz kurlar�",
+    const directResearchWords = [
 
-    "alt�n",
-    "gram alt�n",
-    "�eyrek alt�n",
-    "yar�m alt�n",
-    "tam alt�n",
-    "cumhuriyet alt�n�",
-    "ons alt�n",
-    "alt�n fiyat�",
+        // �nternet
+        "internetten",
+        "internete bak",
+        "internetten bak",
+        "internetten ara�t�r",
+        "internetten ara",
+        "internetten bul",
+        "internetten ��ren",
+        "webden bak",
+        "webden ara�t�r",
+        "webden ara",
+        "web'den bak",
+        "web'den ara�t�r",
+        "online bak",
+        "internete bakar m�s�n",
+        "internetten kontrol et",
+        "internetten kontrol",
 
-    "araba",
-    "otomobil",
-    "ara�",
-    "araba fiyat�",
-    "otomobil fiyat�",
-    "ara� fiyat�",
-    "ikinci el araba",
-    "ikinci el ara�",
-    "s�f�r araba",
-    "s�f�r ara�",
-    "otomobil fiyatlar�",
+        // Ara�t�rma
+        "ara�t�r",
+        "ara�t�r�r m�s�n",
+        "ara�t�rabilir misin",
+        "ara�t�rabilir miyiz",
+        "iyice ara�t�r",
+        "detayl� ara�t�r",
+        "detayl�ca ara�t�r",
+        "geni� ara�t�r",
+        "webde ara�t�r",
+        "kaynak bul",
+        "kaynaklar� bul",
+        "kaynaklara bak",
+        "kaynaklar� kontrol et",
+        "kaynak kontrol",
+        "bilgiyi do�rula",
+        "bilgiyi kontrol et",
+        "do�rula",
+        "kontrol et",
 
-    "telefon",
-    "telefon fiyat�",
-    "telefon fiyatlar�",
-    "iphone",
-    "samsung",
-    "xiaomi",
-    "oppo",
-    "redmi",
+        // G�ncellik
+        "g�ncel",
+        "g�ncel bilgi",
+        "g�ncel bilgiler",
+        "�u an",
+        "�u anda",
+        "�imdiki",
+        "�imdilik",
+        "bug�n",
+        "bug�nk�",
+        "bu g�n",
+        "son durum",
+        "son durum ne",
+        "en son",
+        "son geli�meler",
+        "son haberler",
+        "en g�ncel",
 
-    "bilgisayar",
-    "bilgisayar fiyat�",
-    "bilgisayar fiyatlar�",
-    "laptop",
-    "laptop fiyat�",
-    "ekran kart�",
-    "ekran kart� fiyat�",
-    "i�lemci",
-    "i�lemci fiyat�",
-    "ram",
-    "ssd",
+        // Haber
+        "haber",
+        "haberler",
+        "son dakika",
+        "son dakika haberleri",
+        "g�ndem",
+        "g�ndemde ne var",
+        "ne oldu",
+        "neler oldu",
 
-    "oyun",
-    "steam",
-    "playstation",
-    "xbox",
-    "minecraft",
-    "valorant",
+        // Sonu�
+        "kim kazand�",
+        "kim kazand�?",
+        "sonu� ne",
+        "sonu� ne oldu",
+        "sonu�lar",
+        "sonu� a��kland� m�",
+        "sonu� belli oldu mu",
+        "ka� oldu",
+        "skor ne",
+        "skor ka�",
 
-    "ma�",
-    "skor",
-    "transfer",
-    "puan durumu",
-    "fikst�r",
-    "futbol",
-    "basketbol",
-    "spor",
-
-    "borsa",
-    "enflasyon",
-    "faiz",
-    "ekonomi",
-    "petrol",
-
-    "konut",
-    "konut fiyat�",
-    "konut fiyatlar�",
-    "ev fiyat�",
-    "ev fiyatlar�",
-    "kira",
-    "kira fiyat�",
-
-    "u�ak bileti",
-    "u�u�",
-    "otob�s bileti",
-    "sefer",
-
-    "film",
-    "dizi",
-    "sinema",
-    "vizyon",
-    "vizyonda",
-
-    "s�nav",
-    "okul takvimi",
-    "e�itim",
-    "�niversite",
-
-    "konser",
-    "festival",
-    "etkinlik",
-
-    "haber",
-    "haberler",
-    "son dakika",
-    "son haberler",
-    "g�ndem",
-    "son geli�meler",
-
-    "ara�t�r",
-    "ara�t�r�r m�s�n",
-    "internetten bak",
-    "internetten ara�t�r",
-    "web'den bak",
-    "webden bak",
-    "internete bak",
-    "kaynak bul",
-    "kaynaklar� bul",
-    "g�ncel bilgi",
-    "g�ncel olarak",
-    "son durum",
-    "son geli�meler",
-    "en son",
-    "�u an",
-    "�uan",
-    "�imdi",
-    "bug�n",
-    "d�n",
-    "yar�n",
-    "bu hafta",
-    "bu ay",
-    "2026",
-    "latest",
-    "current",
-    "recent",
-    "news",
-    "what is happening",
-    "what's happening"
-
-];
-                
-
-    
-
-    for (
-        const word of researchWords
-    ) {
-
-        if (
-            text.includes(
-                word
-            )
-        ) {
-
-            return true;
-        }
-    }
-
-    const weatherWords = [
-
-        "hava durumu",
-        "hava nas?l",
-        "hava ka? derece",
-        "s?cakl?k ka?",
-        "ya?mur ya?acak m?",
-        "ya?mur ya?ar m?",
-        "kar ya?acak m?",
-        "bug?n hava",
-        "yar?n hava",
-        "r?zgar ka?",
-        "nem ka?",
-        "weather",
-        "temperature",
-        "forecast"
-
+        // Zaman
+        "ne zaman",
+        "ne zaman olacak",
+        "ne zaman ba�l�yor",
+        "ne zaman ba�layacak",
+        "ne zaman bitiyor",
+        "ne zaman bitecek",
+        "hangi tarihte",
+        "tarihi ne",
+        "tarih ne"
     ];
 
-    for (
-        const word of weatherWords
+
+    /*
+    =========================================================
+    F�YAT / ALI�VER��
+    =========================================================
+    */
+
+    const priceWords = [
+
+        "fiyat",
+        "fiyat�",
+        "fiyat� ne",
+        "fiyat� ka�",
+        "ne kadar",
+        "ka� tl",
+        "ka� lira",
+        "tl ne kadar",
+        "g�ncel fiyat",
+        "�u an fiyat",
+        "�u anda fiyat",
+        "en ucuz",
+        "en uygun",
+        "en d���k fiyat",
+        "en y�ksek fiyat",
+        "fiyat kar��la�t�r",
+        "fiyatlar� kar��la�t�r",
+        "ka�a sat�l�yor",
+        "sat�l�yor mu",
+        "sat�� fiyat�",
+        "zam geldi mi",
+        "zamland� m�"
+    ];
+
+
+    /*
+    =========================================================
+    STOK / �R�N
+    =========================================================
+    */
+
+    const stockWords = [
+
+        "stokta",
+        "stokta m�",
+        "stok var m�",
+        "stok kald� m�",
+        "stok durumu",
+        "stok durumu nedir",
+        "mevcut mu",
+        "�r�n mevcut mu",
+        "sat��ta m�",
+        "sat��a ��kt� m�",
+        "sat�� ba�lad� m�",
+        "sat��a sunuldu mu",
+        "bulunuyor mu"
+    ];
+
+
+    /*
+    =========================================================
+    �ND�R�M / KAMPANYA
+    =========================================================
+    */
+
+    const discountWords = [
+
+        "indirim",
+        "indirim var m�",
+        "indirimde mi",
+        "�u an indirimde mi",
+        "kampanya",
+        "kampanya var m�",
+        "kampanyalar",
+        "f�rsat",
+        "f�rsatlar",
+        "kupon",
+        "kupon var m�",
+        "bedava",
+        "�cretsiz",
+        "kampanya ne zaman bitiyor",
+        "indirim ne zaman bitiyor"
+    ];
+
+
+    /*
+    =========================================================
+    SPOR
+    =========================================================
+    */
+
+    const sportsWords = [
+
+        "puan durumu",
+        "puan tablosu",
+        "s�ralama",
+        "g�ncel s�ralama",
+        "son s�ralama",
+        "lig s�ralamas�",
+        "fikst�r",
+        "ma�",
+        "ma� sonucu",
+        "ma� skoru",
+        "ma� ka� ka�",
+        "ma� ne zaman",
+        "ma� saat ka�ta",
+        "kim kazand�",
+        "transfer",
+        "transfer oldu mu",
+        "transfer haberi",
+        "kadrosu",
+        "ilk 11",
+        "lig",
+        "�ampiyon",
+        "�ampiyon oldu mu",
+        "�ampiyon kim",
+        "futbol",
+        "basketbol",
+        "tenis"
+    ];
+
+
+    /*
+    =========================================================
+    TEKNOLOJ� / OYUN
+    =========================================================
+    */
+
+    const technologyWords = [
+
+        "iphone",
+        "samsung",
+        "xiaomi",
+        "redmi",
+        "telefon fiyat�",
+        "telefon ��kt� m�",
+        "yeni telefon",
+        "yeni model",
+        "ekran kart�",
+        "i�lemci",
+        "ekran kart� fiyat�",
+        "laptop fiyat�",
+        "bilgisayar fiyat�",
+        "steam",
+        "steam fiyat�",
+        "minecraft",
+        "valorant",
+        "playstation",
+        "xbox",
+        "oyun ��kt� m�",
+        "oyun g�ncellemesi",
+        "g�ncelleme geldi mi",
+        "yeni s�r�m"
+    ];
+
+
+    /*
+    =========================================================
+    ULA�IM
+    =========================================================
+    */
+
+    const transportWords = [
+
+        "u�u�",
+        "u�u� durumu",
+        "u�u� iptal mi",
+        "u�u� ertelendi mi",
+        "u�u� gecikti mi",
+        "u�u� ba�lad� m�",
+        "u�u� saat ka�ta",
+        "sefer",
+        "sefer iptal mi",
+        "sefer ertelendi mi",
+        "sefer saat ka�ta",
+        "sefer var m�",
+        "otob�s bileti",
+        "u�ak bileti",
+        "bilet fiyat�",
+        "trafik",
+        "trafik durumu",
+        "trafik yo�un mu",
+        "yol durumu",
+        "yollar a��k m�",
+        "yol kapal� m�",
+        "yol �al��mas�",
+        "ula��m durumu"
+    ];
+
+
+    /*
+    =========================================================
+    F�LM / D�Z� / ETK�NL�K
+    =========================================================
+    */
+
+    const entertainmentWords = [
+
+        "sinema program�",
+        "sinema seanslar�",
+        "film seanslar�",
+        "film hangi sinemada",
+        "film hangi platformda",
+        "film yay�n tarihi",
+        "film ne zaman ��k�yor",
+        "dizi",
+        "dizinin yeni b�l�m�",
+        "dizinin son b�l�m�",
+        "dizinin yay�n tarihi",
+        "dizi hangi platformda",
+        "yeni b�l�m",
+        "konser",
+        "konser ne zaman",
+        "konser nerede",
+        "konser saat ka�ta",
+        "konser iptal mi",
+        "festival",
+        "festival ne zaman",
+        "festival nerede",
+        "etkinlik",
+        "etkinlik ne zaman",
+        "etkinlik nerede",
+        "etkinlik saat ka�ta",
+        "etkinlik iptal mi"
+    ];
+
+
+    /*
+    =========================================================
+    OKUL / E��T�M
+    =========================================================
+    */
+
+    const educationWords = [
+
+        "okul ne zaman",
+        "okullar ne zaman",
+        "okul ba�lang�� tarihi",
+        "okul biti� tarihi",
+        "okullar ne zaman a��l�yor",
+        "okullar ne zaman kapan�yor",
+        "e�itim takvimi",
+        "e�itim ��retim takvimi",
+        "s�nav takvimi",
+        "s�nav sonu�lar�",
+        "sonu�lar a��kland� m�",
+        "s�nav ne zaman",
+        "s�nav tarihi",
+        "tatil ne zaman",
+        "ara tatil",
+        "yaz tatili"
+    ];
+
+
+    /*
+    =========================================================
+    T�M KATEGOR�LER� B�RLE�T�R
+    =========================================================
+    */
+
+    const allResearchWords = [
+
+        ...directResearchWords,
+        ...priceWords,
+        ...stockWords,
+        ...discountWords,
+        ...sportsWords,
+        ...technologyWords,
+        ...transportWords,
+        ...entertainmentWords,
+        ...educationWords
+    ];
+
+
+    /*
+    =========================================================
+    DO�RUDAN KONTROL
+    =========================================================
+    */
+
+    if (
+        allResearchWords.some(
+            word =>
+                text.includes(word)
+        )
     ) {
 
-        if (
-            text.includes(
-                word
-            )
-        ) {
-
-            return true;
-        }
+        return true;
     }
-  
+
+
+    /*
+    =========================================================
+    AKILLI G�NCEL SORU KONTROL�
+    =========================================================
+    
+    Kullan�c� kelimeleri farkl� s�rada yazsa bile
+    ara�t�rmay� tetikler.
+    */
+
+    const currentWords = [
+
+        "g�ncel",
+        "�u an",
+        "�u anda",
+        "bug�n",
+        "son",
+        "en son",
+        "�imdiki"
+    ];
+
+
+    const questionWords = [
+
+        "ne",
+        "ka�",
+        "kim",
+        "nerede",
+        "ne zaman",
+        "nas�l",
+        "hangi",
+        "var m�",
+        "oldu mu",
+        "a��kland� m�"
+    ];
+
+
+    const hasCurrentWord =
+        currentWords.some(
+            word =>
+                text.includes(word)
+        );
+
+
+    const hasQuestionWord =
+        questionWords.some(
+            word =>
+                text.includes(word)
+        );
+
+
+    if (
+        hasCurrentWord &&
+        hasQuestionWord
+    ) {
+
+        return true;
+    }
+
+
+    /*
+    =========================================================
+    SON KONTROL
+    =========================================================
+    */
+
     return false;
 }
-
-/* =========================================================
-HAVA DURUMU SORUSU MU?
-========================================================= */
-
-function isWeatherQuestion(
-    message
-) {
-
-    const text =
-        String(
-            message || ""
-        ).toLowerCase();
-
-    const words = [
-
-        "hava durumu",
-        "hava nas?l",
-        "hava ka? derece",
-        "s?cakl?k ka?",
-        "ya?mur ya?acak m?",
-        "ya?mur ya?ar m?",
-        "kar ya?acak m?",
-        "bug?n hava",
-        "yar?n hava",
-        "r?zgar ka?",
-        "nem ka?",
-        "weather",
-        "temperature",
-        "forecast"
-
-    ];
-
-    return words.some(
-        word =>
-            text.includes(
-                word
-            )
-    );
-}
-
-/* =========================================================
-HAVA KONUMU BUL
-========================================================= */
-
-function extractWeatherLocation(
-    message
-) {
-
-    const text =
-        String(
-            message || ""
-        ).trim();
-
-    const patterns = [
-
-        /(.+?)\s+(?:hava durumu|hava nas?l|hava ka? derece)/i,
-
-        /(.+?)\s+(?:i?in hava|i?inde hava)/i,
-
-        /(?:hava durumu|hava nas?l|hava ka? derece)\s+(?:olan\s+)?(.+)/i,
-
-        /(?:weather|forecast)\s+(?:in|for)\s+(.+)/i
-
-    ];
-
-    for (
-        const pattern of patterns
-    ) {
-
-        const match =
-            text.match(
-                pattern
-            );
-
-        if (
-            match &&
-            match[1]
-        ) {
-
-            let location =
-                match[1]
-                    .trim()
-                    .replace(
-                        /[?.!,]+$/g,
-                        ""
-                    );
-
-            if (
-                location.length >= 2 &&
-                location.length <= 100
-            ) {
-
-                return location;
-            }
-        }
-    }
-
-    return "";
-}
-
 /* =========================================================
 GENEL ARAMA
 ========================================================= */
@@ -3167,7 +4110,7 @@ console.log(
                         method: "GET",
                         headers: {
                             "User-Agent":
-                                "ErencanAI/1.0"
+                                "TürkAI/10.0"
                         }
                     },
                     10000
@@ -3584,7 +4527,7 @@ async function getWeather(
                 headers: {
 
                     "User-Agent":
-                        "ErencanAI/9.00"
+                        "TürkAI/10.0"
 
                 }
             }
@@ -3894,7 +4837,20 @@ async function requestGroq(
 
                     }
                 );
+console.log(
+    "GROQ KALAN İSTEK:",
+    response.headers.get("x-ratelimit-remaining-requests")
+);
 
+console.log(
+    "GROQ KALAN TOKEN:",
+    response.headers.get("x-ratelimit-remaining-tokens")
+);
+
+console.log(
+    "GROQ LİMİT SIFIRLANMA:",
+    response.headers.get("x-ratelimit-reset-requests")
+);
             clearTimeout(
                 timeout
             );
@@ -3946,7 +4902,14 @@ async function requestGroq(
                 );
             }
 
-            return data;
+            const usedTokens =
+    data?.usage?.total_tokens || 0;
+
+addGroqUsage(
+    usedTokens
+);
+
+return data;
 
         } catch (error) {
 
@@ -4286,69 +5249,181 @@ async function requestAI(
     messages
 ) {
 
+    const lastUserMessage =
+        messages
+            .filter(
+                m =>
+                    m &&
+                    m.role === "user"
+            )
+            .pop()
+            ?.content
+            ?.trim()
+            .toLowerCase() || "";
+           console.log(
+    "YEREL TEST MESAJI:",
+    JSON.stringify(lastUserMessage)
+);
+
+    /* =========================================================
+    BASİT MESAJLAR
+    API KULLANILMAZ
+    ========================================================= */
+
+    const simpleMessages = {
+
+        "selam":
+            "Selam! 😊",
+
+        "slm":
+            "Selam! 😊",
+
+        "merhaba":
+            "Merhaba! Size nasıl yardımcı olabilirim?",
+
+        "mrb":
+            "Merhaba! 😊",
+
+        "hey":
+            "Hey! 👋",
+
+        "sa":
+            "Selam! 😊",
+
+        "s.a.":
+            "Selam! 😊",
+
+        "günaydın":
+            "Günaydın! ☀️",
+
+        "iyi akşamlar":
+            "İyi akşamlar! 😊",
+
+       
+
+        "teşekkürler":
+            "Rica ederim! 😊",
+
+        "teşekkür ederim":
+            "Rica ederim! 😊",
+
+        "sağ ol":
+            "Ne demek! 😊",
+
+        "tamam":
+            "Tamamdır! 👍",
+
+        "olur":
+            "Olur! 👍",
+
+        "peki":
+            "Peki! 😊",
+
+        "anladım":
+            "Harika! 👍",
+
+        "görüşürüz":
+            "Görüşürüz! 👋",
+
+        "bye":
+            "Görüşürüz! 👋"
+
+    };
+
+
+  if (
+    Object.prototype.hasOwnProperty.call(
+        simpleMessages,
+        lastUserMessage
+    )
+) {
+
+    console.log(
+        "AI: YEREL CEVAP (0 API TOKEN)"
+    );
+
+    return {
+        choices: [
+            {
+                message: {
+                    role: "assistant",
+                    content:
+                        simpleMessages[
+                            lastUserMessage
+                        ]
+                }
+            }
+        ]
+    };
+}
+
+
+/* =========================================================
+NORMAL / GÜNCEL / KARMAŞIK SORULAR
+========================================================= */
+
+try {
+
+    console.log(
+        "AI: GROQ"
+    );
+
+    return await requestGroq(
+        messages
+    );
+
+} catch (groqError) {
+
+    console.error(
+        "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
+        groqError.message
+    );
 
     try {
 
         console.log(
-            "AI: GROQ"
+            "AI: CEREBRAS YEDEK"
         );
 
-        return await requestGroq(
+        return await requestCerebras(
             messages
         );
 
-    } catch (groqError) {
+    } catch (cerebrasError) {
 
         console.error(
-            "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
-            groqError.message
+            "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
+            cerebrasError.message
         );
 
         try {
 
             console.log(
-                "AI: CEREBRAS YEDEK"
+                "AI: GEMINI YEDEK"
             );
 
-            return await requestCerebras(
+            return await requestGemini(
                 messages
             );
 
-        } catch (cerebrasError) {
+        } catch (geminiError) {
 
             console.error(
-                "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
-                cerebrasError.message
+                "GEMINI DE BAŞARISIZ:",
+                geminiError.message
             );
 
-            try {
+            console.error(
+                "GEMINI DETAY:",
+                geminiError
+            );
 
-                console.log(
-                    "AI: GEMINI YEDEK"
-                );
-
-                return await requestGemini(
-                    messages
-                );
-
-            } catch (geminiError) {
-
-                console.error(
-                    "GEMINI DE BAŞARISIZ:",
-                    geminiError.message
-                );
-
-                console.error(
-                    "GEMINI DETAY:",
-                    geminiError
-                );
-
-                throw new Error(
-                    "Groq, Cerebras ve Gemini kullanılamıyor."
-                );
-            }
+            throw new Error(
+                "Groq, Cerebras ve Gemini kullanılamıyor."
+            );
         }
     }
+}
 }
 
 /* =========================================================
@@ -5263,11 +6338,25 @@ app.post(
             BA?LAM
             ----------------------------------------- */
 
-            const recentMessages =
-    userMemory
-        .slice(
-            -USER_CONTEXT_MESSAGES
-        )
+        let recentMessages = [];
+
+const shortMessage =
+    message.trim().toLowerCase();
+
+const isCasualMessage =
+    /^(slm|selam|merhaba|mrb|sa|hey|nas[�i]ls[�i]n|iyi misin|naber|nbr|te�ekk�rler|tesekkurler|sa�ol|sagol)$/i.test(
+        shortMessage
+    );
+
+if (!isCasualMessage) {
+
+    recentMessages =
+        userMemory
+            .slice(
+                -2
+            );
+
+}
         const cleanRecentMessages =
     recentMessages.filter(
         item =>
@@ -5429,6 +6518,7 @@ ${String(
             ----------------------------------------- */
 
             const messages = [
+                
 
                 {
 
@@ -5436,7 +6526,7 @@ ${String(
                         "system",
 
                     content:
-                        SYSTEM_PROMPT
+                        `Sen TürkAI'sın. Kullanıcıyla doğal ve kısa konuş. Kullanıcının dilinde cevap ver. Güncel bilgi gerekiyorsa araştırma sonucunu kullan. Gereksiz açıklama yapma. Kod sorularında mevcut kodu koru ve sadece gerekli değişikliği öner.`
 
                 },
 
@@ -5571,10 +6661,7 @@ sonucundaki TCMB de�erlerini aynen kullan.
     });
 
 }
-            for (
-    const item of
-    cleanRecentMessages
-) {
+            for (const item of cleanRecentMessages.slice(-USER_CONTEXT_MESSAGES)) {
 
                 if (
                     !item ||
@@ -5666,10 +6753,8 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             GROQ
             ----------------------------------------- */
 
-              const data =
-             await requestAI(
-                messages
-          );
+      
+            
 
             /* -----------------------------------------
             CEVAP
@@ -5711,7 +6796,13 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
                 cleanReply(
                     reply
                 );
-
+console.log(
+    "BİLGİ HAFIZASI TEST:",
+    saveKnowledgeItem(
+        message,
+        reply
+    )
+);
             if (
                 !reply
             ) {
@@ -5728,7 +6819,7 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
                         false,
 
                     reply:
-                        "ErencanAI bo? cevap verdi. L?tfen tekrar dene."
+                        "TürkAI boş cevap verdi. Lütfen tekrar dene."
 
                 });
             }
@@ -5961,7 +7052,7 @@ K?sa, do?al ve do?ru cevap ver.
             );
 
             console.error(
-                "ERENCANAI HATASI"
+                "TürkAI HATASI"
             );
 
             console.error(
@@ -6157,7 +7248,7 @@ app.post(
 
             message:
                 saved
-                    ? "Bu kullan?c?n?n ErencanAI haf?zas? temizlendi."
+                    ? "Bu kullan?c?n?n TürkAI haf?zas? temizlendi."
                     : "Kullan?c? haf?zas? temizlenemedi."
 
         });
@@ -6189,7 +7280,7 @@ app.post(
 
             message:
                 saved
-                    ? "ErencanAI haf?zas? temizlendi."
+                    ? "TürkAI haf?zas? temizlendi."
                     : "Haf?za temizlenemedi."
 
         });
@@ -6217,7 +7308,7 @@ app.get(
                 true,
 
             service:
-                "ErencanAI",
+                "TürkAI",
 
             ai:
                 "Groq",
@@ -6279,7 +7370,7 @@ app.use(
                 false,
 
             error:
-                "Bu ErencanAI API adresi bulunamad?."
+                "Bu TürkAI API adresi bulunamad?."
 
         });
 
@@ -6459,5 +7550,15 @@ app.listen(
 
     }
 );
+
+
+
+
+
+
+
+
+
+console.log("TEST KAYIT"); 
 
 
