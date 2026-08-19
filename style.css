@@ -1558,3 +1558,23 @@ input:focus-visible {
     opacity: 0.6;
     line-height: 1.4;
 }
+/* PLAN ANİMASYONU */
+#accountPlanText {
+    display: inline-block;
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+    animation: planGlow 2s ease-in-out infinite;
+}
+
+@keyframes planGlow {
+    0%, 100% {
+        opacity: 0.75;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
