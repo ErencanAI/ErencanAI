@@ -2695,97 +2695,121 @@ if (
 
     init();
 }
-const proActivateButton =
-    document.getElementById("proActivateButton");
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-const proCodeInput =
-    document.getElementById("proCodeInput");
+        const proActivateButton =
+            document.getElementById(
+                "proActivateButton"
+            );
 
-const proCodeMessage =
-    document.getElementById("proCodeMessage");
+        const proCodeInput =
+            document.getElementById(
+                "proCodeInput"
+            );
 
-if (
-    proActivateButton &&
-    proCodeInput &&
-    proCodeMessage
-) {
+        const proCodeMessage =
+            document.getElementById(
+                "proCodeMessage"
+            );
 
-    proActivateButton.addEventListener(
-        "click",
-        async function () {
+        if (
+            !proActivateButton ||
+            !proCodeInput ||
+            !proCodeMessage
+        ) {
+            return;
+        }
 
-            const code =
-                proCodeInput.value.trim();
+        proActivateButton.addEventListener(
+            "click",
+            async function () {
 
-            if (!code) {
-                proCodeMessage.textContent =
-                    "Pro kodunu gir.";
-                return;
-            }
+                const code =
+                    proCodeInput.value.trim();
 
-            proActivateButton.disabled = true;
-            proActivateButton.textContent =
-                "Kontrol ediliyor...";
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/api/pro/activate",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-                            body: JSON.stringify({
-                                code: code
-                            })
-                        }
-                    );
-
-                const data =
-                    await response.json();
-
-                if (data.ok === true) {
+                if (!code) {
 
                     proCodeMessage.textContent =
-                        "Pro başarıyla etkinleştirildi! 🚀";
+                        "Pro kodunu gir.";
 
-                    localStorage.setItem(
-                        "turkai_plan",
-                        "pro"
+                    return;
+                }
+
+                proActivateButton.disabled = true;
+
+                proActivateButton.textContent =
+                    "Kontrol ediliyor...";
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/pro/activate",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        code: code
+                                    })
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if (data.ok === true) {
+
+                        proCodeMessage.textContent =
+                            "Pro başarıyla etkinleştirildi! 🚀";
+
+                        localStorage.setItem(
+                            "turkai_plan",
+                            "pro"
+                        );
+
+                        proCodeInput.value = "";
+
+                    } else {
+
+                        proCodeMessage.textContent =
+                            data.message ||
+                            "Geçersiz Pro kodu.";
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "PRO AKTİVASYON HATASI:",
+                        error
                     );
 
-                    proCodeInput.value = "";
-
-                } else {
-
                     proCodeMessage.textContent =
-                        data.message ||
-                        "Geçersiz Pro kodu.";
+                        "Sunucuya bağlanılamadı.";
+
+                } finally {
+
+                    proActivateButton.disabled =
+                        false;
+
+                    proActivateButton.textContent =
+                        "Pro'yu Etkinleştir";
 
                 }
 
-            } catch (error) {
-
-                console.error(
-                    "PRO AKTİVASYON HATASI:",
-                    error
-                );
-
-                proCodeMessage.textContent =
-                    "Sunucuya bağlanılamadı.";
-
-            } finally {
-
-                proActivateButton.disabled = false;
-                proActivateButton.textContent =
-                    "Pro'yu Etkinleştir";
             }
-        }
-    );
-}
+        );
+
+    }
+);
 window.addEventListener("load", function () {
 
     if (
