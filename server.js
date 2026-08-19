@@ -1,34 +1,122 @@
 "use strict";
-require("dotenv").config();
+require("dotenv").config({
+    override: true
+});
 
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const app = express();
-const TURKAI_PRO_CODE = process.env.TURKAI_PRO_CODE;
-app.post("/api/pro/activate", express.json(), (req, res) => {
+const TURKAI_PRO_CODE =
+    process.env.TURKAI_PRO_CODE || "";
 
-    const enteredCode =
-        String(req.body?.code || "").trim();
+app.post(
+    "/api/pro/activate",
+    express.json(),
+    (req, res) => {
 
-    if (
-        !enteredCode ||
-        !TURKAI_PRO_CODE ||
-        enteredCode !== TURKAI_PRO_CODE
-    ) {
-        return res.status(403).json({
-            ok: false,
-            message: "Geçersiz Pro kodu."
+        const enteredCode =
+
+            String(
+                req.body?.code || ""
+            ).trim();
+            console.log(
+    "PRO TEST:",
+    "gelen uzunluk =", enteredCode.length,
+    "beklenen uzunluk =", TURKAI_PRO_CODE.length
+);
+console.log(
+    "GELEN UZUNLUK:",
+    enteredCode.length
+);
+
+console.log(
+    "BEKLENEN UZUNLUK:",
+    TURKAI_PRO_CODE.length
+);
+        console.log(
+            "PRO AKTİVASYON DENEMESİ:",
+            enteredCode ? "KOD GİRİLDİ" : "KOD BOŞ"
+        );
+
+   console.log(
+    "PRO DURUM:",
+    "gelen uzunluk =", enteredCode.length,
+    "beklenen uzunluk =", TURKAI_PRO_CODE.length,
+    "gelen boş =", !enteredCode,
+    "beklenen boş =", !TURKAI_PRO_CODE
+);
+
+if (
+    !enteredCode ||
+    !TURKAI_PRO_CODE ||
+    enteredCode !== TURKAI_PRO_CODE
+) {
+            return res.status(403).json({
+                ok: false,
+                message:
+    "Geçersiz Pro kodu. Gelen: " +
+    enteredCode.length +
+    " / Beklenen: " +
+    TURKAI_PRO_CODE.length
+            });
+        }
+
+        return res.json({
+            ok: true,
+            plan: "pro",
+            message: "TürkAI Pro etkinleştirildi! 🚀"
         });
     }
+);
+const TURKAI_PRO_CODE =
+    process.env.TURKAI_PRO_CODE || "";
+    console.log(
+    "PRO KODU DURUMU:",
+    TURKAI_PRO_CODE ? "YÜKLENDİ" : "YÜKLENMEDİ"
+);
 
-    return res.json({
-        ok: true,
-        plan: "pro",
-        message: "TürkAI Pro etkinleştirildi! 🚀"
-    });
-});
+app.post(
+    "/api/pro/activate",
+    express.json(),
+    (req, res) => {
+
+        const enteredCode =
+            String(
+                req.body?.code || ""
+            ).trim();
+            console.log(
+    "PRO TEST:",
+    "gelen uzunluk =", enteredCode.length,
+    "beklenen uzunluk =", TURKAI_PRO_CODE.length
+);
+
+        if (
+            !enteredCode ||
+            !TURKAI_PRO_CODE ||
+            enteredCode.toLowerCase() !==
+TURKAI_PRO_CODE.toLowerCase()
+        ) {
+
+            return res.status(403).json({
+                ok: false,
+               message:
+    "Geçersiz Pro kodu. Gelen: " +
+    enteredCode.length +
+    " / Beklenen: " +
+    TURKAI_PRO_CODE.length
+            });
+        }
+
+        return res.json({
+            ok: true,
+            plan: "pro",
+            message: "TürkAI Pro etkinleştirildi! 🚀"
+        });
+    }
+);
+
 // TÜRKAI GÜNLÜK MESAJ LİMİTLERİ
 const DAILY_LIMITS = {
     free: 200,
@@ -2659,17 +2747,29 @@ function findUserName(
     const value =
         String(
             text || ""
-        );
+        )
+        .trim()
+        .replace(/\s+/g, " ");
+
+    // Kısa selamlaşmaları asla isim olarak algılama
+    if (
+        /^(slm|selam|merhaba|mrb|sa|hey|nbr|naber|günaydın|iyi akşamlar|iyi geceler|nasılsın|iyi misin)$/iu.test(
+            value
+        )
+    ) {
+        return null;
+    }
 
     const match =
         value.match(
-            /(?:benim\s+ad?m|benim\s+ismim|ad?m|ismim)\s+([A-Za-z????????????]+)\b/i
+            /(?:benim\s+ad[ıi]m|benim\s+ismim|ad[ıi]m|ismim)\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)\b/iu
         );
 
     if (
-        match
+        match &&
+        match[1] &&
+        match[1].length >= 2
     ) {
-
         return match[1];
     }
 
@@ -6438,24 +6538,45 @@ app.post(
             /* -----------------------------------------
             BA?LAM
             ----------------------------------------- */
-
-        let recentMessages = [];
+let recentMessages = [];
 
 const shortMessage =
-    message.trim().toLowerCase();
+    message
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+
+const casualPatterns = [
+    /^slm$/,
+    /^selam$/,
+    /^mrb$/,
+    /^merhaba$/,
+    /^sa$/,
+    /^hey$/,
+    /^nbr$/,
+    /^naber$/,
+    /^nas[ıi]ls[ıi]n$/,
+    /^iyi misin$/,
+    /^te[şs]ekk[uü]rler$/,
+    /^tesekkurler$/,
+    /^sa[ğg]ol$/,
+    /^sagol$/,
+    /^g[uü]nayd[ıi]n$/,
+    /^iyi akşamlar$/,
+    /^iyi geceler$/
+];
 
 const isCasualMessage =
-    /^(slm|selam|merhaba|mrb|sa|hey|nas[�i]ls[�i]n|iyi misin|naber|nbr|te�ekk�rler|tesekkurler|sa�ol|sagol)$/i.test(
-        shortMessage
+    casualPatterns.some(
+        pattern =>
+            pattern.test(shortMessage)
     );
 
 if (!isCasualMessage) {
 
     recentMessages =
         userMemory
-            .slice(
-                -2
-            );
+            .slice(-2);
 
 }
         const cleanRecentMessages =
