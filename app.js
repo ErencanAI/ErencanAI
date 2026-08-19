@@ -2723,9 +2723,10 @@ document.addEventListener(
         }
 
         proActivateButton.addEventListener(
+          
             "click",
             async function () {
-
+console.log("PRO BUTONUNA BASILDI");
                 const code =
                     proCodeInput.value.trim();
 
