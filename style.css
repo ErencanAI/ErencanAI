@@ -193,7 +193,7 @@ input:focus-visible {
     font-weight: 900;
 }
 
-/* YENİ SOHBET */
+/* YENÄ° SOHBET */
 
 .new-chat-button {
     width: 100%;
@@ -233,7 +233,7 @@ input:focus-visible {
     transform: scale(0.98);
 }
 
-/* BAŞLIK */
+/* BAÅLIK */
 
 .sidebar-section-title {
     color: var(--muted);
@@ -245,7 +245,7 @@ input:focus-visible {
     margin: 28px 8px 10px;
 }
 
-/* SOHBET GEÇMİŞİ */
+/* SOHBET GEÃ‡MÄ°ÅÄ° */
 
 .chat-history {
     flex: 1;
@@ -691,7 +691,7 @@ input:focus-visible {
     letter-spacing: 0.7px;
 }
 
-/* ÖNERİLER */
+/* Ã–NERÄ°LER */
 
 .suggestions {
     width: 100%;
@@ -1002,7 +1002,7 @@ input:focus-visible {
         scale(0.94);
 }
 
-/* ARAÇLAR */
+/* ARAÃ‡LAR */
 
 .composer-tools {
     display: flex;
@@ -1331,7 +1331,7 @@ input:focus-visible {
     background: white;
 }
 
-/* SİLME */
+/* SÄ°LME */
 
 .danger-button {
     width: 100%;
@@ -1403,7 +1403,7 @@ input:focus-visible {
         translate(-50%, 0);
 }
 
-/* MOBİL */
+/* MOBÄ°L */
 
 @media (max-width: 800px) {
 
@@ -1502,5 +1502,632 @@ input:focus-visible {
     .chat-container {
         padding:
             25px 12px 155px;
+    }
+}
+.pro-purchase-box {
+    width: 420px;
+    max-width: 92vw;
+}
+
+.pro-purchase-content {
+    padding: 24px;
+    text-align: center;
+}
+
+.pro-price {
+    margin-bottom: 24px;
+}
+
+.pro-price strong {
+    font-size: 42px;
+    font-weight: 800;
+}
+
+.pro-price span {
+    font-size: 18px;
+    opacity: 0.65;
+}
+
+.pro-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 24px;
+}
+
+.pro-features div {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--panel-2);
+}
+
+.pro-purchase-button {
+    width: 100%;
+    padding: 14px 18px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.pro-payment-note {
+    display: block;
+    margin-top: 14px;
+    opacity: 0.6;
+    line-height: 1.4;
+}
+/* =========================================================
+   GELİŞMİŞ PLUS / PRO PLAN ANİMASYONU
+========================================================= */
+
+#accountPlanText {
+    display: inline-block;
+    position: relative;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+
+    background: linear-gradient(
+        90deg,
+        #929aaa,
+        #ffffff,
+        #a07cff,
+        #ffffff,
+        #929aaa
+    );
+
+    background-size: 250% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    animation:
+        planShine 3s linear infinite,
+        planFloat 2s ease-in-out infinite;
+}
+
+/* Işık geçişi */
+@keyframes planShine {
+
+    0% {
+        background-position: 250% 0;
+    }
+
+    100% {
+        background-position: -250% 0;
+    }
+
+}
+
+/* Hafif hareket */
+@keyframes planFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-1px) scale(1.04);
+    }
+
+} 
+/* =========================================================
+   PLUS / PRO EKSTRA EFEKTLER
+========================================================= */
+
+/* Hafif mor ışık */
+#accountPlanText {
+    text-shadow:
+        0 0 5px rgba(124, 92, 255, 0.35),
+        0 0 12px rgba(124, 92, 255, 0.25),
+        0 0 22px rgba(124, 92, 255, 0.15);
+}
+
+/* Hover'da güçlenen efekt */
+#accountPlanText:hover {
+    text-shadow:
+        0 0 6px rgba(124, 92, 255, 0.8),
+        0 0 15px rgba(124, 92, 255, 0.6),
+        0 0 30px rgba(160, 124, 255, 0.45);
+
+    transform: scale(1.08);
+}
+
+/* Parlama katmanı */
+#accountPlanText::after {
+    content: "";
+    position: absolute;
+
+    left: -20%;
+    top: 0;
+
+    width: 20%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.8),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+
+    animation: planSpark 3.5s ease-in-out infinite;
+
+    pointer-events: none;
+}
+
+@keyframes planSpark {
+
+    0% {
+        left: -30%;
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    45% {
+        left: 110%;
+        opacity: 0;
+    }
+
+    100% {
+        left: 110%;
+        opacity: 0;
+    }
+
+}
+
+/* Plus / Pro aktif olduğunda hafif nabız */
+#accountPlanText.plan-active {
+    animation:
+        planShine 3s linear infinite,
+        planFloat 2s ease-in-out infinite,
+        planPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes planPulse {
+
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.25);
+    }
+
+}
+/* =========================================================
+   TÜRKAI BAŞLIK ANİMASYONU
+========================================================= */
+
+.model-title {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    background: linear-gradient(
+        90deg,
+        #ffffff,
+        #a07cff,
+        #ffffff,
+        #7c5cff,
+        #ffffff
+    );
+
+    background-size: 250% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    text-shadow:
+        0 0 6px rgba(124, 92, 255, 0.25),
+        0 0 14px rgba(124, 92, 255, 0.18);
+
+    animation:
+        turkAIShine 3s linear infinite,
+        turkAIPulse 2.5s ease-in-out infinite;
+}
+
+/* Renkli ışık geçişi */
+@keyframes turkAIShine {
+
+    0% {
+        background-position: 250% 0;
+    }
+
+    100% {
+        background-position: -250% 0;
+    }
+
+}
+
+/* Hafif nefes alma efekti */
+@keyframes turkAIPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    50% {
+        transform: scale(1.025);
+        filter: brightness(1.18);
+    }
+
+}
+
+/* Üzerine gelince ekstra parlama */
+.model-title:hover {
+
+    transform: scale(1.06);
+
+    text-shadow:
+        0 0 8px rgba(124, 92, 255, 0.8),
+        0 0 18px rgba(124, 92, 255, 0.55),
+        0 0 35px rgba(160, 124, 255, 0.35);
+
+}
+/* =========================================================
+   TÜRKAI PREMIUM ANİMASYON KATMANI
+========================================================= */
+
+.model-title,
+#accountPlanText {
+    will-change: transform, filter, text-shadow;
+}
+
+/* Üstteki TürkAI */
+.model-title {
+    animation:
+        turkAIShine 3s linear infinite,
+        turkAIPulse 2.5s ease-in-out infinite,
+        premiumFloat 3.5s ease-in-out infinite;
+}
+
+/* Hesap planı */
+#accountPlanText {
+    animation:
+        planShine 3s linear infinite,
+        planFloat 2s ease-in-out infinite,
+        premiumPulse 2.2s ease-in-out infinite;
+}
+
+/* Daha yumuşak süzülme */
+@keyframes premiumFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-1.5px) scale(1.025);
+    }
+}
+
+/* Parlaklık nabzı */
+@keyframes premiumPulse {
+    0%, 100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.22);
+    }
+}
+
+/* Hover = ekstra enerji */
+.model-title:hover,
+#accountPlanText:hover {
+    filter: brightness(1.3) saturate(1.2);
+
+    text-shadow:
+        0 0 6px rgba(124, 92, 255, 0.9),
+        0 0 14px rgba(124, 92, 255, 0.7),
+        0 0 28px rgba(160, 124, 255, 0.5),
+        0 0 45px rgba(160, 124, 255, 0.25);
+
+    transform:
+        translateY(-2px)
+        scale(1.07);
+
+    transition:
+        transform 0.25s ease,
+        filter 0.25s ease,
+        text-shadow 0.25s ease;
+}
+
+/* Hassas cihazlarda animasyonu azalt */
+@media (prefers-reduced-motion: reduce) {
+
+    .model-title,
+    #accountPlanText {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+/* =========================================================
+   TÜRKAI PREMIUM ANIMATION PACK
+   ========================================================= */
+
+/* GENEL YUMUŞAK GEÇİŞ */
+button,
+.history-item,
+.suggestion,
+.icon-button,
+.sidebar-button,
+.account-card,
+.send-button {
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        color 0.18s ease;
+}
+
+/* BUTON HOVER PARILTISI */
+button:hover {
+    filter: brightness(1.06);
+}
+
+/* BUTONA BASINCA MİNİK EFEKT */
+button:active {
+    transform: scale(0.96);
+}
+
+/* GÖNDER BUTONU PREMIUM PARILTI */
+.send-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.send-button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 70%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.35),
+        transparent
+    );
+    transform: skewX(-20deg);
+}
+
+.send-button:hover::after {
+    animation: sendShine 0.7s ease;
+}
+
+@keyframes sendShine {
+    from {
+        left: -120%;
+    }
+
+    to {
+        left: 150%;
+    }
+}
+
+/* TÜRKAI LOGOSU HAFİF NEFES ALIYOR */
+.brand-logo,
+.welcome-logo-inner,
+.ai-avatar,
+.model-icon {
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+/* HESAP AVATAR PARILTISI */
+.account-avatar {
+    animation: avatarGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes avatarGlow {
+    0%,
+    100% {
+        box-shadow:
+            0 8px 25px rgba(124, 92, 255, 0.20);
+    }
+
+    50% {
+        box-shadow:
+            0 8px 32px rgba(124, 92, 255, 0.50);
+    }
+}
+
+/* AI MESAJI GELİŞ ANİMASYONU */
+.message {
+    animation:
+        premiumMessageIn 0.35s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes premiumMessageIn {
+    from {
+        opacity: 0;
+        transform:
+            translateY(12px)
+            scale(0.985);
+        filter: blur(3px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+        filter: blur(0);
+    }
+}
+
+/* AI DÜŞÜNÜYOR EFEKTİ */
+.message-thinking .message-content {
+    animation: thinkingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes thinkingPulse {
+    0%,
+    100% {
+        opacity: 0.45;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ÖNERİ KARTLARI */
+.suggestion {
+    position: relative;
+    overflow: hidden;
+}
+
+.suggestion::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            110deg,
+            transparent 25%,
+            rgba(124, 92, 255, 0.12) 50%,
+            transparent 75%
+        );
+    transform: translateX(-120%);
+    pointer-events: none;
+}
+
+.suggestion:hover::before {
+    animation: suggestionShine 0.8s ease;
+}
+
+@keyframes suggestionShine {
+    from {
+        transform: translateX(-120%);
+    }
+
+    to {
+        transform: translateX(120%);
+    }
+}
+
+/* PRO BADGE PARILTI */
+.pro-active-badge,
+.pro-welcome-badge,
+.version-badge {
+    animation: proGlow 2s ease-in-out infinite;
+}
+
+@keyframes proGlow {
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 rgba(124, 92, 255, 0);
+    }
+
+    50% {
+        box-shadow:
+            0 0 18px rgba(124, 92, 255, 0.35);
+    }
+}
+
+/* INPUT ODAKLANINCA PREMIUM GLOW */
+.composer:focus-within {
+    border-color:
+        rgba(124, 92, 255, 0.55);
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.35),
+        0 0 30px rgba(124, 92, 255, 0.08);
+}
+
+/* MODAL AÇILIŞ */
+.modal.active .modal-box {
+    animation:
+        premiumModalIn
+        0.28s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes premiumModalIn {
+    from {
+        opacity: 0;
+        transform:
+            translateY(15px)
+            scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+/* SIDEBAR HOVER */
+.sidebar-button:hover,
+.history-item:hover {
+    transform: translateX(3px);
+}
+
+/* YENİ SOHBET BUTONU */
+.new-chat-button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 14px 35px rgba(124, 92, 255, 0.30);
+}
+
+/* SEND BUTONUNA HOVER */
+.send-button:hover {
+    transform: translateY(-2px) scale(1.03);
+}
+
+/* MOBİLDE ANİMASYONLARI HAFİFLET */
+@media (max-width: 500px) {
+
+    .message {
+        animation-duration: 0.25s;
+    }
+
+    .brand-logo,
+    .welcome-logo-inner,
+    .ai-avatar,
+    .model-icon {
+        animation-duration: 4s;
+    }
+}
+
+/* HAREKET AZALTMA AYARI */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

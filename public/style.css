@@ -193,7 +193,7 @@ input:focus-visible {
     font-weight: 900;
 }
 
-/* YENİ SOHBET */
+/* YENÃ„Â° SOHBET */
 
 .new-chat-button {
     width: 100%;
@@ -233,7 +233,7 @@ input:focus-visible {
     transform: scale(0.98);
 }
 
-/* BAŞLIK */
+/* BAÃ…ÂLIK */
 
 .sidebar-section-title {
     color: var(--muted);
@@ -245,7 +245,7 @@ input:focus-visible {
     margin: 28px 8px 10px;
 }
 
-/* SOHBET GEÇMİŞİ */
+/* SOHBET GEÃƒâ€¡MÃ„Â°Ã…ÂÃ„Â° */
 
 .chat-history {
     flex: 1;
@@ -691,7 +691,7 @@ input:focus-visible {
     letter-spacing: 0.7px;
 }
 
-/* ÖNERİLER */
+/* Ãƒâ€“NERÃ„Â°LER */
 
 .suggestions {
     width: 100%;
@@ -1002,7 +1002,7 @@ input:focus-visible {
         scale(0.94);
 }
 
-/* ARAÇLAR */
+/* ARAÃƒâ€¡LAR */
 
 .composer-tools {
     display: flex;
@@ -1331,7 +1331,7 @@ input:focus-visible {
     background: white;
 }
 
-/* SİLME */
+/* SÃ„Â°LME */
 
 .danger-button {
     width: 100%;
@@ -1403,7 +1403,7 @@ input:focus-visible {
         translate(-50%, 0);
 }
 
-/* MOBİL */
+/* MOBÃ„Â°L */
 
 @media (max-width: 800px) {
 

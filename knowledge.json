@@ -1,0 +1,74 @@
+[
+  {
+    "question": "nasılısn",
+    "answer": "İyiyim, teşekkür ederim! Sen nasılsın?",
+    "source": "Groq",
+    "time": "2026-08-18T10:53:07.466Z"
+  },
+  {
+    "question": "slm",
+    "answer": "Merhaba! Nasıl yardımcı olabilirim?",
+    "source": "Groq",
+    "time": "2026-08-18T10:53:10.769Z"
+  },
+  {
+    "question": "nasilsin",
+    "answer": "Merhaba! Nasıl yardımcı olabilirim?",
+    "source": "Groq",
+    "time": "2026-08-18T17:38:34.607Z"
+  },
+  {
+    "question": "nasılsın",
+    "answer": "İyiyim, teşekkür ederim! Sen nasılsın?",
+    "source": "Groq",
+    "time": "2026-08-18T17:38:43.069Z"
+  },
+  {
+    "question": "G�ncel hava durumunu ara�t�r ve bana bildir. Konum: Konya",
+    "answer": "Üzgünüm, şu anda canlı hava durumu verilerine erişemiyorum. Konya için güncel hava durumunu öğrenmek istersen, bir hava durumu uygulaması veya web sitesini kontrol edebilirsin.",
+    "source": "Groq",
+    "time": "2026-08-18T17:44:49.903Z"
+  },
+  {
+    "question": "Bu konu hakk�nda g�ncel internet ara�t�rmas� yap: mercimek köftesi",
+    "answer": "Üzgünüm, şu anda internet erişimim yok, bu yüzden 2026 Dünya Kupası veya mercimek köftesi hakkında gerçek‑zaman araştırma yapamıyorum. Ancak elimdeki bilgilerle size yardımcı olabilirim. Başka bir konuda bilgi ister misiniz?",
+    "source": "Groq",
+    "time": "2026-08-18T17:45:14.232Z"
+  },
+  {
+    "question": "s",
+    "answer": "Ne hakkında konuşmak istersiniz?",
+    "source": "Groq",
+    "time": "2026-08-18T17:55:26.686Z"
+  },
+  {
+    "question": "sesli konuş",
+    "answer": "Üzgünüm, şu anda sesli konuşma özelliği desteklenmiyor. Metin üzerinden devam edebiliriz. Nasıl yardımcı olabilirim?",
+    "source": "Groq",
+    "time": "2026-08-18T18:26:54.012Z"
+  },
+  {
+    "question": "aq",
+    "answer": "Ne hakkında konuşmak istersiniz?",
+    "source": "Groq",
+    "time": "2026-08-18T18:40:05.681Z"
+  },
+  {
+    "question": "amk",
+    "answer": "Üzgünüm, bu konuda yardımcı olamam.",
+    "source": "Groq",
+    "time": "2026-08-18T18:40:09.941Z"
+  },
+  {
+    "question": "Haf�zamda benimle ilgili neler var?",
+    "answer": "Hafızamda yalnızca şu bilgi var:  \n- **Kullanıcı ID**: `user_1786574049236_yra3npiviq`",
+    "source": "Groq",
+    "time": "2026-08-18T18:46:02.732Z"
+  },
+  {
+    "question": "selam",
+    "answer": "Merhaba! Nasıl yardımcı olabilirim?",
+    "source": "Groq",
+    "time": "2026-08-18T23:10:03.960Z"
+  }
+]

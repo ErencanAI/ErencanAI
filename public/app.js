@@ -1,8 +1,8 @@
 ﻿"use strict";
 
 /* =====================================================
-ERENCANAI PRO 9.00
-SOHBET + HAFIZA + İNTERNET ARAŞTIRMASI
+TÃœRKAI 10.0
+SOHBET + HAFIZA + Ä°NTERNET ARAÅTIRMASI
 ===================================================== */
 
 const API_URL = "/api/chat";
@@ -59,7 +59,7 @@ function loadSettings() {
     } catch (error) {
 
         console.error(
-            "AYARLAR YÜKLENEMEDİ:",
+            "AYARLAR YÃœKLENEMEDÄ°:",
             error
         );
 
@@ -116,7 +116,7 @@ function getUserId() {
 }
 
 /* =====================================================
-BAŞLANGIÇ
+BAÅLANGIÃ‡
 ===================================================== */
 
 function init() {
@@ -184,7 +184,7 @@ function init() {
     }
 
     /* =================================================
-    GÖNDER
+    GÃ–NDER
     ================================================= */
 
     if (elements.sendButton) {
@@ -224,7 +224,7 @@ function init() {
     }
 
     /* =================================================
-    YENİ SOHBET
+    YENÄ° SOHBET
     ================================================= */
 
     if (elements.newChatButton) {
@@ -239,7 +239,7 @@ function init() {
     }
 
     /* =================================================
-    SOHBET TEMİZLE
+    SOHBET TEMÄ°ZLE
     ================================================= */
 
     if (elements.clearChatButton) {
@@ -254,7 +254,7 @@ function init() {
     }
 
     /* =================================================
-    MOBİL MENÜ
+    MOBÄ°L MENÃœ
     ================================================= */
 
     if (elements.menuButton) {
@@ -311,7 +311,7 @@ function init() {
     }
 
     /* =================================================
-    TÜM GEÇMİŞİ SİL
+    TÃœM GEÃ‡MÄ°ÅÄ° SÄ°L
     ================================================= */
 
     if (elements.deleteHistoryButton) {
@@ -323,7 +323,7 @@ function init() {
     }
 
     /* =================================================
-    İNTERNET ARAŞTIRMASI BUTONU
+    Ä°NTERNET ARAÅTIRMASI BUTONU
     ================================================= */
 
     if (elements.researchButton) {
@@ -347,7 +347,7 @@ function init() {
     }
 
     /* =================================================
-    ÖNERİLER
+    Ã–NERÄ°LER
     ================================================= */
 
     document
@@ -406,7 +406,7 @@ function init() {
         );
 
     /* =================================================
-    MODAL DIŞINA TIKLAMA
+    MODAL DIÅINA TIKLAMA
     ================================================= */
 
     document
@@ -434,7 +434,7 @@ function init() {
     renderChatHistory();
 
     console.log(
-        "ERENCANAI PRO 9.00 HAZIR"
+        "TÃœRKAI 10.0 HAZIR"
     );
 
     console.log(
@@ -444,7 +444,7 @@ function init() {
 }
 
 /* =====================================================
-SOHBETLERİ YÜKLE
+SOHBETLERÄ° YÃœKLE
 ===================================================== */
 
 function loadChats() {
@@ -478,7 +478,7 @@ function loadChats() {
     } catch (error) {
 
         console.error(
-            "SOHBET GEÇMİŞİ OKUNAMADI:",
+            "SOHBET GEÃ‡MÄ°ÅÄ° OKUNAMADI:",
             error
         );
 
@@ -487,7 +487,7 @@ function loadChats() {
 }
 
 /* =====================================================
-SOHBETLERİ KAYDET
+SOHBETLERÄ° KAYDET
 ===================================================== */
 
 function saveChats() {
@@ -504,14 +504,14 @@ function saveChats() {
     } catch (error) {
 
         console.error(
-            "SOHBET GEÇMİŞİ KAYDEDİLEMEDİ:",
+            "SOHBET GEÃ‡MÄ°ÅÄ° KAYDEDÄ°LEMEDÄ°:",
             error
         );
     }
 }
 
 /* =====================================================
-YENİ SOHBET
+YENÄ° SOHBET
 ===================================================== */
 
 function createNewChat(showToast) {
@@ -555,7 +555,7 @@ function createNewChat(showToast) {
     ) {
 
         showToastMessage(
-            "Yeni sohbet oluşturuldu."
+            "Yeni sohbet oluÅŸturuldu."
         );
     }
 
@@ -566,7 +566,7 @@ function createNewChat(showToast) {
 }
 
 /* =====================================================
-SOHBET AÇ
+SOHBET AÃ‡
 ===================================================== */
 
 function openChat(chatId) {
@@ -604,7 +604,7 @@ function openChat(chatId) {
 }
 
 /* =====================================================
-BAŞLIK
+BAÅLIK
 ===================================================== */
 
 function createTitle(text) {
@@ -631,7 +631,7 @@ function createTitle(text) {
 }
 
 /* =====================================================
-GEÇMİŞİ GÖSTER
+GEÃ‡MÄ°ÅÄ° GÃ–STER
 ===================================================== */
 
 function renderChatHistory() {
@@ -689,7 +689,7 @@ function renderChatHistory() {
 }
 
 /* =====================================================
-MEVCUT SOHBETİ GÖSTER
+MEVCUT SOHBETÄ° GÃ–STER
 ===================================================== */
 
 function renderCurrentChat() {
@@ -1002,7 +1002,7 @@ async function sendMessage() {
     const thinking =
         addMessage(
             "ErencanAI",
-            "Düşünüyor...",
+            "DÃ¼ÅŸÃ¼nÃ¼yor...",
             "ai thinking"
         );
 
@@ -1043,7 +1043,7 @@ async function sendMessage() {
         if (!response.ok) {
 
             throw new Error(
-                "Sunucu hatası (" +
+                "Sunucu hatasÄ± (" +
                 response.status +
                 "): " +
                 rawText
@@ -1062,14 +1062,14 @@ async function sendMessage() {
         } catch (error) {
 
             throw new Error(
-                "Sunucudan geçerli JSON gelmedi."
+                "Sunucudan geÃ§erli JSON gelmedi."
             );
         }
 
         if (!data) {
 
             throw new Error(
-                "Sunucudan cevap alınamadı."
+                "Sunucudan cevap alÄ±namadÄ±."
             );
         }
 
@@ -1132,7 +1132,7 @@ async function sendMessage() {
         if (!reply) {
 
             throw new Error(
-                "ErencanAI boş cevap gönderdi."
+                "ErencanAI boÅŸ cevap gÃ¶nderdi."
             );
         }
 
@@ -1193,7 +1193,7 @@ async function sendMessage() {
 }
 
 /* =====================================================
-🧠 HAFIZA BUTONU
+ğŸ§  HAFIZA BUTONU
 ===================================================== */
 
 async function showUserMemory() {
@@ -1207,7 +1207,7 @@ async function showUserMemory() {
     const thinking =
         addMessage(
             "ErencanAI",
-            "🧠 Hafızam kontrol ediliyor...",
+            "ğŸ§  HafÄ±zam kontrol ediliyor...",
             "ai thinking"
         );
 
@@ -1238,7 +1238,7 @@ async function showUserMemory() {
         if (!response.ok) {
 
             throw new Error(
-                "Hafıza sunucu hatası (" +
+                "HafÄ±za sunucu hatasÄ± (" +
                 response.status +
                 ")"
             );
@@ -1256,7 +1256,7 @@ async function showUserMemory() {
         } catch (error) {
 
             throw new Error(
-                "Hafıza API'sinden geçersiz cevap geldi."
+                "HafÄ±za API'sinden geÃ§ersiz cevap geldi."
             );
         }
 
@@ -1269,7 +1269,7 @@ async function showUserMemory() {
                 data &&
                 data.reply
                     ? data.reply
-                    : "Hafıza alınamadı."
+                    : "HafÄ±za alÄ±namadÄ±."
             );
         }
 
@@ -1287,7 +1287,7 @@ async function showUserMemory() {
 
             addMessage(
                 "ErencanAI",
-                "🧠 Hafızam şu anda boş.",
+                "ğŸ§  HafÄ±zam ÅŸu anda boÅŸ.",
                 "ai"
             );
 
@@ -1295,8 +1295,8 @@ async function showUserMemory() {
         }
 
         /*
-         * Son 20 hafıza mesajını göster.
-         * Böylece butona basınca ekran aşırı
+         * Son 20 hafÄ±za mesajÄ±nÄ± gÃ¶ster.
+         * BÃ¶ylece butona basÄ±nca ekran aÅŸÄ±rÄ±
          * uzun bir mesajla dolmaz.
          */
 
@@ -1304,9 +1304,9 @@ async function showUserMemory() {
             messages.slice(-20);
 
         let memoryText =
-            "🧠 Hafızamda " +
+            "ğŸ§  HafÄ±zamda " +
             messages.length +
-            " kayıt bulunuyor.\n\n";
+            " kayÄ±t bulunuyor.\n\n";
 
         recent.forEach(
             function (item) {
@@ -1353,7 +1353,7 @@ async function showUserMemory() {
 
         addMessage(
             "ErencanAI",
-            "Hafızaya ulaşılamadı: " +
+            "HafÄ±zaya ulaÅŸÄ±lamadÄ±: " +
             (
                 error.message ||
                 "Bilinmeyen hata"
@@ -1364,7 +1364,7 @@ async function showUserMemory() {
 }
 
 /* =====================================================
-🔎 İNTERNET ARAŞTIRMASI
+ğŸ” Ä°NTERNET ARAÅTIRMASI
 ===================================================== */
 
 async function startResearch() {
@@ -1385,8 +1385,8 @@ async function startResearch() {
             .trim();
 
     /*
-     * Butona basıldığında kutu boşsa
-     * kullanıcıdan konu ister.
+     * Butona basÄ±ldÄ±ÄŸÄ±nda kutu boÅŸsa
+     * kullanÄ±cÄ±dan konu ister.
      */
 
     if (!query) {
@@ -1395,7 +1395,7 @@ async function startResearch() {
             "";
 
         input.placeholder =
-            "Araştırılacak konuyu yaz...";
+            "AraÅŸtÄ±rÄ±lacak konuyu yaz...";
 
         input.focus();
 
@@ -1409,7 +1409,7 @@ async function startResearch() {
 
     addMessage(
         "Sen",
-        "🔎 " + query,
+        "ğŸ” " + query,
         "user"
     );
 
@@ -1421,7 +1421,7 @@ async function startResearch() {
     const thinking =
         addMessage(
             "ErencanAI",
-            "🔎 İnternette araştırıyor...",
+            "ğŸ” Ä°nternette araÅŸtÄ±rÄ±yor...",
             "ai thinking"
         );
 
@@ -1459,7 +1459,7 @@ async function startResearch() {
         if (!response.ok) {
 
             throw new Error(
-                "Araştırma sunucu hatası (" +
+                "AraÅŸtÄ±rma sunucu hatasÄ± (" +
                 response.status +
                 ")"
             );
@@ -1477,7 +1477,7 @@ async function startResearch() {
         } catch (error) {
 
             throw new Error(
-                "Araştırma API'sinden geçersiz cevap geldi."
+                "AraÅŸtÄ±rma API'sinden geÃ§ersiz cevap geldi."
             );
         }
 
@@ -1490,7 +1490,7 @@ async function startResearch() {
                 data &&
                 data.reply
                     ? data.reply
-                    : "İnternet araştırması başarısız."
+                    : "Ä°nternet araÅŸtÄ±rmasÄ± baÅŸarÄ±sÄ±z."
             );
         }
 
@@ -1509,11 +1509,11 @@ async function startResearch() {
         if (!researchText) {
 
             researchText =
-                "Araştırma sonucu bulunamadı.";
+                "AraÅŸtÄ±rma sonucu bulunamadÄ±.";
         }
 
         /*
-         * Kaynaklar varsa cevabın sonuna ekle.
+         * Kaynaklar varsa cevabÄ±n sonuna ekle.
          */
 
         if (
@@ -1544,7 +1544,7 @@ async function startResearch() {
                             "";
 
                         researchText +=
-                            "\n• " +
+                            "\nâ€¢ " +
                             title;
 
                         if (url) {
@@ -1566,7 +1566,7 @@ async function startResearch() {
     } catch (error) {
 
         console.error(
-            "ARAŞTIRMA HATASI:",
+            "ARAÅTIRMA HATASI:",
             error
         );
 
@@ -1577,7 +1577,7 @@ async function startResearch() {
 
         addMessage(
             "ErencanAI",
-            "İnternet araştırması yapılamadı: " +
+            "Ä°nternet araÅŸtÄ±rmasÄ± yapÄ±lamadÄ±: " +
             (
                 error.message ||
                 "Bilinmeyen hata"
@@ -1601,7 +1601,7 @@ async function startResearch() {
 }
 
 /* =====================================================
-SOHBET TEMİZLE
+SOHBET TEMÄ°ZLE
 ===================================================== */
 
 function clearCurrentChat() {
@@ -1642,14 +1642,14 @@ function clearCurrentChat() {
 }
 
 /* =====================================================
-TÜM GEÇMİŞİ SİL
+TÃœM GEÃ‡MÄ°ÅÄ° SÄ°L
 ===================================================== */
 
 function deleteAllChats() {
 
     const confirmed =
         window.confirm(
-            "Tüm sohbet geçmişi silinsin mi?"
+            "TÃ¼m sohbet geÃ§miÅŸi silinsin mi?"
         );
 
     if (!confirmed) {
@@ -1770,7 +1770,7 @@ function searchChats() {
 }
 
 /* =====================================================
-HOŞ GELDİN
+HOÅ GELDÄ°N
 ===================================================== */
 
 function hideWelcome() {
@@ -1826,7 +1826,7 @@ function scrollBottom() {
 }
 
 /* =====================================================
-BİLDİRİM
+BÄ°LDÄ°RÄ°M
 ===================================================== */
 
 function showToastMessage(text) {
@@ -1868,7 +1868,7 @@ function showToastMessage(text) {
 }
 
 /* =====================================================
-BAŞLAT
+BAÅLAT
 ===================================================== */
 
 if (
@@ -1885,4 +1885,5 @@ if (
 
     init();
 }
+
 
