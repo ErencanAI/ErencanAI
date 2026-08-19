@@ -1704,3 +1704,77 @@ input:focus-visible {
     }
 
 }
+/* =========================================================
+   TÜRKAI BAŞLIK ANİMASYONU
+========================================================= */
+
+.model-title {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    background: linear-gradient(
+        90deg,
+        #ffffff,
+        #a07cff,
+        #ffffff,
+        #7c5cff,
+        #ffffff
+    );
+
+    background-size: 250% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    text-shadow:
+        0 0 6px rgba(124, 92, 255, 0.25),
+        0 0 14px rgba(124, 92, 255, 0.18);
+
+    animation:
+        turkAIShine 3s linear infinite,
+        turkAIPulse 2.5s ease-in-out infinite;
+}
+
+/* Renkli ışık geçişi */
+@keyframes turkAIShine {
+
+    0% {
+        background-position: 250% 0;
+    }
+
+    100% {
+        background-position: -250% 0;
+    }
+
+}
+
+/* Hafif nefes alma efekti */
+@keyframes turkAIPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    50% {
+        transform: scale(1.025);
+        filter: brightness(1.18);
+    }
+
+}
+
+/* Üzerine gelince ekstra parlama */
+.model-title:hover {
+
+    transform: scale(1.06);
+
+    text-shadow:
+        0 0 8px rgba(124, 92, 255, 0.8),
+        0 0 18px rgba(124, 92, 255, 0.55),
+        0 0 35px rgba(160, 124, 255, 0.35);
+
+}
