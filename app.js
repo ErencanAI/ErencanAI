@@ -2821,8 +2821,13 @@ window.addEventListener("load", function () {
         }
     );
 });
+const googleModal =
+    document.getElementById("googleLoginModal");
 
-
+if (googleModal) {
+    googleModal.classList.remove("open");
+}
+console.log("GOOGLE CALLBACK ÇALIŞTI", response);
 function handleGoogleLogin(response) {
 
     try {
