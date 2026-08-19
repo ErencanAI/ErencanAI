@@ -193,7 +193,7 @@ input:focus-visible {
     font-weight: 900;
 }
 
-/* YENİ SOHBET */
+/* YENÄ° SOHBET */
 
 .new-chat-button {
     width: 100%;
@@ -233,7 +233,7 @@ input:focus-visible {
     transform: scale(0.98);
 }
 
-/* BAŞLIK */
+/* BAÅLIK */
 
 .sidebar-section-title {
     color: var(--muted);
@@ -245,7 +245,7 @@ input:focus-visible {
     margin: 28px 8px 10px;
 }
 
-/* SOHBET GEÇMİŞİ */
+/* SOHBET GEÃ‡MÄ°ÅÄ° */
 
 .chat-history {
     flex: 1;
@@ -691,7 +691,7 @@ input:focus-visible {
     letter-spacing: 0.7px;
 }
 
-/* ÖNERİLER */
+/* Ã–NERÄ°LER */
 
 .suggestions {
     width: 100%;
@@ -1002,7 +1002,7 @@ input:focus-visible {
         scale(0.94);
 }
 
-/* ARAÇLAR */
+/* ARAÃ‡LAR */
 
 .composer-tools {
     display: flex;
@@ -1331,7 +1331,7 @@ input:focus-visible {
     background: white;
 }
 
-/* SİLME */
+/* SÄ°LME */
 
 .danger-button {
     width: 100%;
@@ -1403,7 +1403,7 @@ input:focus-visible {
         translate(-50%, 0);
 }
 
-/* MOBİL */
+/* MOBÄ°L */
 
 @media (max-width: 800px) {
 
@@ -1503,4 +1503,58 @@ input:focus-visible {
         padding:
             25px 12px 155px;
     }
+}
+.pro-purchase-box {
+    width: 420px;
+    max-width: 92vw;
+}
+
+.pro-purchase-content {
+    padding: 24px;
+    text-align: center;
+}
+
+.pro-price {
+    margin-bottom: 24px;
+}
+
+.pro-price strong {
+    font-size: 42px;
+    font-weight: 800;
+}
+
+.pro-price span {
+    font-size: 18px;
+    opacity: 0.65;
+}
+
+.pro-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 24px;
+}
+
+.pro-features div {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--panel-2);
+}
+
+.pro-purchase-button {
+    width: 100%;
+    padding: 14px 18px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.pro-payment-note {
+    display: block;
+    margin-top: 14px;
+    opacity: 0.6;
+    line-height: 1.4;
 }
