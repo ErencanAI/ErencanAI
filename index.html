@@ -271,15 +271,7 @@
             type="button"
         >
             Pro'yu Etkinleştir
-        </button>
 
-        <div id="proCodeMessage"></div>
-        <button
-    id="buyProButton"
-    type="button"
->
-    Pro Satın Al
-</button>
 
     </div>
 
@@ -2009,14 +2001,35 @@ if (data.ok) {
 
             </div>
 
+<div class="manual-payment-box">
 
-            <button
-                id="continueProPurchaseButton"
-                class="pro-purchase-button"
-                type="button"
-            >
-                200 TL / ay ile devam et
-            </button>
+    <h3>Manuel Ödeme</h3>
+
+    <p>
+        TürkAI Pro: <strong>200 TL / ay</strong>
+    </p>
+
+    <p>
+        Ödemeyi aşağıdaki banka hesabına yaptıktan sonra
+        "Ödemeyi Yaptım" butonuna basın.
+    </p>
+
+    
+
+    <button
+        id="continueProPurchaseButton"
+        class="pro-purchase-button"
+        type="button"
+    >
+        Ödemeyi Yaptım
+    </button>
+
+    <div
+        id="paymentStatusMessage"
+        class="payment-status-message"
+    ></div>
+
+</div>
 
 
             <small class="pro-payment-note">
