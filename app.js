@@ -3019,3 +3019,76 @@ document.addEventListener("DOMContentLoaded", function () {
         "TÜRKAI PRO: F5 SONRASI GERİ YÜKLENDİ"
     );
 });
+const buyProButton =
+    document.getElementById("buyProButton");
+
+const proPurchaseModal =
+    document.getElementById("proPurchaseModal");
+
+const buyProButton =
+    document.getElementById("buyProButton");
+
+const proPurchaseModal =
+    document.getElementById("proPurchaseModal");
+
+const continueProPurchaseButton =
+    document.getElementById(
+        "continueProPurchaseButton"
+    );
+
+
+if (
+    buyProButton &&
+    proPurchaseModal
+) {
+
+    buyProButton.addEventListener(
+        "click",
+        function () {
+
+            proPurchaseModal.classList.add(
+                "open"
+            );
+
+        }
+    );
+
+}
+
+
+if (
+    continueProPurchaseButton
+) {
+
+    continueProPurchaseButton.addEventListener(
+        "click",
+        function () {
+
+            alert(
+                "TürkAI Pro ödeme sistemi yakında aktif olacak.\n\n" +
+                "Fiyat: 200 TL / ay"
+            );
+
+        }
+    );
+
+}
+
+
+if (
+    continueProPurchaseButton
+) {
+
+    continueProPurchaseButton.addEventListener(
+        "click",
+        function () {
+
+            alert(
+                "TürkAI Pro ödeme sistemi yakında aktif olacak.\n\n" +
+                "Fiyat: 200 TL / ay"
+            );
+
+        }
+    );
+
+}
