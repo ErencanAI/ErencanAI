@@ -1,13 +1,13 @@
 "use strict";
 
 /* =====================================================
-   TüRKAI 10.0
-   SOHBET + HAFIZA + iNTERNET ARAŞTIRMASI + SES
+   TÃœRKAI 10.0
+   SOHBET + HAFIZA + Ä°NTERNET ARAÅTIRMASI + SES
 ===================================================== */
 
 
 /* =====================================================
-   SESLENDİRME
+   SESLENDÄ°RME
 ===================================================== */
 
 function speakText(text) {
@@ -19,7 +19,7 @@ function speakText(text) {
     if (!("speechSynthesis" in window)) {
 
         console.warn(
-            "Bu tarayı±cÄ± seslendirmeyi desteklemiyor."
+            "Bu tarayÄ±cÄ± seslendirmeyi desteklemiyor."
         );
 
         return;
@@ -2821,14 +2821,13 @@ window.addEventListener("load", function () {
         }
     );
 });
-const googleModal =
-    document.getElementById("googleLoginModal");
 
-if (googleModal) {
-    googleModal.classList.remove("open");
-}
-console.log("GOOGLE CALLBACK ÇALIŞTI", response);
 function handleGoogleLogin(response) {
+
+    console.log(
+        "GOOGLE CALLBACK ÇALIŞTI",
+        response
+    );
 
     try {
 
@@ -2878,7 +2877,6 @@ function handleGoogleLogin(response) {
                     .trim()
                     .charAt(0)
                     .toUpperCase();
-
         }
 
         const accountName =
@@ -2887,7 +2885,8 @@ function handleGoogleLogin(response) {
             );
 
         if (accountName) {
-            accountName.textContent = name;
+            accountName.textContent =
+                name;
         }
 
         const accountStatus =
@@ -2900,43 +2899,27 @@ function handleGoogleLogin(response) {
                 "Google hesabı";
         }
 
+        const googleModal =
+            document.getElementById(
+                "googleLoginModal"
+            );
+
+        if (googleModal) {
+            googleModal.classList.remove(
+                "open"
+            );
+        }
+
         console.log(
             "GOOGLE GİRİŞ BAŞARILI:",
             name
         );
-const googleModal =
-    document.getElementById("googleLoginModal");
 
-if (googleModal) {
-    googleModal.classList.remove("open");
-}
-const accountAvatar =
-    document.querySelector(".account-avatar");
-
-if (accountAvatar) {
-    accountAvatar.textContent =
-        name.trim().charAt(0).toUpperCase();
-}
-
-const accountName =
-    document.querySelector(".account-info strong");
-
-if (accountName) {
-    accountName.textContent = name;
-}
-
-const accountStatus =
-    document.querySelector(".account-info small");
-
-if (accountStatus) {
-    accountStatus.textContent = "Google hesabı";
-}
     } catch (error) {
 
         console.error(
             "GOOGLE GİRİŞ HATASI:",
             error
         );
-
     }
 }
