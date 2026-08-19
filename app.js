@@ -2854,7 +2854,38 @@ function handleGoogleLogin(response) {
             "googleUserName",
             name
         );
+const savedGoogleName =
+    localStorage.getItem("googleUserName");
 
+if (savedGoogleName) {
+
+    const accountAvatar =
+        document.querySelector(".account-avatar");
+
+    if (accountAvatar) {
+        accountAvatar.textContent =
+            savedGoogleName
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+    }
+
+    const accountName =
+        document.querySelector(".account-info strong");
+
+    if (accountName) {
+        accountName.textContent =
+            savedGoogleName;
+    }
+
+    const accountStatus =
+        document.querySelector(".account-info small");
+
+    if (accountStatus) {
+        accountStatus.textContent =
+            "Google hesabı";
+    }
+}
         localStorage.setItem(
             "googleUserEmail",
             email
@@ -2923,3 +2954,39 @@ function handleGoogleLogin(response) {
         );
     }
 }
+document.addEventListener("DOMContentLoaded", function () {
+
+    const savedGoogleName =
+        localStorage.getItem("googleUserName");
+
+    if (!savedGoogleName) {
+        return;
+    }
+
+    const accountAvatar =
+        document.querySelector(".account-avatar");
+
+    if (accountAvatar) {
+        accountAvatar.textContent =
+            savedGoogleName
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+    }
+
+    const accountName =
+        document.querySelector(".account-info strong");
+
+    if (accountName) {
+        accountName.textContent =
+            savedGoogleName;
+    }
+
+    const accountStatus =
+        document.querySelector(".account-info small");
+
+    if (accountStatus) {
+        accountStatus.textContent =
+            "Google hesabı";
+    }
+});
