@@ -6851,7 +6851,10 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             console.log(
                 "GROQ ?STE?? G?NDER?L?YOR..."
             );
-
+const data =
+    await requestAI(
+        messages
+    );
             /* -----------------------------------------
             GROQ
             ----------------------------------------- */
