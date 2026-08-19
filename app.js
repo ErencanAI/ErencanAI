@@ -2904,7 +2904,33 @@ function handleGoogleLogin(response) {
             "GOOGLE GİRİŞ BAŞARILI:",
             name
         );
+const googleModal =
+    document.getElementById("googleLoginModal");
 
+if (googleModal) {
+    googleModal.classList.remove("open");
+}
+const accountAvatar =
+    document.querySelector(".account-avatar");
+
+if (accountAvatar) {
+    accountAvatar.textContent =
+        name.trim().charAt(0).toUpperCase();
+}
+
+const accountName =
+    document.querySelector(".account-info strong");
+
+if (accountName) {
+    accountName.textContent = name;
+}
+
+const accountStatus =
+    document.querySelector(".account-info small");
+
+if (accountStatus) {
+    accountStatus.textContent = "Google hesabı";
+}
     } catch (error) {
 
         console.error(
