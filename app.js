@@ -1,13 +1,13 @@
 "use strict";
 
 /* =====================================================
-   TÃœRKAI 10.0
-   SOHBET + HAFIZA + Ä°NTERNET ARAÅTIRMASI + SES
+   TüRKAI 10.0
+   SOHBET + HAFIZA + iNTERNET ARAŞTIRMASI + SES
 ===================================================== */
 
 
 /* =====================================================
-   SESLENDÄ°RME
+   SESLENDİRME
 ===================================================== */
 
 function speakText(text) {
@@ -19,7 +19,7 @@ function speakText(text) {
     if (!("speechSynthesis" in window)) {
 
         console.warn(
-            "Bu tarayÄ±cÄ± seslendirmeyi desteklemiyor."
+            "Bu tarayı±cÄ± seslendirmeyi desteklemiyor."
         );
 
         return;
