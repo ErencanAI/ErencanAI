@@ -1558,23 +1558,149 @@ input:focus-visible {
     opacity: 0.6;
     line-height: 1.4;
 }
-/* PLAN ANİMASYONU */
+/* =========================================================
+   GELİŞMİŞ PLUS / PRO PLAN ANİMASYONU
+========================================================= */
+
 #accountPlanText {
     display: inline-block;
-    transition:
-        transform 0.3s ease,
-        opacity 0.3s ease;
-    animation: planGlow 2s ease-in-out infinite;
+    position: relative;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+
+    background: linear-gradient(
+        90deg,
+        #929aaa,
+        #ffffff,
+        #a07cff,
+        #ffffff,
+        #929aaa
+    );
+
+    background-size: 250% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    animation:
+        planShine 3s linear infinite,
+        planFloat 2s ease-in-out infinite;
 }
 
-@keyframes planGlow {
-    0%, 100% {
-        opacity: 0.75;
-        transform: scale(1);
+/* Işık geçişi */
+@keyframes planShine {
+
+    0% {
+        background-position: 250% 0;
+    }
+
+    100% {
+        background-position: -250% 0;
+    }
+
+}
+
+/* Hafif hareket */
+@keyframes planFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
     }
 
     50% {
-        opacity: 1;
-        transform: scale(1.05);
+        transform: translateY(-1px) scale(1.04);
     }
+
+} 
+/* =========================================================
+   PLUS / PRO EKSTRA EFEKTLER
+========================================================= */
+
+/* Hafif mor ışık */
+#accountPlanText {
+    text-shadow:
+        0 0 5px rgba(124, 92, 255, 0.35),
+        0 0 12px rgba(124, 92, 255, 0.25),
+        0 0 22px rgba(124, 92, 255, 0.15);
+}
+
+/* Hover'da güçlenen efekt */
+#accountPlanText:hover {
+    text-shadow:
+        0 0 6px rgba(124, 92, 255, 0.8),
+        0 0 15px rgba(124, 92, 255, 0.6),
+        0 0 30px rgba(160, 124, 255, 0.45);
+
+    transform: scale(1.08);
+}
+
+/* Parlama katmanı */
+#accountPlanText::after {
+    content: "";
+    position: absolute;
+
+    left: -20%;
+    top: 0;
+
+    width: 20%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.8),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+
+    animation: planSpark 3.5s ease-in-out infinite;
+
+    pointer-events: none;
+}
+
+@keyframes planSpark {
+
+    0% {
+        left: -30%;
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    45% {
+        left: 110%;
+        opacity: 0;
+    }
+
+    100% {
+        left: 110%;
+        opacity: 0;
+    }
+
+}
+
+/* Plus / Pro aktif olduğunda hafif nabız */
+#accountPlanText.plan-active {
+    animation:
+        planShine 3s linear infinite,
+        planFloat 2s ease-in-out infinite,
+        planPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes planPulse {
+
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.25);
+    }
+
 }
