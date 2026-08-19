@@ -2727,6 +2727,7 @@ document.addEventListener(
             "click",
             async function () {
 console.log("PRO BUTONUNA BASILDI");
+
                 const code =
                     proCodeInput.value.trim();
 
@@ -2762,7 +2763,10 @@ console.log("PRO BUTONUNA BASILDI");
                                     })
                             }
                         );
-
+console.log(
+    "PRO API DURUMU:",
+    response.status
+);
                     const data =
                         await response.json();
 
