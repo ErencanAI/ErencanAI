@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 
 <html lang="tr">
+ 
 <head>
-
+   <script src="https://accounts.google.com/gsi/client" async></script>
 <meta charset="UTF-8">
 
 <meta
@@ -945,7 +946,32 @@
             </span>
 
         </div>
-
+<div class="setting"> 
+ 
+    <div> 
+        <strong>Pro Kodunu Etkinleştir</strong> 
+ 
+        <small> 
+            Pro kodunu girerek Pro özelliklerini aç. 
+        </small> 
+    </div> 
+ 
+    <input 
+        id="proCodeInput" 
+        type="text" 
+        placeholder="Pro kodu" 
+    > 
+ 
+    <button 
+        id="proActivateButton" 
+        type="button" 
+    > 
+        Pro'yu Etkinleştir 
+    </button> 
+ 
+    <div id="proCodeMessage"></div> 
+ 
+</div>
 
     </div>
 
@@ -1022,13 +1048,28 @@
         </p>
 
 
-        <button
-            class="google-login-button"
-            type="button"
-            id="googleLoginButton"
-        >
-            G Google ile devam et
-        </button>
+       <div class="google-login-area">
+
+    <div class="google-login-logo">
+        G
+    </div>
+
+    <h3>
+        Google ile giriş
+    </h3>
+
+    <p>
+        Hesabını bağlayarak sohbet geçmişini
+        cihazların arasında kullanabilirsin.
+    </p>
+
+    <div id="googleLoginButton"></div>
+
+    <small class="login-note">
+        Google ile güvenli giriş
+    </small>
+
+</div>
 
 
         <small class="login-note">
@@ -1872,105 +1913,33 @@ document.addEventListener(
 
     }
 );
-const proActivateButton =
-    document.getElementById("proActivateButton");
+if (data.ok) {
 
-const proCodeInput =
-    document.getElementById("proCodeInput");
-
-const proCodeMessage =
-    document.getElementById("proCodeMessage");
-
-if (
-    proActivateButton &&
-    proCodeInput &&
-    proCodeMessage
-) {
-
-    proActivateButton.addEventListener(
-        "click",
-        async () => {
-
-            const code =
-                proCodeInput.value.trim();
-
-            if (!code) {
-
-                proCodeMessage.textContent =
-                    "Lütfen Pro kodunu gir.";
-
-                return;
-            }
-
-            proActivateButton.disabled =
-                true;
-
-            proActivateButton.textContent =
-                "Kontrol ediliyor...";
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/api/pro/activate",
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                code: code
-                            })
-                        }
-                    );
-
-                const data =
-                    await response.json();
-
-                if (data.ok) {
-
-                    proCodeMessage.textContent =
-                        "Pro başarıyla etkinleştirildi! 🚀";
-
-                    proCodeInput.value = "";
-
-                } else {
-
-                    proCodeMessage.textContent =
-                        data.message ||
-                        "Pro kodu geçersiz.";
-
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "PRO AKTİVASYON HATASI:",
-                    error
-                );
-
-                proCodeMessage.textContent =
-                    "Sunucuya bağlanılamadı.";
-
-            } finally {
-
-                proActivateButton.disabled =
-                    false;
-
-                proActivateButton.textContent =
-                    "Pro'yu Etkinleştir";
-
-            }
-
-        }
+    localStorage.setItem(
+        "turkai_plan",
+        "pro"
     );
+
+    proCodeMessage.textContent =
+        "Pro başarıyla etkinleştirildi! ??";
+
+    proCodeInput.value = "";
+
+    setTimeout(() => {
+        location.reload();
+    }, 500);
+
+} else {
+
+    proCodeMessage.textContent =
+        data.message ||
+        "Pro kodu geçersiz.";
 
 }
 </script>
+<script>
 
+</script>
 
 </body>
 </html>
