@@ -1380,12 +1380,20 @@ function addMessageToScreen(
 
     } else {
 
-        avatar.classList.add(
-            "ai-avatar"
-        );
+       avatar.classList.add(
+    "user-avatar"
+);
 
-        avatar.textContent =
-            "E";
+const userDisplayName =
+    localStorage.getItem("userName") ||
+    localStorage.getItem("user_name") ||
+    "Sen";
+
+avatar.textContent =
+    userDisplayName
+        .trim()
+        .charAt(0)
+        .toUpperCase();
     }
 
 
@@ -2686,4 +2694,218 @@ if (
 } else {
 
     init();
+}
+const proActivateButton =
+    document.getElementById("proActivateButton");
+
+const proCodeInput =
+    document.getElementById("proCodeInput");
+
+const proCodeMessage =
+    document.getElementById("proCodeMessage");
+
+if (
+    proActivateButton &&
+    proCodeInput &&
+    proCodeMessage
+) {
+
+    proActivateButton.addEventListener(
+        "click",
+        async function () {
+
+            const code =
+                proCodeInput.value.trim();
+
+            if (!code) {
+                proCodeMessage.textContent =
+                    "Pro kodunu gir.";
+                return;
+            }
+
+            proActivateButton.disabled = true;
+            proActivateButton.textContent =
+                "Kontrol ediliyor...";
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/pro/activate",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+                            body: JSON.stringify({
+                                code: code
+                            })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (data.ok === true) {
+
+                    proCodeMessage.textContent =
+                        "Pro başarıyla etkinleştirildi! 🚀";
+
+                    localStorage.setItem(
+                        "turkai_plan",
+                        "pro"
+                    );
+
+                    proCodeInput.value = "";
+
+                } else {
+
+                    proCodeMessage.textContent =
+                        data.message ||
+                        "Geçersiz Pro kodu.";
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "PRO AKTİVASYON HATASI:",
+                    error
+                );
+
+                proCodeMessage.textContent =
+                    "Sunucuya bağlanılamadı.";
+
+            } finally {
+
+                proActivateButton.disabled = false;
+                proActivateButton.textContent =
+                    "Pro'yu Etkinleştir";
+            }
+        }
+    );
+}
+window.addEventListener("load", function () {
+
+    if (
+        typeof google === "undefined" ||
+        !google.accounts ||
+        !google.accounts.id
+    ) {
+        console.error("Google Identity Services yüklenemedi.");
+        return;
+    }
+
+    const googleButton =
+        document.getElementById("googleLoginButton");
+
+    if (!googleButton) {
+        return;
+    }
+
+    google.accounts.id.initialize({
+        client_id: "1093913966610-21vqqf604k2liiga2ni65a07dbrph6lo.apps.googleusercontent.com",
+        callback: handleGoogleLogin
+    });
+
+    google.accounts.id.renderButton(
+        googleButton,
+        {
+            theme: "outline",
+            size: "large",
+            text: "signin_with",
+            shape: "rectangular",
+            logo_alignment: "left",
+            width: 300
+        }
+    );
+});
+
+
+function handleGoogleLogin(response) {
+
+    try {
+
+        const payload =
+            JSON.parse(
+                atob(
+                    response.credential
+                        .split(".")[1]
+                        .replace(/-/g, "+")
+                        .replace(/_/g, "/")
+                )
+            );
+
+        const name =
+            payload.name || "Google Kullanıcısı";
+
+        const email =
+            payload.email || "";
+
+        const picture =
+            payload.picture || "";
+
+        localStorage.setItem(
+            "googleUserName",
+            name
+        );
+
+        localStorage.setItem(
+            "googleUserEmail",
+            email
+        );
+
+        localStorage.setItem(
+            "googleUserPicture",
+            picture
+        );
+
+        const accountAvatar =
+            document.querySelector(
+                ".account-avatar"
+            );
+
+        if (accountAvatar) {
+
+            accountAvatar.textContent =
+                name
+                    .trim()
+                    .charAt(0)
+                    .toUpperCase();
+
+        }
+
+        const accountName =
+            document.querySelector(
+                ".account-info strong"
+            );
+
+        if (accountName) {
+            accountName.textContent = name;
+        }
+
+        const accountStatus =
+            document.querySelector(
+                ".account-info small"
+            );
+
+        if (accountStatus) {
+            accountStatus.textContent =
+                "Google hesabı";
+        }
+
+        console.log(
+            "GOOGLE GİRİŞ BAŞARILI:",
+            name
+        );
+
+    } catch (error) {
+
+        console.error(
+            "GOOGLE GİRİŞ HATASI:",
+            error
+        );
+
+    }
 }
