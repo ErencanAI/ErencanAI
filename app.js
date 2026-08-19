@@ -2990,3 +2990,32 @@ document.addEventListener("DOMContentLoaded", function () {
             "Google hesabı";
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
+
+    const savedPlan =
+        localStorage.getItem("turkai_plan");
+
+    if (savedPlan !== "pro") {
+        return;
+    }
+
+    const proStatusBadge =
+        document.querySelector(".pro-active-badge");
+
+    if (proStatusBadge) {
+        proStatusBadge.textContent =
+            "AKTİF";
+    }
+
+    const accountStatus =
+        document.querySelector(".account-info small");
+
+    if (accountStatus) {
+        accountStatus.textContent =
+            "Pro hesap";
+    }
+
+    console.log(
+        "TÜRKAI PRO: F5 SONRASI GERİ YÜKLENDİ"
+    );
+});
