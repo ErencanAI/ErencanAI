@@ -2440,3 +2440,967 @@ button:active {
         transform: scaleX(1.15);
     }
 }
+/* =========================================================
+   PREMIUM PLUS — AI THINKING ULTRA EFFECTS
+========================================================= */
+
+/* Düşünme mesajının tamamına aura */
+.message-thinking {
+    position: relative;
+    overflow: visible;
+}
+
+.message-thinking::before {
+    content: "";
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    width: 180px;
+    height: 70px;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(124, 92, 255, 0.14),
+            transparent 70%
+        );
+
+    transform: translateY(-50%);
+    filter: blur(18px);
+
+    opacity: 0;
+    pointer-events: none;
+
+    animation: thinkingAmbient 2.2s ease-in-out infinite;
+}
+
+@keyframes thinkingAmbient {
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: translateY(-50%) scale(0.85);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translateY(-50%) scale(1.15);
+    }
+}
+
+
+/* =========================================================
+   AI AVATAR — ENERJİ HALKASI
+========================================================= */
+
+.message-thinking .ai-avatar {
+    z-index: 1;
+}
+
+.message-thinking .ai-avatar::before {
+    content: "";
+    position: absolute;
+    inset: -7px;
+
+    border-radius: 15px;
+
+    border: 1px solid rgba(124, 92, 255, 0.35);
+
+    box-shadow:
+        0 0 10px rgba(124, 92, 255, 0.25),
+        inset 0 0 10px rgba(124, 92, 255, 0.15);
+
+    animation: thinkingRing 1.8s ease-in-out infinite;
+}
+
+@keyframes thinkingRing {
+    0% {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.35);
+    }
+}
+
+
+/* =========================================================
+   DÜŞÜNME YAZISI — PREMIUM GRADIENT
+========================================================= */
+
+.message-thinking .message-content {
+    background:
+        linear-gradient(
+            90deg,
+            #777f91,
+            #ffffff,
+            #a07cff,
+            #ffffff,
+            #777f91
+        );
+
+    background-size: 250% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    animation:
+        thinkingGradient 2.5s linear infinite,
+        thinkingTextPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes thinkingGradient {
+    0% {
+        background-position: 250% 0;
+    }
+
+    100% {
+        background-position: -250% 0;
+    }
+}
+
+@keyframes thinkingTextPulse {
+    0%,
+    100% {
+        filter: brightness(0.8);
+    }
+
+    50% {
+        filter: brightness(1.25);
+    }
+}
+
+
+/* =========================================================
+   PREMIUM YÜZEN IŞIK PARÇALARI
+========================================================= */
+
+.message-thinking .message-body::after {
+    content: "";
+    position: absolute;
+
+    left: 5px;
+    top: 10px;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: #a07cff;
+
+    box-shadow:
+        45px 14px 0 rgba(124, 92, 255, 0.6),
+        90px -5px 0 rgba(160, 124, 255, 0.4),
+        135px 18px 0 rgba(124, 92, 255, 0.5);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    animation: thinkingParticles 2.8s ease-in-out infinite;
+}
+
+@keyframes thinkingParticles {
+    0% {
+        opacity: 0;
+        transform: translateY(12px) scale(0.6);
+    }
+
+    30% {
+        opacity: 0.7;
+    }
+
+    70% {
+        opacity: 0.35;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-18px) scale(1.2);
+    }
+}
+
+
+/* =========================================================
+   CEVAP GELİŞİNDE ENERGY BURST
+========================================================= */
+
+.message:not(.message-thinking) {
+    animation:
+        premiumMessageIn 0.35s cubic-bezier(.2,.8,.2,1);
+}
+
+.message:not(.message-thinking) .ai-avatar {
+    animation:
+        responseBurst 0.65s ease-out;
+}
+
+@keyframes responseBurst {
+    0% {
+        transform: scale(0.8);
+        filter: brightness(1.8);
+        box-shadow:
+            0 0 35px rgba(124, 92, 255, 0.8);
+    }
+
+    55% {
+        transform: scale(1.08);
+        filter: brightness(1.25);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+        box-shadow:
+            0 8px 25px rgba(124, 92, 255, 0.25);
+    }
+}
+
+
+/* =========================================================
+   PREMIUM PLUS — DÜŞÜNME SÜRESİNDE YAVAŞ IŞIK
+========================================================= */
+
+.message-thinking .message-body {
+    isolation: isolate;
+}
+
+.message-thinking .message-body > * {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   MOBİL PERFORMANS
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .message-thinking::before {
+        filter: blur(12px);
+    }
+
+    .message-thinking .message-body::after {
+        display: none;
+    }
+
+}
+/* =========================================================
+   TÜRKAI — PREMIUM PLUS ULTRA THINKING SYSTEM
+========================================================= */
+
+/* Ana düşünme alanı */
+.message-thinking {
+    position: relative;
+    isolation: isolate;
+}
+
+/* ---------------------------------------------------------
+   1. ANA MOR AURA
+--------------------------------------------------------- */
+
+.message-thinking .message-body {
+    position: relative;
+}
+
+.message-thinking .message-body::before {
+    content: "";
+    position: absolute;
+
+    left: -25px;
+    top: 50%;
+
+    width: 240px;
+    height: 90px;
+
+    transform: translateY(-50%);
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(124, 92, 255, 0.18),
+            rgba(124, 92, 255, 0.06) 40%,
+            transparent 75%
+        );
+
+    filter: blur(22px);
+
+    opacity: 0.4;
+
+    pointer-events: none;
+
+    animation:
+        ultraThinkingAura 2.4s ease-in-out infinite;
+}
+
+@keyframes ultraThinkingAura {
+
+    0%,
+    100% {
+        opacity: 0.25;
+        transform:
+            translateY(-50%)
+            scale(0.82);
+    }
+
+    50% {
+        opacity: 1;
+        transform:
+            translateY(-50%)
+            scale(1.18);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   2. AVATAR DIŞ ENERJİ HALKASI
+--------------------------------------------------------- */
+
+.message-thinking .ai-avatar {
+    position: relative;
+    z-index: 5;
+
+    animation:
+        ultraAvatarPulse 1.6s ease-in-out infinite;
+}
+
+.message-thinking .ai-avatar::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -8px;
+
+    border-radius: 16px;
+
+    border:
+        1px solid rgba(124, 92, 255, 0.45);
+
+    box-shadow:
+        0 0 10px rgba(124, 92, 255, 0.25),
+        0 0 25px rgba(124, 92, 255, 0.18);
+
+    animation:
+        avatarEnergyRing 1.8s ease-out infinite;
+
+    pointer-events: none;
+}
+
+@keyframes avatarEnergyRing {
+
+    0% {
+        opacity: 0;
+        transform: scale(0.75);
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+@keyframes ultraAvatarPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    50% {
+        transform: scale(1.06);
+        filter: brightness(1.28);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   3. İKİNCİ ENERJİ HALKASI
+--------------------------------------------------------- */
+
+.message-thinking .ai-avatar::after {
+    content: "";
+
+    position: absolute;
+
+    inset: -14px;
+
+    border-radius: 20px;
+
+    border:
+        1px solid rgba(160, 124, 255, 0.18);
+
+    opacity: 0;
+
+    animation:
+        secondEnergyRing 2.4s ease-out infinite;
+
+    pointer-events: none;
+}
+
+@keyframes secondEnergyRing {
+
+    0% {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    35% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.35);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   4. DÜŞÜNME YAZISI
+--------------------------------------------------------- */
+
+.message-thinking .message-content {
+    position: relative;
+
+    background:
+        linear-gradient(
+            90deg,
+            #686f80,
+            #ffffff,
+            #a07cff,
+            #ffffff,
+            #686f80
+        );
+
+    background-size: 350% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    animation:
+        ultraTextShine 2.4s linear infinite,
+        ultraTextPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes ultraTextShine {
+
+    0% {
+        background-position: 300% 0;
+    }
+
+    100% {
+        background-position: -300% 0;
+    }
+}
+
+@keyframes ultraTextPulse {
+
+    0%,
+    100% {
+        filter: brightness(0.75);
+    }
+
+    50% {
+        filter: brightness(1.35);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   5. DÜŞÜNME ÇİZGİSİ
+--------------------------------------------------------- */
+
+.message-thinking .message-content::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: -7px;
+
+    width: 80px;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #7c5cff,
+            transparent
+        );
+
+    opacity: 0.7;
+
+    animation:
+        thinkingLine 1.8s ease-in-out infinite;
+}
+
+@keyframes thinkingLine {
+
+    0% {
+        width: 20px;
+        opacity: 0;
+        transform: translateX(0);
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    100% {
+        width: 130px;
+        opacity: 0;
+        transform: translateX(60px);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   6. HAREKETLİ TARAMA IŞIĞI
+--------------------------------------------------------- */
+
+.message-thinking .message-body {
+    overflow: visible;
+}
+
+.message-thinking .message-body::after {
+    content: "";
+
+    position: absolute;
+
+    left: -40px;
+    top: 0;
+
+    width: 35px;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(160, 124, 255, 0.28),
+            transparent
+        );
+
+    transform: skewX(-18deg);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    animation:
+        thinkingScan 2.8s ease-in-out infinite;
+}
+
+@keyframes thinkingScan {
+
+    0% {
+        left: -50px;
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    55% {
+        opacity: 0.7;
+    }
+
+    100% {
+        left: 110%;
+        opacity: 0;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   7. YÜKLENME DALGASI
+--------------------------------------------------------- */
+
+.message-thinking {
+    overflow: visible;
+}
+
+.message-thinking::after {
+    content: "";
+
+    position: absolute;
+
+    left: 35px;
+    right: 0;
+    bottom: 5px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(124, 92, 255, 0.8),
+            rgba(160, 124, 255, 0.2),
+            transparent
+        );
+
+    background-size: 200% 100%;
+
+    opacity: 0.45;
+
+    animation:
+        thinkingWave 2s linear infinite;
+}
+
+@keyframes thinkingWave {
+
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   8. YÜZEN IŞIK NOKTALARI
+--------------------------------------------------------- */
+
+.message-thinking .message-name {
+    position: relative;
+}
+
+.message-thinking .message-name::after {
+    content: "";
+
+    display: inline-block;
+
+    width: 4px;
+    height: 4px;
+
+    margin-left: 8px;
+
+    vertical-align: middle;
+
+    border-radius: 50%;
+
+    background: #a07cff;
+
+    box-shadow:
+        0 0 7px #7c5cff,
+        0 0 15px rgba(124, 92, 255, 0.7);
+
+    animation:
+        thinkingDotGlow 1.2s ease-in-out infinite;
+}
+
+@keyframes thinkingDotGlow {
+
+    0%,
+    100% {
+        opacity: 0.25;
+        transform: scale(0.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.4);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   9. MESAJ GİRİŞİ
+--------------------------------------------------------- */
+
+.message-thinking {
+    animation:
+        ultraThinkingEnter
+        0.55s
+        cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes ultraThinkingEnter {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px)
+            scale(0.96);
+
+        filter: blur(7px);
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+        filter: blur(0);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   10. DÜŞÜNME BİTTİĞİNDE CEVAP PATLAMASI
+--------------------------------------------------------- */
+
+.message:not(.message-thinking) .ai-avatar {
+    animation:
+        ultraResponseBurst
+        0.7s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes ultraResponseBurst {
+
+    0% {
+        transform: scale(0.7);
+
+        filter:
+            brightness(1.8)
+            blur(1px);
+
+        box-shadow:
+            0 0 0 rgba(124, 92, 255, 0);
+    }
+
+    35% {
+        transform: scale(1.16);
+
+        filter:
+            brightness(1.5);
+
+        box-shadow:
+            0 0 35px rgba(124, 92, 255, 0.8);
+    }
+
+    70% {
+        transform: scale(0.97);
+    }
+
+    100% {
+        transform: scale(1);
+
+        filter: brightness(1);
+
+        box-shadow:
+            0 8px 25px rgba(124, 92, 255, 0.25);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   11. CEVAP METNİ FADE + BLUR
+--------------------------------------------------------- */
+
+.message:not(.message-thinking) .message-content {
+    animation:
+        responseTextReveal
+        0.45s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes responseTextReveal {
+
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+        filter: blur(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   12. PRO PLUS RENK DALGASI
+--------------------------------------------------------- */
+
+.message-thinking .message-content strong {
+    background:
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #a07cff,
+            #ffffff
+        );
+
+    background-size: 200% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    animation:
+        thinkingStrongShine 2s linear infinite;
+}
+
+@keyframes thinkingStrongShine {
+
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   13. PREMIUM PARÇACIK AURASI
+--------------------------------------------------------- */
+
+.message-thinking .message-name::before {
+    content: "";
+
+    display: inline-block;
+
+    width: 3px;
+    height: 3px;
+
+    margin-right: 7px;
+
+    vertical-align: middle;
+
+    border-radius: 50%;
+
+    background: #7c5cff;
+
+    box-shadow:
+        0 0 8px #7c5cff;
+
+    animation:
+        microParticle 2s ease-in-out infinite;
+}
+
+@keyframes microParticle {
+
+    0%,
+    100% {
+        transform:
+            translateY(2px)
+            scale(0.5);
+
+        opacity: 0.2;
+    }
+
+    50% {
+        transform:
+            translateY(-3px)
+            scale(1.3);
+
+        opacity: 1;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   14. DÜŞÜNME SIRASINDA PANEL GLOW
+--------------------------------------------------------- */
+
+.message-thinking .message-body {
+    transition:
+        filter 0.3s ease,
+        transform 0.3s ease;
+}
+
+.message-thinking:hover .message-body {
+    transform: translateX(2px);
+
+    filter:
+        drop-shadow(
+            0 0 12px
+            rgba(124, 92, 255, 0.12)
+        );
+}
+
+
+/* ---------------------------------------------------------
+   15. ULTRA YUMUŞAK NEFES
+--------------------------------------------------------- */
+
+.message-thinking .message-name {
+    animation:
+        thinkingNameBreath
+        2.2s
+        ease-in-out
+        infinite;
+}
+
+@keyframes thinkingNameBreath {
+
+    0%,
+    100% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   16. MOBİL OPTİMİZASYON
+--------------------------------------------------------- */
+
+@media (max-width: 500px) {
+
+    .message-thinking .message-body::after {
+        display: none;
+    }
+
+    .message-thinking .message-body::before {
+        filter: blur(14px);
+    }
+
+    .message-thinking::after {
+        opacity: 0.25;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   17. HAREKET AZALTMA
+--------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .message-thinking,
+    .message-thinking *,
+    .message-thinking::before,
+    .message-thinking::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
