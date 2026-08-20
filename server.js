@@ -6096,63 +6096,102 @@ async function requestAI(
 
     const simpleMessages = {
 
-        "selam":
-            "Selam! ğŸ˜Š",
+    // SELAMLAŞMA
+    "selam": "Selam! 😎",
+    "slm": "Selam! 😎",
+    "merhaba": "Merhaba! 👋",
+    "merhabalar": "Merhabalar! 👋",
+    "mrb": "Merhaba! 😎",
+    "hey": "Hey! 👋",
+    "hello": "Hello! 👋",
+    "hi": "Hi! 👋",
+    "sa": "Selam! 😎",
+    "s.a.": "Selam! 😎",
 
-        "slm":
-            "Selam! ğŸ˜Š",
+    // HAL HATIR
+    "nasılsın": "İyiyim knk 😎 Sen nasılsın?",
+    "nasilsin": "İyiyim knk 😎 Sen nasılsın?",
+    "iyi misin": "İyiyim 😎 Sen nasılsın?",
+    "naber": "İyilik knk 😎 Senden naber?",
+    "ne haber": "İyilik knk 😎 Senden ne haber?",
+    "napıyorsun": "Buradayım knk 😎 Sen ne yapıyorsun?",
+    "napıyosun": "Buradayım 😎",
+    "ne yapıyorsun": "Buradayım, seni dinliyorum 😎",
+    "ne yapiyorsun": "Buradayım, seni dinliyorum 😎",
 
-        "merhaba":
-            "Merhaba! Size nasÄ±l yardÄ±mcÄ± olabilirim?",
+    // TEŞEKKÜR
+    "teşekkürler": "Rica ederim! 😎",
+    "tesekkurler": "Rica ederim! 😎",
+    "teşekkür ederim": "Ne demek! 😎",
+    "tesekkur ederim": "Ne demek! 😎",
+    "sağ ol": "Ne demek knk! 😎",
+    "sag ol": "Ne demek knk! 😎",
+    "eyvallah": "Eyvallah knk 😎",
 
-        "mrb":
-            "Merhaba! ğŸ˜Š",
+    // KISA CEVAPLAR
+    "tamam": "Tamamdır! 👍",
+    "tamamdır": "Tamamdır! 👍",
+    "tamamdir": "Tamamdır! 👍",
+    "ok": "Tamam! 👍",
+    "okay": "Tamam! 👍",
+    "okey": "Okey! 👍",
+    "olur": "Olur knk! 👍",
+    "aynen": "Aynen 😎",
+    "evet": "Süper! 👍",
+    "hayır": "Tamam 😄",
+    "hayir": "Tamam 😄",
+    "yok": "Tamam knk 😄",
+    "peki": "Peki! 😎",
+    "peki tamam": "Tamamdır! 👍",
+    "anladım": "Harika! 👍",
+    "anladim": "Harika! 👍",
 
-        "hey":
-            "Hey! ğŸ‘‹",
+    // TEPKİLER
+    "haha": "😂",
+    "hahaha": "😂😂",
+    "lol": "😂",
+    "vay": "Vay be! 😎",
+    "oha": "Oha 😄",
+    "wow": "Vay be! 😎",
+    "vay be": "Aynen, vay be! 😎",
+    "çok iyi": "😎🔥",
+    "cok iyi": "😎🔥",
+    "süper": "Süper! 🔥",
+    "super": "Süper! 🔥",
+    "harika": "Harika! 🔥",
+    "mükemmel": "Mükemmel! 😎🔥",
+    "mukemmel": "Mükemmel! 😎🔥",
 
-        "sa":
-            "Selam! ğŸ˜Š",
+    // VEDALAŞMA
+    "görüşürüz": "Görüşürüz knk! 👋",
+    "gorusuruz": "Görüşürüz knk! 👋",
+    "bye": "Görüşürüz! 👋",
+    "bye bye": "Görüşürüz! 👋",
+    "bb": "Görüşürüz! 👋",
+    "bay bay": "Bay bay! 👋",
+    "hoşça kal": "Hoşça kal! 👋",
+    "hosca kal": "Hoşça kal! 👋",
 
-        "s.a.":
-            "Selam! ğŸ˜Š",
+    // ZAMAN / GÜN
+    "günaydın": "Günaydın! ☀️",
+    "gunaydin": "Günaydın! ☀️",
+    "iyi akşamlar": "İyi akşamlar! 🌆",
+    "iyi aksamlar": "İyi akşamlar! 🌆",
+    "iyi geceler": "İyi geceler! 🌙",
 
-        "gÃ¼naydÄ±n":
-            "GÃ¼naydÄ±n! â˜€ï¸",
-
-        "iyi akÅŸamlar":
-            "Ä°yi akÅŸamlar! ğŸ˜Š",
-
-       
-
-        "teÅŸekkÃ¼rler":
-            "Rica ederim! ğŸ˜Š",
-
-        "teÅŸekkÃ¼r ederim":
-            "Rica ederim! ğŸ˜Š",
-
-        "saÄŸ ol":
-            "Ne demek! ğŸ˜Š",
-
-        "tamam":
-            "TamamdÄ±r! ğŸ‘",
-
-        "olur":
-            "Olur! ğŸ‘",
-
-        "peki":
-            "Peki! ğŸ˜Š",
-
-        "anladÄ±m":
-            "Harika! ğŸ‘",
-
-        "gÃ¶rÃ¼ÅŸÃ¼rÃ¼z":
-            "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹",
-
-        "bye":
-            "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹"
-
-    };
+    // KISA GÜNLÜK MESAJLAR
+    "hazır mısın": "Hazırım knk! 😎",
+    "hazir misin": "Hazırım knk! 😎",
+    "hazırım": "Ben hazırım! 😎",
+    "hazirim": "Ben hazırım! 😎",
+    "orada mısın": "Buradayım! 👋",
+    "orada misin": "Buradayım! 👋",
+    "burada mısın": "Evet, buradayım! 😎",
+    "burada misin": "Evet, buradayım! 😎",
+    "çalışıyor musun": "Evet, çalışıyorum! ⚡",
+    "calisiyor musun": "Evet, çalışıyorum! ⚡",
+    "beni duyuyor musun": "Evet, seni görüyorum ve mesajını okuyorum! 😎"
+};
 
 
   if (
