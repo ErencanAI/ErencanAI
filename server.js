@@ -3138,6 +3138,76 @@ function shouldResearch(message) {
     if (simpleMessages.includes(text)) {
         return false;
     }
+        // =========================================================
+    // AKILLI GÜNCELLİK KONTROLÜ
+    // =========================================================
+
+    const currentInfoWords = [
+        "bugün",
+        "bu gün",
+        "şu an",
+        "şu anda",
+        "şimdiki",
+        "güncel",
+        "güncel bilgi",
+        "en güncel",
+        "en son",
+        "son durum",
+        "son gelişme",
+        "son gelişmeler",
+        "şimdi",
+        "2026",
+        "bu yıl",
+        "bu ay",
+        "bu hafta",
+        "dün",
+        "yarın"
+    ];
+
+    const liveDataWords = [
+        "fiyat",
+        "kaç tl",
+        "kaç lira",
+        "ne kadar",
+        "dolar",
+        "euro",
+        "sterlin",
+        "kur",
+        "hava",
+        "hava durumu",
+        "sıcaklık",
+        "yağmur",
+        "kar yağıyor",
+        "maç",
+        "skor",
+        "sonuç",
+        "puan durumu",
+        "transfer",
+        "haber",
+        "haberler",
+        "son dakika",
+        "istatistik",
+        "sıralama",
+        "program",
+        "etkinlik"
+    ];
+
+    const hasCurrentInfoWord =
+        currentInfoWords.some(
+            word => text.includes(word)
+        );
+
+    const hasLiveDataWord =
+        liveDataWords.some(
+            word => text.includes(word)
+        );
+
+    if (
+        hasCurrentInfoWord &&
+        hasLiveDataWord
+    ) {
+        return true;
+    }
     /*
     =========================================================
     G NCEL /  NTERNET ARA TIRMASI TET KLEY C LER 
