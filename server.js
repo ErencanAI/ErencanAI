@@ -968,6 +968,8 @@ const MAX_USER_MEMORY_MESSAGES =
     400;
 
 const USER_CONTEXT_MESSAGES = 2;
+const PRO_CONTEXT_MESSAGES = 5;
+const PLUS_CONTEXT_MESSAGES = 15;
     
 
 /* =========================================================
@@ -7002,6 +7004,30 @@ app.post(
                 getUserId(
                     req
                 );
+                const userPlan =
+    normalizeSubscriptionPlan(
+        req.body &&
+        req.body.plan
+            ? req.body.plan
+            : "free"
+    );
+
+const contextMessages =
+    isPlus(userPlan)
+        ? PLUS_CONTEXT_MESSAGES
+        : userPlan === "pro"
+            ? PRO_CONTEXT_MESSAGES
+            : FREE_CONTEXT_MESSAGES;
+
+console.log(
+    "KULLANICI PLANI:",
+    userPlan.toUpperCase()
+);
+
+console.log(
+    "CONTEXT MESAJ SAYISI:",
+    contextMessages
+);
 
             let message =
                 String(
@@ -7527,7 +7553,7 @@ sonucundaki TCMB de erlerini aynen kullan.
     });
 
 }
-            for (const item of cleanRecentMessages.slice(-USER_CONTEXT_MESSAGES)) {
+           for (const item of cleanRecentMessages.slice(-contextMessages)) {
 
                 if (
                     !item ||
