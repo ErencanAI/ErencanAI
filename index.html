@@ -693,11 +693,20 @@ function updatePlanAnimation(plan) {
                     <input
                         type="file"
                         id="fileInput"
+                    
                         hidden
                         multiple
-                        accept=".txt,.json,.js,.html,.css,.py,.cs,.md,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp"
+                      accept=".txt,.json,.js,.html,.css,.py,.cs,.md,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp,.mp4,.webm,.mov"
                     >
-
+<div
+    id="selectedFiles"
+    style="
+        display:none;
+        margin-top:8px;
+        gap:6px;
+        flex-wrap:wrap;
+    "
+></div>
 
                     <!-- ATAÇ -->
 
@@ -1809,9 +1818,122 @@ document.addEventListener(
         
 
 </script>
+
+
 <script>
 
+
 </script>
+<!-- =========================================================
+     TÜRKAI SATIN ALMA EKRANI
+     ========================================================= -->
+
+<div
+    class="modal"
+    id="purchaseModal"
+>
+
+    <div class="modal-box small purchase-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>TürkAI Plus / Pro</h2>
+
+                <p>
+                    TürkAI'nin gelişmiş özelliklerini kullan.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="purchaseModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="purchase-plans">
+
+            <!-- PLUS -->
+
+            <div class="purchase-plan">
+
+                <div class="purchase-plan-title">
+                    ⭐ TürkAI Plus
+                </div>
+
+                <div class="purchase-price">
+                    <strong>100 TL</strong>
+                    <span>/ ay</span>
+                </div>
+
+                <div class="purchase-features">
+
+                    <div>✓ Daha yüksek kullanım limiti</div>
+                    <div>✓ Gelişmiş hafıza</div>
+                    <div>✓ Güncel internet araştırması</div>
+                    <div>✓ Sesli konuşma</div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="purchase-button"
+                    data-plan="plus"
+                >
+                    Plus Satın Al
+                </button>
+
+            </div>
+
+
+            <!-- PRO -->
+
+            <div class="purchase-plan purchase-plan-pro">
+
+                <div class="purchase-plan-title">
+                    👑 TürkAI Pro
+                </div>
+
+                <div class="purchase-price">
+                    <strong>200 TL</strong>
+                    <span>/ ay</span>
+                </div>
+
+                <div class="purchase-features">
+
+                    <div>✓ Plus'taki tüm özellikler</div>
+                    <div>✓ Daha yüksek kullanım limiti</div>
+                    <div>✓ Gelişmiş yapay zeka özellikleri</div>
+                    <div>✓ Fotoğraf ve gelişmiş içerik özellikleri</div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="purchase-button purchase-button-pro"
+                    data-plan="pro"
+                >
+                    Pro Satın Al
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="purchaseMessage"
+            class="payment-status-message"
+        ></div>
+
+    </div>
+
+</div>
 <!-- =========================================================
      TÜRKAI PRO SATIN ALMA MODALI
      ========================================================= -->
