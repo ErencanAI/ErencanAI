@@ -2927,7 +2927,217 @@ function shouldResearch(message) {
     if (!text) {
         return false;
     }
+    // =========================================================
+    // BASİT / GÜNLÜK MESAJLAR
+    // Bunlarda internet araştırması yapılmaz.
+    // =========================================================
 
+    const simpleMessages = [
+        // Selamlaşma
+        "slm",
+        "selam",
+        "selamlar",
+        "merhaba",
+        "merhabalar",
+        "mrb",
+        "sa",
+        "s.a",
+        "as",
+        "a.s",
+        "hey",
+        "hello",
+        "hi",
+
+        // Hal hatır
+        "nasılsın",
+        "nasilsin",
+        "iyi misin",
+        "naber",
+        "ne haber",
+        "napıyorsun",
+        "napıyosun",
+        "ne yapıyorsun",
+        "ne yapiyorsun",
+
+        // Kısa cevaplar
+        "tamam",
+        "ok",
+        "okay",
+        "okey",
+        "olur",
+        "aynen",
+        "evet",
+        "hayır",
+        "hayir",
+        "yok",
+        "var",
+        "anladım",
+        "anladim",
+        "biliyorum",
+        "bilmiyorum",
+        "doğru",
+        "dogru",
+
+        // Teşekkür
+        "teşekkürler",
+        "tesekkurler",
+        "teşekkür ederim",
+        "tesekkur ederim",
+        "sağ ol",
+        "sag ol",
+        "eyvallah",
+
+        // Vedalaşma
+        "görüşürüz",
+        "gorusuruz",
+        "bay bay",
+        "bye",
+        "hoşça kal",
+        "hosca kal",
+        "iyi geceler",
+        "günaydın",
+        "gunaydin",
+        "iyi akşamlar",
+        "iyi aksamlar",
+
+        // Tepkiler
+        "haha",
+        "hahaha",
+        "lol",
+        "vay",
+        "oha",
+        "wow",
+        "vay be",
+        "çok iyi",
+        "cok iyi",
+        "süper",
+        "super",
+        "harika",
+        "mükemmel",
+        "mukemmel",
+
+        // Kısa konuşmalar
+        "ne",
+        "neden",
+        "nasıl",
+        "nasil",
+        "niye",
+        "kim",
+        "anladın mı",
+        "anladin mi",
+                // Günlük konuşma
+        "he",
+        "hee",
+        "hee tamam",
+        "hı hı",
+        "hıhı",
+        "hmm",
+        "hmmm",
+        "hımm",
+        "hmm tamam",
+        "peki",
+        "peki tamam",
+        "tabii",
+        "tabi",
+        "tabii ki",
+        "tabi ki",
+        "olabilir",
+        "bence de",
+        "ben de",
+        "evet ya",
+        "aynen ya",
+        "haklısın",
+        "haklisin",
+        "doğru diyorsun",
+        "dogru diyorsun",
+        "tamamdır",
+        "tamamdir",
+        "sıkıntı yok",
+        "sikinti yok",
+        "sorun yok",
+        "problem yok",
+
+        // Kısa tepkiler
+        "cidden",
+        "gerçekten",
+        "gercekten",
+        "şaka mı",
+        "saka mi",
+        "ciddi misin",
+        "emin misin",
+        "eminim",
+        "vay canına",
+        "vay be",
+        "yuh",
+        "haha",
+        "hahaha",
+        "hehe",
+        "hehehe",
+        "xd",
+        "xD",
+        "😂",
+        "🤣",
+        "😎",
+        "👍",
+        "❤️",
+
+        // Kısa istekler / konuşmalar
+        "bak",
+        "dinle",
+        "bir bak",
+        "dur",
+        "bekle",
+        "gel",
+        "git",
+        "devam",
+        "devam et",
+        "başla",
+        "basla",
+        "hazırım",
+        "hazirim",
+        "hazır mısın",
+        "hazir misin",
+
+        // Teşekkür / rica
+        "çok sağ ol",
+        "cok sag ol",
+        "eyvallah knk",
+        "sağolasın",
+        "sagolasin",
+        "rica ederim",
+        "sağ ol knk",
+        "eyvallah kardeşim",
+
+        // Vedalaşma
+        "bb",
+        "by",
+        "bye bye",
+        "bay",
+        "görüşürüz knk",
+        "gorusuruz knk",
+        "yarın görüşürüz",
+        "iyi günler",
+        "iyi günler knk",
+
+        // Günlük kısa sorular
+        "orada mısın",
+        "orada misin",
+        "burada mısın",
+        "burada misin",
+        "uyuyor musun",
+        "uyanık mısın",
+        "uyanık misin",
+        "beni duyuyor musun",
+        "beni duyuyor musun",
+        "hazır mısın",
+        "hazir misin",
+        "çalışıyor musun",
+        "calisiyor musun"
+    ];
+
+    if (simpleMessages.includes(text)) {
+        return false;
+    }
     /*
     =========================================================
     G NCEL /  NTERNET ARA TIRMASI TET KLEY C LER 
@@ -7518,7 +7728,6 @@ app.listen(
 
     }
 );
-
 
 
 
