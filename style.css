@@ -2131,3 +2131,312 @@ button:active {
         transition-duration: 0.01ms !important;
     }
 }
+/* =========================================================
+   TÜRKAI ULTRA PREMIUM GLOW
+========================================================= */
+
+.model-title {
+    isolation: isolate;
+}
+
+.model-title::before {
+    content: "";
+    position: absolute;
+    inset: -8px -14px;
+    z-index: -1;
+    border-radius: 20px;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(124, 92, 255, 0.22),
+            transparent 70%
+        );
+
+    filter: blur(10px);
+    opacity: 0.7;
+
+    animation: titleAura 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes titleAura {
+    0%,
+    100% {
+        opacity: 0.45;
+        transform: scale(0.96);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: scale(1.04);
+    }
+}
+
+/* =========================================================
+   COMPOSER PREMIUM AURA
+========================================================= */
+
+.composer {
+    position: relative;
+}
+
+.composer::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 19px;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent 20%,
+            rgba(124, 92, 255, 0.35),
+            transparent 80%
+        );
+
+    opacity: 0;
+    pointer-events: none;
+}
+
+.composer:focus-within::before {
+    opacity: 1;
+    animation: composerAura 2s linear infinite;
+}
+
+@keyframes composerAura {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* =========================================================
+   AI AVATAR PREMIUM GLOW
+========================================================= */
+
+.ai-avatar {
+    position: relative;
+}
+
+.ai-avatar::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+
+    border-radius: 13px;
+
+    border: 1px solid rgba(160, 124, 255, 0.45);
+
+    opacity: 0;
+
+    animation: aiAvatarRing 2.5s ease-in-out infinite;
+}
+
+@keyframes aiAvatarRing {
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+}
+
+/* =========================================================
+   PRO DURUMU PREMIUM NEFES
+========================================================= */
+
+.pro-status-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.pro-status-card::after {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: -100%;
+
+    width: 60%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.08),
+            transparent
+        );
+
+    transform: skewX(-20deg);
+    pointer-events: none;
+
+    animation: proStatusShine 4s ease-in-out infinite;
+}
+
+@keyframes proStatusShine {
+    0% {
+        left: -100%;
+    }
+
+    30%,
+    100% {
+        left: 150%;
+    }
+}
+/* =========================================================
+   PREMIUM PLUS — AI DÜŞÜNME ANİMASYONU
+========================================================= */
+
+.message-thinking {
+    position: relative;
+    animation: premiumThinkingIn 0.45s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes premiumThinkingIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+        filter: blur(3px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* AI düşünürken avatar ışığı */
+
+.message-thinking .ai-avatar {
+    animation:
+        thinkingAvatar 1.4s ease-in-out infinite,
+        logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes thinkingAvatar {
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 rgba(124, 92, 255, 0);
+        filter: brightness(1);
+    }
+
+    50% {
+        box-shadow:
+            0 0 22px rgba(124, 92, 255, 0.65);
+        filter: brightness(1.25);
+    }
+}
+
+/* Düşünüyorum yazısı */
+
+.message-thinking .message-content {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #a9b0c0;
+
+    animation: thinkingTextGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes thinkingTextGlow {
+    0%,
+    100% {
+        opacity: 0.55;
+        text-shadow:
+            0 0 0 rgba(124, 92, 255, 0);
+    }
+
+    50% {
+        opacity: 1;
+        text-shadow:
+            0 0 12px rgba(124, 92, 255, 0.45);
+    }
+}
+
+/* Hareketli düşünme noktaları */
+
+.message-thinking .message-content::after {
+    content: "•••";
+    display: inline-block;
+
+    width: 24px;
+
+    letter-spacing: 3px;
+    color: #a07cff;
+
+    animation: thinkingDots 1.4s steps(4, end) infinite;
+}
+
+@keyframes thinkingDots {
+    0% {
+        clip-path: inset(0 100% 0 0);
+    }
+
+    25% {
+        clip-path: inset(0 66% 0 0);
+    }
+
+    50% {
+        clip-path: inset(0 33% 0 0);
+    }
+
+    75%,
+    100% {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* Düşünme satırının arkasında çok hafif aura */
+
+.message-thinking .message-body {
+    position: relative;
+}
+
+.message-thinking .message-body::before {
+    content: "";
+    position: absolute;
+
+    left: -10px;
+    top: 18px;
+
+    width: 130px;
+    height: 35px;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(124, 92, 255, 0.12),
+            transparent 70%
+        );
+
+    filter: blur(12px);
+    pointer-events: none;
+
+    animation: thinkingAura 2s ease-in-out infinite;
+}
+
+@keyframes thinkingAura {
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scaleX(0.8);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: scaleX(1.15);
+    }
+}
