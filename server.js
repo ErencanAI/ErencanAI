@@ -6972,28 +6972,30 @@ if (
     "ARAŞTIRMA SONUCU GROQ'A GİDİYOR:",
     researchContext
 );
-        if (researchContext) {
+
+ if (researchContext) {
     messages.push({
         role: "system",
-        content: `?NEML?: A?A?IDAK? MET?N G?NCEL ?NTERNET ARA?TIRMASI SONUCUDUR.
+        content: `ÖNEMLİ: AŞAĞIDAKİ METİN GÜNCEL İNTERNET ARAŞTIRMASI SONUCUDUR.
 
 ${researchContext}
 
-ARA?TIRMA KURALLARI:
+ARAŞTIRMA KURALLARI:
 
-1. Cevab?n? ?ncelikle yukar?daki ara?t?rma metnine dayanarak ver.
-2. Ara?t?rma metninde a??k?a bulunmayan hi?bir say?, fiyat, kur, tarih, saat, istatistik veya olay bilgisini UYDURMA.
-3. Ara?t?rma metninde bir bilgi bulunmuyorsa, bunu varm?? gibi g?sterme.
-4. Bir kayna??n ad? ara?t?rma metninde ger?ekten ge?miyorsa o kayna??n ad?n? kullanma.
-5. Bloomberg, Reuters, TCMB, MGM veya ba?ka bir kurumdan al?nm?? gibi bilgi UYDURMA.
-6. Ara?t?rma metnindeki kaynaklar birbiriyle ?eli?iyorsa bunu a??k?a belirt ve kesin olmayan bilgiyi kesinmi? gibi sunma.
-7. G?ncel bilgi sorusunda eski model bilgini kullanarak ara?t?rma sonucunu de?i?tirme.
-8. Emin olmad???n g?ncel bir bilgiyi tahmin etme. "Ara?t?rma kaynaklar?nda do?rulanamad?" de.
-9. Kullan?c? yaln?zca ara?t?rma sonucunu soruyorsa k?sa ve do?rudan cevap ver.
-10. Kaynakta 47 TL yaz?yorsa 27 TL gibi ba?ka bir rakam ?retme.
+1. Cevabını öncelikle yukarıdaki araştırma metnine dayanarak ver.
+2. Araştırma metninde açıkça bulunmayan hiçbir sayı, fiyat, kur, tarih, saat, istatistik veya olay bilgisini uydurma.
+3. Araştırma metninde bir bilgi bulunmuyorsa, bunu varmış gibi gösterme.
+4. Bir kaynağın adı araştırma metninde gerçekten geçmiyorsa o kaynağın adını kullanma.
+5. Bloomberg, Reuters, TCMB, MGM veya başka bir kurumdan alınmış gibi bilgi uydurma.
+6. Araştırma metnindeki kaynaklar birbiriyle çelişiyorsa bunu açıkça belirt.
+7. Güncel bilgi sorusunda eski model bilgini kullanarak araştırma sonucunu değiştirme.
+8. Emin olmadığın güncel bir bilgiyi tahmin etme.
+9. Araştırma sonucu soruyu cevaplamak için yeterliyse kısa ve doğrudan cevap ver.
+10. Kaynakta belirli bir değer varsa o değeri değiştirme.
 
-?ZELL?KLE:
-Kaynak metninde bulunmayan kesin rakamlar? veya kaynaklar? asla kendin olu?turma.`
+ÖZELLİKLE:
+Araştırma metninde bulunan güncel değerleri aynen kullan.
+Araştırma metninde bulunmayan kesin rakamları veya kaynakları kendin oluşturma.`
     });
 }
 console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
