@@ -877,7 +877,77 @@ let knowledge =
     loadKnowledge();
 const MAX_MEMORY_MESSAGES =
     400;
+/* =========================================================
+   ABONELİK SİSTEMİ
+   FREE / PRO / PLUS
+========================================================= */
 
+const SUBSCRIPTION_PLANS = {
+    free: {
+        name: "Free",
+        price: 0,
+        currency: "TRY",
+        period: "monthly"
+    },
+
+    pro: {
+        name: "Pro",
+        price: 100,
+        currency: "TRY",
+        period: "monthly"
+    },
+
+    plus: {
+        name: "Plus",
+        price: 400,
+        currency: "TRY",
+        period: "monthly"
+    }
+};
+
+function normalizeSubscriptionPlan(plan) {
+
+    const cleanPlan =
+        String(plan || "")
+            .toLowerCase()
+            .trim();
+
+    if (
+        cleanPlan === "pro" ||
+        cleanPlan === "plus"
+    ) {
+        return cleanPlan;
+    }
+
+    return "free";
+}
+
+function getSubscriptionPlan(plan) {
+
+    const cleanPlan =
+        normalizeSubscriptionPlan(plan);
+
+    return SUBSCRIPTION_PLANS[cleanPlan];
+}
+
+function isProOrHigher(plan) {
+
+    const cleanPlan =
+        normalizeSubscriptionPlan(plan);
+
+    return (
+        cleanPlan === "pro" ||
+        cleanPlan === "plus"
+    );
+}
+
+function isPlus(plan) {
+
+    return (
+        normalizeSubscriptionPlan(plan) ===
+        "plus"
+    );
+}
 const CONTEXT_MESSAGES =
     30;
 
@@ -2959,7 +3029,48 @@ function isWeatherQuestion(message) {
     );
 }
 
+function isWeatherQuestion(message) {
+    const text =
+        String(message || "")
+            .toLowerCase()
+            .trim();
 
+    if (!text) {
+        return false;
+    }
+
+    const weatherWords = [
+        "hava durumu",
+        "hava nasıl",
+        "hava nasil",
+        "bugün hava",
+        "bugun hava",
+        "şu an hava",
+        "su an hava",
+        "şimdiki hava",
+        "simdiki hava",
+        "sıcaklık",
+        "sicaklik",
+        "kaç derece",
+        "kac derece",
+        "yağmur",
+        "yagmur",
+        "kar yağacak",
+        "kar yagacak",
+        "yağış",
+        "yagis",
+        "rüzgar",
+        "ruzgar",
+        "nem",
+        "meteoroloji",
+        "hava tahmini",
+        "hava tahmin"
+    ];
+
+    return weatherWords.some(
+        word => text.includes(word)
+    );
+}
 function shouldResearch(message) {
 
     const text =
