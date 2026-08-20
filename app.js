@@ -3259,3 +3259,30 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
 });
+document.addEventListener("DOMContentLoaded", function () {
+
+    const purchaseButton =
+        document.getElementById("purchaseButton");
+
+    const purchaseModal =
+        document.getElementById("purchaseModal");
+
+    if (!purchaseButton) {
+        console.error("purchaseButton BULUNAMADI!");
+        return;
+    }
+
+    if (!purchaseModal) {
+        console.error("purchaseModal BULUNAMADI!");
+        return;
+    }
+
+    purchaseButton.addEventListener("click", function () {
+
+        console.log("SATIN ALMA BUTONUNA BASILDI");
+
+        purchaseModal.classList.add("active");
+
+    });
+
+});
