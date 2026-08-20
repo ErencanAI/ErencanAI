@@ -2916,6 +2916,49 @@ function cleanUrl(
 /* =========================================================
 ?NTERNET ARA?TIRMASI GEREK?YOR MU?
 ========================================================= */
+function isWeatherQuestion(message) {
+
+    const text =
+        String(message || "")
+            .toLowerCase()
+            .trim();
+
+    if (!text) {
+        return false;
+    }
+
+    const weatherWords = [
+        "hava durumu",
+        "hava nasıl",
+        "hava nasil",
+        "sıcaklık",
+        "sicaklik",
+        "kaç derece",
+        "kac derece",
+        "derece",
+        "yağmur",
+        "yagmur",
+        "kar yağacak",
+        "kar yagacak",
+        "yağış",
+        "yagis",
+        "rüzgar",
+        "ruzgar",
+        "nem",
+        "meteoroloji",
+        "bugün hava",
+        "bugun hava",
+        "yarın hava",
+        "yarin hava",
+        "hava tahmini",
+        "hava tahmin"
+    ];
+
+    return weatherWords.some(
+        word => text.includes(word)
+    );
+}
+
 
 function shouldResearch(message) {
 
