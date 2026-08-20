@@ -222,13 +222,13 @@ const RESEARCH_API_URL =
 ===================================================== */
 
 const STORAGE_KEY =
-    "erencanai_pro_chats_v1";
+    "türkai_pro_chats_v1";
 
 const USER_ID_KEY =
-    "erencanai_pro_user_id_v1";
+    "türkai_pro_user_id_v1";
 
 const SETTINGS_KEY =
-    "erencanai_pro_settings_v1";
+    "türkai_pro_settings_v1";
 
 
 /* =====================================================
@@ -509,7 +509,7 @@ function init() {
     ================================================= */
 
     loadChats();
-setupVoiceRecognition();
+ // setupVoiceRecognition();
 
     if (
        TürkAI .chats.length ===
