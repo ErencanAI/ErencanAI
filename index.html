@@ -251,9 +251,31 @@
     </div>
     <!-- PRO KODU -->
 
-    <div class="pro-code-card">
+   <div class="pro-code-card">
+
+    <strong>TürkAI Pro</strong>
+
+    <small>
+        Pro kodun varsa buradan etkinleştirebilirsin.
+    </small>
+
+    <input
+        id="proCodeInput"
+        type="password"
+        placeholder="Pro veya Plus kodunu gir"
+        autocomplete="off"
+    >
+
+    <button
+        id="proActivateButton"
+        type="button"
+    >
+        Pro / Plus'ı Etkinleştir
+    </button>
+
+    <div id="proCodeMessage"></div>
+
 </div>
-        <strong>TürkAI Pro</strong>
 
         <small>
             Pro kodun varsa buradan etkinleştirebilirsin.
@@ -837,7 +859,8 @@ function updatePlanAnimation(plan) {
     class="quick-tool-static"
     type="button"
     title="TürkAI ile konuş"
-    aria-label="TürkAI ile konuş"></button>
+    aria-label="TürkAI ile konuş"
+>
     🎤
 </button>
                     <div class="composer-info">
@@ -1273,7 +1296,7 @@ function updatePlanAnimation(plan) {
     async
     defer
 ></script>
-<script src="/app.js"></script>
+
 
 
 <!-- =========================================================
@@ -2067,11 +2090,7 @@ document.addEventListener(
     </div>
 
 </div>
-</body>
-</html>
-        /* =====================================================
-           PLUS / PRO SATIN ALMA
-           ===================================================== */
+
 
         const purchaseButton =
             document.getElementById(
