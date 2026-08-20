@@ -431,6 +431,8 @@ const PORT =
     "gpt-oss-120b";
     const GROQ_MODEL =
     "openai/gpt-oss-20b";
+    const PLUS_MODEL =
+    "openai/gpt-oss-20b";
     const GROQ_API_KEY =
     process.env.GROQ_API_KEY ||
     "";
@@ -1201,8 +1203,7 @@ const USERS_MEMORY_FILE =
 const MAX_USER_MEMORY_MESSAGES =
     400;
 
-const USER_CONTEXT_MESSAGES = 2;
-    30;
+const USER_CONTEXT_MESSAGES = 30;
 
 /* =========================================================
 API AYARLARI
@@ -5094,8 +5095,9 @@ async function requestGroq(
                                     700,
 
                                reasoning_effort:
-                               "low",
-
+    plan === "plus"
+        ? "high"
+        : "low",
                           include_reasoning:
                                 false,
 
@@ -5298,8 +5300,7 @@ async function requestCerebras(
                             0.20,
 
                         max_tokens:
-                            700,
-
+     700,
                         stream:
                             false
 
@@ -6413,6 +6414,10 @@ app.post(
                 );
                 const currentPlan =
     usersPlan[userId]?.plan || "free";
+    const selectedModel =
+    currentPlan === "plus"
+        ? PLUS_MODEL
+        : GROQ_MODEL;
 
 const todayKey =
     getTodayKey();
@@ -7070,7 +7075,7 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             GROQ
             ----------------------------------------- */
 
-      
+      const data = await requestAI(messages);
             
 
             /* -----------------------------------------
