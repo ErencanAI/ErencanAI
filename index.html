@@ -318,7 +318,16 @@
 </button>
 <script>
 document.getElementById("purchaseButton").addEventListener("click", function () {
-    alert("BUTON ÇALIŞIYOR!");
+
+    const modal = document.getElementById("purchaseModal");
+
+    if (modal) {
+        modal.classList.add("active");
+        console.log("SATIN ALMA EKRANI AÇILDI");
+    } else {
+        console.error("purchaseModal BULUNAMADI!");
+    }
+
 });
 </script>
 <style>
