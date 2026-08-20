@@ -3386,6 +3386,19 @@ const directLiveQuestions = [
     "gram altın ne kadar",
     "çeyrek altın kaç",
     "çeyrek altın ne kadar",
+    "gram altın fiyat",
+"gram altın fiyatı",
+"gram altın ne kadar",
+"gram altın kaç tl",
+"gram altın ne kadar tl",
+"gram altın bugün ne kadar",
+"gram altın bugün kaç",
+"altın fiyat",
+"altın fiyatı",
+"altın ne kadar",
+"altın kaç tl",
+"altın bugün ne kadar",
+"altın bugün kaç",
     "gram altın kaç tl",
 "gram altın ne kadar tl",
 "gram altın bugün kaç",
@@ -3408,7 +3421,185 @@ const directLiveQuestions = [
     "yağmur yağıyor mu",
     "maç kaç kaç",
     "maç sonucu",
-    "skor kaç"
+    "skor kaç",
+    // =========================================================
+// DÖVİZ
+// =========================================================
+
+"dolar fiyatı",
+"dolar kuru",
+"dolar bugün kaç",
+"dolar bugün ne kadar",
+"1 dolar kaç",
+"1 dolar ne kadar",
+"euro fiyatı",
+"euro kuru",
+"euro bugün kaç",
+"euro bugün ne kadar",
+"1 euro kaç",
+"1 euro ne kadar",
+"sterlin fiyatı",
+"sterlin kuru",
+"sterlin bugün kaç",
+"sterlin bugün ne kadar",
+"1 sterlin kaç",
+"1 sterlin ne kadar",
+
+// =========================================================
+// ALTIN
+// =========================================================
+
+"gram altın fiyatı",
+"gram altın fiyat",
+"gram altın kaç",
+"gram altın ne kadar",
+"gram altın bugün kaç",
+"gram altın bugün ne kadar",
+"çeyrek altın fiyatı",
+"çeyrek altın fiyat",
+"çeyrek altın kaç",
+"çeyrek altın ne kadar",
+"yarım altın fiyatı",
+"yarım altın kaç",
+"yarım altın ne kadar",
+"tam altın fiyatı",
+"tam altın kaç",
+"tam altın ne kadar",
+"cumhuriyet altını fiyatı",
+"cumhuriyet altını kaç",
+"cumhuriyet altını ne kadar",
+"ons altın kaç",
+"ons altın ne kadar",
+
+// =========================================================
+// KRİPTO
+// =========================================================
+
+"bitcoin fiyatı",
+"bitcoin kaç",
+"bitcoin ne kadar",
+"bitcoin bugün kaç",
+"btc fiyatı",
+"btc kaç",
+"ethereum fiyatı",
+"ethereum kaç",
+"ethereum ne kadar",
+"eth fiyatı",
+"eth kaç",
+"kripto fiyatları",
+
+// =========================================================
+// SPOR
+// =========================================================
+
+"maç sonucu",
+"maç skoru",
+"maç kaç kaç",
+"maç ne zaman",
+"maç saat kaçta",
+"kim kazandı",
+"puan durumu",
+"lig sıralaması",
+"fikstür",
+"transfer oldu mu",
+"transfer haberi",
+"son maç",
+"son maç sonucu",
+"bugünkü maçlar",
+
+// =========================================================
+// HABER
+// =========================================================
+
+"son haberler",
+"son dakika",
+"son dakika haberleri",
+"bugünkü haberler",
+"bugün ne oldu",
+"gündemde ne var",
+"son gelişmeler",
+"son gelişme",
+"güncel haberler",
+"haberleri araştır",
+
+// =========================================================
+// TEKNOLOJİ
+// =========================================================
+
+"yeni iphone",
+"yeni samsung",
+"yeni telefon",
+"telefon fiyatı",
+"laptop fiyatı",
+"ekran kartı fiyatı",
+"işlemci fiyatı",
+"yeni ekran kartı",
+"yeni işlemci",
+"yeni teknoloji",
+"teknoloji haberleri",
+"yeni sürüm",
+"güncelleme geldi mi",
+
+// =========================================================
+// OYUN
+// =========================================================
+
+"minecraft güncellemesi",
+"minecraft yeni sürüm",
+"valorant güncellemesi",
+"valorant yeni ajan",
+"steam fiyatı",
+"oyun fiyatı",
+"yeni oyun",
+"oyun çıktı mı",
+"oyun güncellemesi",
+
+// =========================================================
+// ULAŞIM
+// =========================================================
+
+"uçuş durumu",
+"uçuş iptal mi",
+"uçuş ertelendi mi",
+"uçuş saat kaçta",
+"uçak bileti",
+"uçak bileti fiyatı",
+"otobüs bileti",
+"otobüs bileti fiyatı",
+"sefer saat kaçta",
+"sefer iptal mi",
+"trafik durumu",
+"yol durumu",
+
+// =========================================================
+// ETKİNLİK
+// =========================================================
+
+"konser ne zaman",
+"konser nerede",
+"konser saat kaçta",
+"festival ne zaman",
+"festival nerede",
+"etkinlik ne zaman",
+"etkinlik nerede",
+"etkinlik saat kaçta",
+"sinema seansları",
+"film seansları",
+"film hangi platformda",
+
+// =========================================================
+// EĞİTİM / TAKVİM
+// =========================================================
+
+"okullar ne zaman açılıyor",
+"okullar ne zaman kapanıyor",
+"okul ne zaman başlıyor",
+"okul ne zaman bitiyor",
+"sınav tarihi",
+"sınav takvimi",
+"tatil ne zaman",
+"ara tatil ne zaman",
+"yaz tatili ne zaman"
 ];
 
 if (
@@ -3513,7 +3704,151 @@ if (
         "ne zaman bitecek",
         "hangi tarihte",
         "tarihi ne",
-        "tarih ne"
+        "tarih ne",
+        // =========================================================
+// HAVA DURUMU
+// =========================================================
+
+"hava nasıl",
+"hava durumu nasıl",
+"bugün hava nasıl",
+"bugün hava durumu",
+"yarın hava nasıl",
+"yarın hava durumu",
+"şu an hava nasıl",
+"şu anda hava nasıl",
+"sıcaklık kaç",
+"kaç derece",
+"yağmur yağacak mı",
+"yağmur yağıyor mu",
+"kar yağacak mı",
+"kar yağıyor mu",
+"fırtına var mı",
+"rüzgar kaç",
+"rüzgar hızı kaç",
+
+// =========================================================
+// ALIŞVERİŞ
+// =========================================================
+
+"en ucuz",
+"en uygun fiyat",
+"en ucuz fiyat",
+"nereden alınır",
+"nerede satılıyor",
+"satışta mı",
+"stokta mı",
+"stok var mı",
+"hangi mağazada",
+"hangi sitede",
+"kampanya var mı",
+"indirim var mı",
+"indirimde mi",
+"kupon var mı",
+
+// =========================================================
+// FİNANS
+// =========================================================
+
+"borsa kaç",
+"borsa bugün",
+"bist kaç",
+"bist bugün",
+"bitcoin bugün",
+"ethereum bugün",
+"kripto bugün",
+"altın bugün",
+"gümüş fiyatı",
+"gümüş kaç",
+"petrol fiyatı",
+"petrol kaç",
+"brent petrol",
+"faiz oranı",
+"mevduat faizi",
+"enflasyon oranı",
+
+// =========================================================
+// RESMİ BİLGİLER
+// =========================================================
+
+"resmi gazete",
+"yeni kanun",
+"yeni yasa",
+"yasa çıktı mı",
+"kanun çıktı mı",
+"yönetmelik",
+"resmi açıklama",
+"bakanlık açıklaması",
+"bakan açıkladı",
+"cumhurbaşkanı açıkladı",
+
+// =========================================================
+// BİLİM / UZAY
+// =========================================================
+
+"uzay haberleri",
+"nasa haberleri",
+"spacex",
+"roket fırlatıldı mı",
+"roket ne zaman",
+"yeni keşif",
+"bilim haberleri",
+"bilimsel gelişmeler",
+"yeni bilimsel gelişme",
+
+// =========================================================
+// SOSYAL MEDYA / İNTERNET
+// =========================================================
+
+"instagram çöktü mü",
+"youtube çöktü mü",
+"whatsapp çöktü mü",
+"discord çöktü mü",
+"internet çöktü mü",
+"site çöktü mü",
+"sunucular çöktü mü",
+"erişim sorunu var mı",
+
+// =========================================================
+// ÜRÜN / MODEL
+// =========================================================
+
+"hangi model çıktı",
+"yeni model çıktı mı",
+"yeni telefon çıktı mı",
+"yeni ekran kartı çıktı mı",
+"yeni işlemci çıktı mı",
+"fiyatı ne kadar",
+"kaç paraya satılıyor",
+"satış fiyatı",
+"güncel fiyatı",
+
+// =========================================================
+// TARİH / ZAMAN
+// =========================================================
+
+"bugünün tarihi",
+"bugün hangi gün",
+"yarın hangi gün",
+"bu hafta hangi gün",
+"hangi aydayız",
+"kaç gün kaldı",
+"ne kadar kaldı",
+
+// =========================================================
+// GÜNCEL KİŞİ / KURUM
+// =========================================================
+
+"şu an kim",
+"şu an nerede",
+"görevde mi",
+"istifa etti mi",
+"görevden alındı mı",
+"kim seçildi",
+"kim atandı",
+"kim kazandı",
+"kim kaybetti"
+
     ];
 
 
