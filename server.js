@@ -841,6 +841,27 @@ function saveKnowledge(knowledge) {
     }
 }
 function saveKnowledgeItem(question, answer) {
+    const cleanQuestion =
+        String(question || "").trim();
+
+    const cleanAnswer =
+        String(answer || "").trim();
+
+    if (!cleanQuestion || !cleanAnswer) {
+        return false;
+    }
+
+    const exists = knowledge.some(
+        item =>
+            item &&
+            typeof item.question === "string" &&
+            item.question.toLowerCase() ===
+                cleanQuestion.toLowerCase()
+    );
+
+    if (exists) {
+        return false;
+    }
 
     knowledge.push({
         question: cleanQuestion,
