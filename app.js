@@ -3286,3 +3286,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+document.addEventListener("DOMContentLoaded", function () {
+
+    const purchaseButton =
+        document.getElementById("purchaseButton");
+
+    const purchaseModal =
+        document.getElementById("purchaseModal");
+
+    console.log("PURCHASE BUTTON:", purchaseButton);
+    console.log("PURCHASE MODAL:", purchaseModal);
+
+    if (purchaseButton && purchaseModal) {
+
+        purchaseButton.onclick = function () {
+
+            console.log("BUTONA BASILDI!");
+
+            purchaseModal.classList.add("active");
+
+        };
+
+    }
+
+});
