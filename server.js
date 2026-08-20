@@ -7,183 +7,6 @@ const fs = require("fs");
 const crypto = require("crypto");
 const app = express();
 const TURKAI_PRO_CODE = process.env.TURKAI_PRO_CODE || "";
-const TURKAI_PLUS_CODE =
-    process.env.TURKAI_PLUS_CODE || "";
-/* =========================================================
-TÜRKAI KULLANICI / PRO SİSTEMİ
-========================================================= */
-
-const USERS_PLAN_FILE =
-    path.join(
-        __dirname,
-        "users_plan.json"
-    );
-
-function loadUsersPlan() {
-
-    try {
-
-        if (
-            !fs.existsSync(
-                USERS_PLAN_FILE
-            )
-        ) {
-
-            fs.writeFileSync(
-                USERS_PLAN_FILE,
-                JSON.stringify(
-                    {},
-                    null,
-                    2
-                ),
-                "utf8"
-            );
-
-            return {};
-        }
-
-        const data =
-            JSON.parse(
-                fs.readFileSync(
-                    USERS_PLAN_FILE,
-                    "utf8"
-                )
-            );
-
-        return (
-            data &&
-            typeof data === "object" &&
-            !Array.isArray(data)
-        )
-            ? data
-            : {};
-
-    } catch (error) {
-
-        console.error(
-            "KULLANICI PLAN DOSYASI OKUNAMADI:",
-            error.message
-        );
-
-        return {};
-    }
-}
-
-function saveUsersPlan(
-    users
-) {
-
-    try {
-
-        fs.writeFileSync(
-            USERS_PLAN_FILE,
-            JSON.stringify(
-                users,
-                null,
-                2
-            ),
-            "utf8"
-        );
-
-        return true;
-
-    } catch (error) {
-
-        console.error(
-            "KULLANICI PLAN DOSYASI KAYDEDİLEMEDİ:",
-            error.message
-        );
-
-        return false;
-    }
-}
-
-let usersPlan =
-    loadUsersPlan();
-
-
-function createUserId() {
-
-    return crypto
-        .randomBytes(24)
-        .toString("hex");
-}
-
-
-function getUserIdFromRequest(
-    req
-) {
-
-    const cookieHeader =
-        req.headers.cookie || "";
-
-    const match =
-        cookieHeader.match(
-            /turkai_user_id=([^;]+)/
-        );
-
-    if (
-        match &&
-        match[1]
-    ) {
-
-        return match[1];
-    }
-
-    const userId =
-        createUserId();
-
-    if (
-        !usersPlan[userId]
-    ) {
-
-        usersPlan[userId] = {
-            plan: "free",
-            createdAt:
-                new Date().toISOString()
-        };
-
-        saveUsersPlan(
-            usersPlan
-        );
-    }
-
-    return userId;
-}
-
-
-/* Her istekte kullanıcı ID'sini belirle */
-
-app.use(
-    (req, res, next) => {
-
-        let userId =
-            getUserIdFromRequest(
-                req
-            );
-
-        const cookieHeader =
-            req.headers.cookie || "";
-
-        const hasCookie =
-            cookieHeader.includes(
-                "turkai_user_id="
-            );
-
-        if (!hasCookie) {
-
-            res.setHeader(
-                "Set-Cookie",
-                `turkai_user_id=${userId}; Path=/; HttpOnly; SameSite=Lax`
-            );
-        }
-
-        req.turkaiUserId =
-            userId;
-
-        next();
-    }
-);
 
 app.post(
     "/api/pro/activate",
@@ -193,129 +16,31 @@ app.post(
         const enteredCode =
             String(req.body?.code || "").trim();
 
-       const isPro =
-    TURKAI_PRO_CODE &&
-    enteredCode === TURKAI_PRO_CODE;
-
-const isPlus =
-    TURKAI_PLUS_CODE &&
-    enteredCode === TURKAI_PLUS_CODE;
-
-if (!isPro && !isPlus) {
-
-    return res.status(403).json({
-        ok: false,
-        message: "Geçersiz aktivasyon kodu."
-    });
-}
-
-        const userId =
-    req.turkaiUserId;
-
-usersPlan[userId] = {
-    ...(usersPlan[userId] || {}),
-    plan: isPlus ? "plus" : "pro",
-    activatedAt:
-        new Date().toISOString()
-};
-
-const saved =
-    saveUsersPlan(
-        usersPlan
-    );
-
-if (!saved) {
-
-    return res.status(500).json({
-        ok: false,
-        message:
-            "Pro aktivasyonu kaydedilemedi."
-    });
-}
-
-return res.json({
-    ok: true,
-    plan: isPlus ? "plus" : "pro",
-    userId: userId,
-    message:
-    isPlus
-        ? "TürkAI Plus etkinleştirildi! 🚀"
-        : "TürkAI Pro etkinleştirildi! 🚀"
-});
-    }
-);
-// TÜRKAI GÜNLÜK MESAJ LİMİTLERİ
-const DAILY_LIMITS = {
-   free: 50,
-pro: 200,
-plus: 300,
-developer: 400
-};
-const DAILY_USAGE_FILE =
-    path.join(
-        __dirname,
-        "daily_usage.json"
-    );
-
-function loadDailyUsage() {
-
-    try {
-
         if (
-            !fs.existsSync(
-                DAILY_USAGE_FILE
-            )
+            !enteredCode ||
+            !TURKAI_PRO_CODE ||
+            enteredCode !== TURKAI_PRO_CODE
         ) {
-
-            return {};
+            return res.status(403).json({
+                ok: false,
+                message: "GeÃ§ersiz Pro kodu."
+            });
         }
 
-        return JSON.parse(
-            fs.readFileSync(
-                DAILY_USAGE_FILE,
-                "utf8"
-            )
-        );
-
-    } catch (error) {
-
-        console.error(
-            "GÜNLÜK KULLANIM OKUMA HATASI:",
-            error.message
-        );
-
-        return {};
+        return res.json({
+            ok: true,
+            plan: "pro",
+            message: "TÃ¼rkAI Pro etkinleÅŸtirildi! ğŸš€"
+        });
     }
-}
+);
+// TÃœRKAI GÃœNLÃœK MESAJ LÄ°MÄ°TLERÄ°
+const DAILY_LIMITS = {
+    free: 200,
+    pro: 400,
+    developer: 500
+};
 
-function saveDailyUsage(
-    usage
-) {
-
-    try {
-
-        fs.writeFileSync(
-            DAILY_USAGE_FILE,
-            JSON.stringify(
-                usage,
-                null,
-                2
-            ),
-            "utf8"
-        );
-
-        return true;
-
-    } catch (error) {
-
-        console.error(
-            "GÜNLÜK KULLANIM KAYDETME HATASI:",
-            error.message
-        );
-
-        return false;
-    }
-}
 function getTodayKey() {
     const now = new Date();
 
@@ -381,7 +106,7 @@ function loadGroqDailyUsage() {
     } catch (error) {
 
         console.error(
-            "GROQ GÜNLÜK DOSYA HATASI:",
+            "GROQ GÃœNLÃœK DOSYA HATASI:",
             error.message
         );
 
@@ -412,12 +137,12 @@ function addGroqUsage(tokens = 0) {
     );
 
     console.log(
-        "GROQ GÜNLÜK İSTEK:",
+        "GROQ GÃœNLÃœK Ä°STEK:",
         usage.requests
     );
 
     console.log(
-        "GROQ GÜNLÜK TOKEN:",
+        "GROQ GÃœNLÃœK TOKEN:",
         usage.tokens
     );
 }
@@ -430,8 +155,6 @@ const PORT =
   const CEREBRAS_MODEL =
     "gpt-oss-120b";
     const GROQ_MODEL =
-    "openai/gpt-oss-20b";
-    const PLUS_MODEL =
     "openai/gpt-oss-20b";
     const GROQ_API_KEY =
     process.env.GROQ_API_KEY ||
@@ -447,8 +170,8 @@ const GEMINI_API_KEY =
     process.env.GEMINI_API_KEY ||
     "";
     /* =========================================================
-GROQ GÜNLÜK KULLANIM TAKİBİ
-Dosya yoksa otomatik oluşturulur.
+GROQ GÃœNLÃœK KULLANIM TAKÄ°BÄ°
+Dosya yoksa otomatik oluÅŸturulur.
 ========================================================= */
 
 function getTodayDate() {
@@ -484,7 +207,7 @@ function loadGroqDailyUsage() {
                 )
             );
 
-        /* Gün değiştiyse sayaçları sıfırla */
+        /* GÃ¼n deÄŸiÅŸtiyse sayaÃ§larÄ± sÄ±fÄ±rla */
 
         if (data.date !== getTodayDate()) {
 
@@ -512,7 +235,7 @@ function loadGroqDailyUsage() {
     } catch (error) {
 
         console.error(
-            "GROQ GÜNLÜK KULLANIM DOSYASI OKUNAMADI:",
+            "GROQ GÃœNLÃœK KULLANIM DOSYASI OKUNAMADI:",
             error.message
         );
 
@@ -542,7 +265,7 @@ function saveGroqDailyUsage(data) {
     } catch (error) {
 
         console.error(
-            "GROQ GÜNLÜK KULLANIM KAYDEDİLEMEDİ:",
+            "GROQ GÃœNLÃœK KULLANIM KAYDEDÄ°LEMEDÄ°:",
             error.message
         );
     }
@@ -562,17 +285,17 @@ function addGroqUsage(tokens = 0) {
     );
 
     console.log(
-        "GROQ GÜNLÜK İSTEK:",
+        "GROQ GÃœNLÃœK Ä°STEK:",
         usage.requests
     );
 
     console.log(
-        "GROQ GÜNLÜK TOKEN:",
+        "GROQ GÃœNLÃœK TOKEN:",
         usage.tokens
     );
 }
 /* =========================================================
-GROQ � CEBRAS � GEMINI YEDEK S�STEM
+GROQ   CEBRAS   GEMINI YEDEK S STEM
 ========================================================= */
 
 async function requestAI(
@@ -591,348 +314,348 @@ async function requestAI(
             ?.trim()
             .toLowerCase() || "";
 console.log(
-    "YEREL MESAJ KONTROLÜ:",
+    "YEREL MESAJ KONTROLÃœ:",
     JSON.stringify(lastUserMessage)
 );
 
     /* =========================================================
-    BASİT MESAJLAR
+    BASÄ°T MESAJLAR
     API KULLANILMAZ
     ========================================================= */
 
   const simpleMessages = {
 
     // =========================
-    // SELAMLAŞMA
+    // SELAMLAÅMA
     // =========================
 
     "selam":
-        "Selam! Sana nasıl yardımcı olabilirim?",
+        "Selam! Sana nasÄ±l yardÄ±mcÄ± olabilirim?",
 
     "slm":
-        "Aleyküm selam!",
+        "AleykÃ¼m selam!",
 
     "sa":
-        "Aleyküm selam!",
+        "AleykÃ¼m selam!",
 
     "merhaba":
-        "Merhaba! Sana nasıl yardımcı olabilirim?",
+        "Merhaba! Sana nasÄ±l yardÄ±mcÄ± olabilirim?",
 
     "mrb":
-        "Merhaba! 😄",
+        "Merhaba! ğŸ˜„",
 
     "hey":
-        "Hey! 👋",
+        "Hey! ğŸ‘‹",
 
     "naber":
-        "İyiyim 😄 Sen nasılsın?",
+        "Ä°yiyim ğŸ˜„ Sen nasÄ±lsÄ±n?",
 
-    "nasılsın":
-        "İyiyim, teşekkür ederim! Sen nasılsın?",
+    "nasÄ±lsÄ±n":
+        "Ä°yiyim, teÅŸekkÃ¼r ederim! Sen nasÄ±lsÄ±n?",
 
     "nasilsin":
-        "İyiyim, teşekkür ederim! Sen nasılsın?",
+        "Ä°yiyim, teÅŸekkÃ¼r ederim! Sen nasÄ±lsÄ±n?",
 
     // =========================
-    // GÜNAYDIN / AKŞAM / GECE
+    // GÃœNAYDIN / AKÅAM / GECE
     // =========================
 
-    "günaydın":
-        "Günaydın! ☀️",
+    "gÃ¼naydÄ±n":
+        "GÃ¼naydÄ±n! â˜€ï¸",
 
     "gunaydin":
-        "Günaydın! ☀️",
+        "GÃ¼naydÄ±n! â˜€ï¸",
 
-    "iyi akşamlar":
-        "İyi akşamlar! 🌆",
+    "iyi akÅŸamlar":
+        "Ä°yi akÅŸamlar! ğŸŒ†",
 
     "iyi aksamlar":
-        "İyi akşamlar! 🌆",
+        "Ä°yi akÅŸamlar! ğŸŒ†",
 
    
 
     "iyi geceler":
-        "Sana da iyi geceler! 🌙",
+        "Sana da iyi geceler! ğŸŒ™",
 
     // =========================
-    // TEŞEKKÜR
+    // TEÅEKKÃœR
     // =========================
 
-    "teşekkürler":
-        "Rica ederim! 😊",
+    "teÅŸekkÃ¼rler":
+        "Rica ederim! ğŸ˜Š",
 
-    "teşekkür ederim":
-        "Rica ederim! 😊",
+    "teÅŸekkÃ¼r ederim":
+        "Rica ederim! ğŸ˜Š",
 
     "tesekkurler":
-        "Rica ederim! 😊",
+        "Rica ederim! ğŸ˜Š",
 
     "tesekkur ederim":
-        "Rica ederim! 😊",
+        "Rica ederim! ğŸ˜Š",
 
-    "sağol":
-        "Ne demek! 😊",
+    "saÄŸol":
+        "Ne demek! ğŸ˜Š",
 
-    "sağ ol":
-        "Ne demek! 😊",
+    "saÄŸ ol":
+        "Ne demek! ğŸ˜Š",
 
     "sagol":
-        "Ne demek! 😊",
+        "Ne demek! ğŸ˜Š",
 
     "sag ol":
-        "Ne demek! 😊",
+        "Ne demek! ğŸ˜Š",
 
     // =========================
     // ONAY / KISA CEVAPLAR
     // =========================
 
     "tamam":
-        "Tamamdır! 👍",
+        "TamamdÄ±r! ğŸ‘",
 
     "tmm":
-        "Tamamdır! 👍",
+        "TamamdÄ±r! ğŸ‘",
 
     "ok":
-        "Tamamdır! 👍",
+        "TamamdÄ±r! ğŸ‘",
 
     "olur":
-        "Olur! 😎",
+        "Olur! ğŸ˜",
 
     "peki":
-        "Peki! 👍",
+        "Peki! ğŸ‘",
 
     "aynen":
-        "Aynen! 😎",
+        "Aynen! ğŸ˜",
 
     "evet":
-        "Tamam! 👍",
+        "Tamam! ğŸ‘",
 
-    "hayır":
-        "Tamam, sorun değil.",
+    "hayÄ±r":
+        "Tamam, sorun deÄŸil.",
 
     "hayir":
-        "Tamam, sorun değil.",
+        "Tamam, sorun deÄŸil.",
 
     // =========================
-    // VEDALAŞMA
+    // VEDALAÅMA
     // =========================
 
-    "görüşürüz":
-        "Görüşürüz! 👋",
+    "gÃ¶rÃ¼ÅŸÃ¼rÃ¼z":
+        "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹",
 
     "gorusuruz":
-        "Görüşürüz! 👋",
+        "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹",
 
     "bye":
-        "Görüşürüz! 👋",
+        "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹",
 
     "bay":
-        "Görüşürüz! 👋",
+        "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹",
 
-    "hoşçakal":
-        "Hoşça kal! 👋",
+    "hoÅŸÃ§akal":
+        "HoÅŸÃ§a kal! ğŸ‘‹",
 
     "hoscakal":
-        "Hoşça kal! 👋",
+        "HoÅŸÃ§a kal! ğŸ‘‹",
 
     // =========================
     // ERencanaAI
     // =========================
 
     "erencanai":
-        "Buradayım! 🤖",
+        "BuradayÄ±m! ğŸ¤–",
 
     "erencan ai":
-        "Buradayım! 🤖",
+        "BuradayÄ±m! ğŸ¤–",
 
     "test":
-        "Test başarılı! TürkAI çalışıyor. ✅",
+        "Test baÅŸarÄ±lÄ±! TÃ¼rkAI Ã§alÄ±ÅŸÄ±yor. âœ…",
 
-    "çalışıyor musun":
-        "Evet! Buradayım ve çalışıyorum. 🤖",
+    "Ã§alÄ±ÅŸÄ±yor musun":
+        "Evet! BuradayÄ±m ve Ã§alÄ±ÅŸÄ±yorum. ğŸ¤–",
 
     "calisiyor musun":
-        "Evet! Buradayım ve çalışıyorum. 🤖",
+        "Evet! BuradayÄ±m ve Ã§alÄ±ÅŸÄ±yorum. ğŸ¤–",
 
-    "burada mısın":
-        "Evet, buradayım! 👋",
+    "burada mÄ±sÄ±n":
+        "Evet, buradayÄ±m! ğŸ‘‹",
 
     "burada misin":
-        "Evet, buradayım! 👋",
+        "Evet, buradayÄ±m! ğŸ‘‹",
 
     // =========================
-    // KİMLİK
+    // KÄ°MLÄ°K
     // =========================
 
-    "adın ne":
-        "Ben TürkAI'yım. 🤖",
+    "adÄ±n ne":
+        "Ben TÃ¼rkAI'yÄ±m. ğŸ¤–",
 
     "adin ne":
-        "Ben TürkAI'yım. 🤖",
+        "Ben TÃ¼rkAI'yÄ±m. ğŸ¤–",
 
     "sen kimsin":
-        "Ben TürkAI'yım. 🤖",
+        "Ben TÃ¼rkAI'yÄ±m. ğŸ¤–",
 
     "sen kimsin?":
-        "Ben TürkAI'yım. 🤖",
+        "Ben TÃ¼rkAI'yÄ±m. ğŸ¤–",
 
     "ismin ne":
-        "Ben TürkAI'yım. 🤖",
+        "Ben TÃ¼rkAI'yÄ±m. ğŸ¤–",
 
-    "ne yapıyorsun":
-        "Seninle konuşuyorum ve sana yardımcı olmaya çalışıyorum. 😄",
+    "ne yapÄ±yorsun":
+        "Seninle konuÅŸuyorum ve sana yardÄ±mcÄ± olmaya Ã§alÄ±ÅŸÄ±yorum. ğŸ˜„",
 
     "ne yapiyorsun":
-        "Seninle konuşuyorum ve sana yardımcı olmaya çalışıyorum. 😄",
+        "Seninle konuÅŸuyorum ve sana yardÄ±mcÄ± olmaya Ã§alÄ±ÅŸÄ±yorum. ğŸ˜„",
 
     // =========================
     // YARDIM
     // =========================
 
-    "yardım":
-        "Tabii! Ne konuda yardım istiyorsun?",
+    "yardÄ±m":
+        "Tabii! Ne konuda yardÄ±m istiyorsun?",
 
     "yardim":
-        "Tabii! Ne konuda yardım istiyorsun?",
+        "Tabii! Ne konuda yardÄ±m istiyorsun?",
 
-    "yardım eder misin":
-        "Tabii ki! 😎 Ne yapmamı istersin?",
+    "yardÄ±m eder misin":
+        "Tabii ki! ğŸ˜ Ne yapmamÄ± istersin?",
 
     "yardim eder misin":
-        "Tabii ki! 😎 Ne yapmamı istersin?",
+        "Tabii ki! ğŸ˜ Ne yapmamÄ± istersin?",
 
-    "bana yardım et":
-        "Tabii! Sorununu anlat, birlikte çözelim.",
+    "bana yardÄ±m et":
+        "Tabii! Sorununu anlat, birlikte Ã§Ã¶zelim.",
 
     "bana yardim et":
-        "Tabii! Sorununu anlat, birlikte çözelim.",
+        "Tabii! Sorununu anlat, birlikte Ã§Ã¶zelim.",
 
     // =========================
     // DUYGULAR / SOHBET
     // =========================
 
     "iyiyim":
-        "Süper! 😎",
+        "SÃ¼per! ğŸ˜",
 
     "iyi":
-        "Harika! 😄",
+        "Harika! ğŸ˜„",
 
-    "kötüyüm":
-        "Üzgünüm. İstersen ne olduğunu anlatabilirsin.",
+    "kÃ¶tÃ¼yÃ¼m":
+        "ÃœzgÃ¼nÃ¼m. Ä°stersen ne olduÄŸunu anlatabilirsin.",
 
     "kotuyum":
-        "Üzgünüm. İstersen ne olduğunu anlatabilirsin.",
+        "ÃœzgÃ¼nÃ¼m. Ä°stersen ne olduÄŸunu anlatabilirsin.",
 
     "mutluyum":
-        "Buna sevindim! 😄",
+        "Buna sevindim! ğŸ˜„",
 
-    "üzgünüm":
-        "Umarım kısa zamanda daha iyi hissedersin.",
+    "Ã¼zgÃ¼nÃ¼m":
+        "UmarÄ±m kÄ±sa zamanda daha iyi hissedersin.",
 
     "uzgunum":
-        "Umarım kısa zamanda daha iyi hissedersin.",
+        "UmarÄ±m kÄ±sa zamanda daha iyi hissedersin.",
 
     // =========================
-    // EĞLENCELİ
+    // EÄLENCELÄ°
     // =========================
 
     "haha":
-        "😂",
+        "ğŸ˜‚",
 
     "hahaha":
-        "😂😂",
+        "ğŸ˜‚ğŸ˜‚",
 
     "lol":
-        "😂",
+        "ğŸ˜‚",
 
     "xd":
-        "😂",
+        "ğŸ˜‚",
 
     "komik":
-        "😄 Eğlendirebildiysem ne mutlu!",
+        "ğŸ˜„ EÄŸlendirebildiysem ne mutlu!",
 
     // =========================
-    // BASİT SORULAR
+    // BASÄ°T SORULAR
     // =========================
 
-    "kaç yaşındasın":
-        "Benim gerçek bir yaşım yok. 🤖",
+    "kaÃ§ yaÅŸÄ±ndasÄ±n":
+        "Benim gerÃ§ek bir yaÅŸÄ±m yok. ğŸ¤–",
 
     "kac yasindasin":
-        "Benim gerçek bir yaşım yok. 🤖",
+        "Benim gerÃ§ek bir yaÅŸÄ±m yok. ğŸ¤–",
 
     "nerelisin":
-        "Ben bir yapay zekâyım, belirli bir memleketim yok. 🌍",
+        "Ben bir yapay zekÃ¢yÄ±m, belirli bir memleketim yok. ğŸŒ",
 
     "nerelisin?":
-        "Ben bir yapay zekâyım, belirli bir memleketim yok. 🌍",
+        "Ben bir yapay zekÃ¢yÄ±m, belirli bir memleketim yok. ğŸŒ",
 
-    "insan mısın":
-        "Hayır, ben yapay zekâ asistanıyım. 🤖",
+    "insan mÄ±sÄ±n":
+        "HayÄ±r, ben yapay zekÃ¢ asistanÄ±yÄ±m. ğŸ¤–",
 
     "insan misin":
-        "Hayır, ben yapay zekâ asistanıyım. 🤖",
+        "HayÄ±r, ben yapay zekÃ¢ asistanÄ±yÄ±m. ğŸ¤–",
 
     "robot musun":
-        "Ben fiziksel bir robot değilim; bir yapay zekâ yazılımıyım. 🤖",
+        "Ben fiziksel bir robot deÄŸilim; bir yapay zekÃ¢ yazÄ±lÄ±mÄ±yÄ±m. ğŸ¤–",
 
     // =========================
     // KAPATMA / DURUM
     // =========================
 
-    "hazır mısın":
-        "Her zaman hazırım! 😎",
+    "hazÄ±r mÄ±sÄ±n":
+        "Her zaman hazÄ±rÄ±m! ğŸ˜",
 
     "hazir misin":
-        "Her zaman hazırım! 😎",
+        "Her zaman hazÄ±rÄ±m! ğŸ˜",
 
-    "başlayalım":
-        "Hadi başlayalım! 🚀",
+    "baÅŸlayalÄ±m":
+        "Hadi baÅŸlayalÄ±m! ğŸš€",
 
     "baslayalim":
-        "Hadi başlayalım! 🚀",
+        "Hadi baÅŸlayalÄ±m! ğŸš€",
 
     "devam":
-        "Devam ediyoruz! 🚀",
+        "Devam ediyoruz! ğŸš€",
 
     // =========================
-    // EMOJİ
+    // EMOJÄ°
     // =========================
 
-    "😀":
-        "😀",
+    "ğŸ˜€":
+        "ğŸ˜€",
 
-    "😂":
-        "😂",
+    "ğŸ˜‚":
+        "ğŸ˜‚",
 
-    "👍":
-        "👍",
+    "ğŸ‘":
+        "ğŸ‘",
 
-    "❤️":
-        "❤️",
+    "â¤ï¸":
+        "â¤ï¸",
 
-    "😎":
-        "😎",
+    "ğŸ˜":
+        "ğŸ˜",
 
-    "🤖":
-        "🤖",
+    "ğŸ¤–":
+        "ğŸ¤–",
 
-    "🚀":
-        "🚀",
+    "ğŸš€":
+        "ğŸš€",
 
-    "🔥":
-        "🔥"
+    "ğŸ”¥":
+        "ğŸ”¥"
 };
 
 
     /*
-    SADECE TAM EŞLEŞMEDE hazır cevap ver.
-    Böylece:
+    SADECE TAM EÅLEÅMEDE hazÄ±r cevap ver.
+    BÃ¶ylece:
 
-    "selam"          → hazır cevap
-    "selam nasılsın" → API
-    "merhaba"        → hazır cevap
-    "merhaba nasılsın" → API
+    "selam"          â†’ hazÄ±r cevap
+    "selam nasÄ±lsÄ±n" â†’ API
+    "merhaba"        â†’ hazÄ±r cevap
+    "merhaba nasÄ±lsÄ±n" â†’ API
     */
 
     if (
@@ -943,7 +666,7 @@ console.log(
     ) {
 
         console.log(
-            "BASİT MESAJ → API KULLANILMADI"
+            "BASÄ°T MESAJ â†’ API KULLANILMADI"
         );
 
         return simpleMessages[
@@ -953,7 +676,7 @@ console.log(
 
 
     /* =========================================================
-    NORMAL AI SİSTEMİ
+    NORMAL AI SÄ°STEMÄ°
     ========================================================= */
 
     try {
@@ -969,7 +692,7 @@ console.log(
     } catch (groqError) {
 
         console.error(
-            "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
+            "GROQ BAÅARISIZ, CEREBRAS'A GEÃ‡Ä°LÄ°YOR:",
             groqError.message
         );
 
@@ -986,7 +709,7 @@ console.log(
         } catch (cerebrasError) {
 
             console.error(
-                "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
+                "CEREBRAS DA BAÅARISIZ, GEMINI'YE GEÃ‡Ä°LÄ°YOR:",
                 cerebrasError.message
             );
 
@@ -1003,7 +726,7 @@ console.log(
             } catch (geminiError) {
 
                 console.error(
-                    "GEMINI DE BAŞARISIZ:",
+                    "GEMINI DE BAÅARISIZ:",
                     geminiError.message
                 );
 
@@ -1013,7 +736,7 @@ console.log(
                 );
 
                 throw new Error(
-                    "Groq, Cerebras ve Gemini kullanılamıyor."
+                    "Groq, Cerebras ve Gemini kullanÄ±lamÄ±yor."
                 );
             }
         }
@@ -1085,7 +808,7 @@ const KNOWLEDGE_FILE =
 
     } catch (error) {
         console.error(
-            "BİLGİ HAFIZASI OKUMA HATASI:",
+            "BÄ°LGÄ° HAFIZASI OKUMA HATASI:",
             error.message
         );
 
@@ -1110,7 +833,7 @@ function saveKnowledge(knowledge) {
 
     } catch (error) {
         console.error(
-            "BİLGİ HAFIZASI KAYDETME HATASI:",
+            "BÄ°LGÄ° HAFIZASI KAYDETME HATASI:",
             error.message
         );
 
@@ -1118,27 +841,6 @@ function saveKnowledge(knowledge) {
     }
 }
 function saveKnowledgeItem(question, answer) {
-    const cleanQuestion =
-        String(question || "").trim();
-
-    const cleanAnswer =
-        String(answer || "").trim();
-
-    if (!cleanQuestion || !cleanAnswer) {
-        return false;
-    }
-
-    const exists = knowledge.some(
-        item =>
-            item &&
-            typeof item.question === "string" &&
-            item.question.toLowerCase() ===
-                cleanQuestion.toLowerCase()
-    );
-
-    if (exists) {
-        return false;
-    }
 
     knowledge.push({
         question: cleanQuestion,
@@ -1148,38 +850,6 @@ function saveKnowledgeItem(question, answer) {
     });
 
     return saveKnowledge(knowledge);
-    function saveKnowledgeItem(question, answer) {
-    const cleanQuestion =
-        String(question || "").trim();
-
-    const cleanAnswer =
-        String(answer || "").trim();
-
-    if (!cleanQuestion || !cleanAnswer) {
-        return false;
-    }
-
-    const exists = knowledge.some(
-        item =>
-            item &&
-            typeof item.question === "string" &&
-            item.question.toLowerCase() ===
-                cleanQuestion.toLowerCase()
-    );
-
-    if (exists) {
-        return false;
-    }
-
-    knowledge.push({
-        question: cleanQuestion,
-        answer: cleanAnswer,
-        source: "Groq",
-        time: new Date().toISOString()
-    });
-
-    return saveKnowledge(knowledge);
-}
 }
 
 let knowledge =
@@ -1203,7 +873,8 @@ const USERS_MEMORY_FILE =
 const MAX_USER_MEMORY_MESSAGES =
     400;
 
-const USER_CONTEXT_MESSAGES = 30;
+const USER_CONTEXT_MESSAGES = 2;
+    30;
 
 /* =========================================================
 API AYARLARI
@@ -1337,7 +1008,7 @@ GEL??M?? S?STEM PROMPTU
 ========================================================= */
 
 const SYSTEM_PROMPT = `
-Sen TürkAI adl? geli?mi?, h?zl?, do?al, g?venilir ve yard?mc? bir yapay zeka asistan?s?n.
+Sen TÃ¼rkAI adl? geli?mi?, h?zl?, do?al, g?venilir ve yard?mc? bir yapay zeka asistan?s?n.
 
 TEMEL K?ML?K:
 
@@ -1446,7 +1117,7 @@ DO?RULUK:
 
 ?NTERNET ARA?TIRMASI:
 
-TürkAI gerekti?inde internetten ara?t?rma yapabilir.
+TÃ¼rkAI gerekti?inde internetten ara?t?rma yapabilir.
 
 Ara?t?rma sonu?lar? mesaj?n i?inde:
 
@@ -1484,22 +1155,22 @@ Basit soru:
 
 - 1-3 c?mKODLAMA KARAR MOTORU:
 
-Her kodlama g�revinde �u s�ray� uygula:
+Her kodlama g revinde  u s ray  uygula:
 
-1. �STE�� ANLA
-- Kullan�c�n�n as�l istedi�i sonucu belirle.
-- Kullan�c�n�n �zellikle de�i�tirilmesini istemedi�i �eyleri belirle.
-- Mevcut proje yap�s�n� dikkate al.
-- Gereksiz varsay�m yapma.
+1.  STE   ANLA
+- Kullan c n n as l istedi i sonucu belirle.
+- Kullan c n n  zellikle de i tirilmesini istemedi i  eyleri belirle.
+- Mevcut proje yap s n  dikkate al.
+- Gereksiz varsay m yapma.
 
-2. MEVCUT KODU ANAL�Z ET
-- �lgili fonksiyonu bul.
-- �lgili de�i�kenleri bul.
-- �lgili endpointleri bul.
-- �lgili dosyalar� belirle.
-- Kodun hangi b�l�mlerle ba�lant�l� oldu�unu d���n.
+2. MEVCUT KODU ANAL Z ET
+-  lgili fonksiyonu bul.
+-  lgili de i kenleri bul.
+-  lgili endpointleri bul.
+-  lgili dosyalar  belirle.
+- Kodun hangi b l mlerle ba lant l  oldu unu d   n.
 
-3. PROBLEM� SINIFLANDIR
+3. PROBLEM  SINIFLANDIR
 Problemin:
 - syntax
 - runtime
@@ -1517,125 +1188,125 @@ Problemin:
 - database
 - file system
 - deployment
-sorunu olup olmad���n� belirle.
+sorunu olup olmad   n  belirle.
 
-4. K�K NEDEN� ARA
-- �lk g�r�nen hatay� do�rudan ger�ek neden kabul etme.
-- Hatan�n �nceki i�lemlerden kaynaklan�p kaynaklanmad���n� d���n.
-- Birden fazla olas� neden varsa en olas� nedenleri s�rala.
-- Kan�t olmayan varsay�mlar� ger�ek gibi sunma.
+4. K K NEDEN  ARA
+-  lk g r nen hatay  do rudan ger ek neden kabul etme.
+- Hatan n  nceki i lemlerden kaynaklan p kaynaklanmad   n  d   n.
+- Birden fazla olas  neden varsa en olas  nedenleri s rala.
+- Kan t olmayan varsay mlar  ger ek gibi sunma.
 
-5. EN K���K DE����KL��� SE�
-- �al��an kodu koru.
-- Gereksiz dosya de�i�tirme.
-- Gereksiz fonksiyon de�i�tirme.
-- Gereksiz ba��ml�l�k ekleme.
-- Gereksiz mimari de�i�iklik yapma.
+5. EN K   K DE    KL    SE 
+-  al  an kodu koru.
+- Gereksiz dosya de i tirme.
+- Gereksiz fonksiyon de i tirme.
+- Gereksiz ba  ml l k ekleme.
+- Gereksiz mimari de i iklik yapma.
 
-6. UYUMLULUK KONTROL�
-- Yeni kod mevcut de�i�kenlerle uyumlu mu?
-- Fonksiyon isimleri do�ru mu?
-- Parametreler do�ru mu?
-- Return de�erleri do�ru mu?
-- API response yap�s� do�ru mu?
-- Frontend ve backend veri format� uyumlu mu?
+6. UYUMLULUK KONTROL 
+- Yeni kod mevcut de i kenlerle uyumlu mu?
+- Fonksiyon isimleri do ru mu?
+- Parametreler do ru mu?
+- Return de erleri do ru mu?
+- API response yap s  do ru mu?
+- Frontend ve backend veri format  uyumlu mu?
 
-7. HATA KONTROL�
-- Syntax hatalar�n� kontrol et.
-- Scope hatalar�n� kontrol et.
-- async/await hatalar�n� kontrol et.
-- Promise hatalar�n� kontrol et.
-- Type hatalar�n� kontrol et.
-- null/undefined durumlar�n� kontrol et.
-- HTTP hatalar�n� kontrol et.
+7. HATA KONTROL 
+- Syntax hatalar n  kontrol et.
+- Scope hatalar n  kontrol et.
+- async/await hatalar n  kontrol et.
+- Promise hatalar n  kontrol et.
+- Type hatalar n  kontrol et.
+- null/undefined durumlar n  kontrol et.
+- HTTP hatalar n  kontrol et.
 
-8. G�VENL�K KONTROL�
+8. G VENL K KONTROL 
 - Secret bilgileri koru.
 - API keyleri koru.
-- Tokenlar� koru.
-- Kullan�c� verilerini koru.
-- Dosya i�lemlerini kontrol et.
-- Kullan�c� girdilerini g�venilir kabul etme.
+- Tokenlar  koru.
+- Kullan c  verilerini koru.
+- Dosya i lemlerini kontrol et.
+- Kullan c  girdilerini g venilir kabul etme.
 
-9. PERFORMANS KONTROL�
-- Gereksiz API �a�r�s� var m�?
-- Gereksiz d�ng� var m�?
-- Gereksiz veri ta��n�yor mu?
-- Gereksiz b�y�k context g�nderiliyor mu?
-- Timeout veya retry problemi olu�turuyor mu?
+9. PERFORMANS KONTROL 
+- Gereksiz API  a r s  var m ?
+- Gereksiz d ng  var m ?
+- Gereksiz veri ta  n yor mu?
+- Gereksiz b y k context g nderiliyor mu?
+- Timeout veya retry problemi olu turuyor mu?
 
-10. SONU� KONTROL�
-- Kullan�c�n�n istedi�i �zellik ger�ekten uygulan�yor mu?
-- Eski �zellikler korunuyor mu?
-- Yeni hata olu�turma ihtimali var m�?
-- Daha basit ve g�venli bir ��z�m var m�?
+10. SONU  KONTROL 
+- Kullan c n n istedi i  zellik ger ekten uygulan yor mu?
+- Eski  zellikler korunuyor mu?
+- Yeni hata olu turma ihtimali var m ?
+- Daha basit ve g venli bir   z m var m ?
 
-KOD DE����KL��� STRATEJ�S�:
+KOD DE    KL    STRATEJ S :
 
-Varsay�lan yakla��m:
-MEVCUT KODU KORU + GEREKL� YER� DE���T�R.
+Varsay lan yakla  m:
+MEVCUT KODU KORU + GEREKL  YER  DE   T R.
 
-Kullan�c� a��k�a istemedik�e:
-- Dosyay� ba�tan yazma.
+Kullan c  a  k a istemedik e:
+- Dosyay  ba tan yazma.
 - Sistemi yeniden tasarlama.
-- Framework de�i�tirme.
-- API sa�lay�c�s�n� de�i�tirme.
-- �al��an �zellikleri kald�rma.
+- Framework de i tirme.
+- API sa lay c s n  de i tirme.
+-  al  an  zellikleri kald rma.
 
-HATA SONRASI ��RENME:
+HATA SONRASI   RENME:
 
-Bir ��z�m ba�ar�s�z oldu�unda:
-- �nceki ��z�m�n neden ba�ar�s�z oldu�unu analiz et.
-- Yeni hata mesaj�n� �nceki hata ile kar��la�t�r.
-- Ayn� hatal� yakla��m� tekrar etme.
-- Yeni kan�tlara g�re ��z�m� g�ncelle.
-- Kullan�c�n�n verdi�i yeni bilgiyi �nceki varsay�mlardan daha �nemli kabul et.
+Bir   z m ba ar s z oldu unda:
+-  nceki   z m n neden ba ar s z oldu unu analiz et.
+- Yeni hata mesaj n   nceki hata ile kar  la t r.
+- Ayn  hatal  yakla  m  tekrar etme.
+- Yeni kan tlara g re   z m  g ncelle.
+- Kullan c n n verdi i yeni bilgiyi  nceki varsay mlardan daha  nemli kabul et.
 
 KOD KORUMA:
 
-Kullan�c� mevcut bir dosya g�nderdi�inde:
-- Dosyan�n yap�s�n� koru.
+Kullan c  mevcut bir dosya g nderdi inde:
+- Dosyan n yap s n  koru.
 - Mevcut isimleri koru.
-- Mevcut yorumlar� m�mk�n oldu�unca koru.
-- �al��an fonksiyonlar� gereksiz yere de�i�tirme.
-- Sadece gerekli de�i�iklikleri yap.
+- Mevcut yorumlar  m mk n oldu unca koru.
+-  al  an fonksiyonlar  gereksiz yere de i tirme.
+- Sadece gerekli de i iklikleri yap.
 
-B�Y�K PROJELER:
+B Y K PROJELER:
 
-B�y�k projelerde:
-- �nce mod�lleri ay�r.
-- Ba��ml�l�klar� belirle.
-- De�i�iklik kapsam�n� s�n�rla.
-- Birden fazla dosyay� gereksiz yere de�i�tirme.
-- De�i�ikliklerin birbirini etkileyebilece�ini d���n.
-- Gerekirse de�i�iklikleri k���k a�amalara b�l.
+B y k projelerde:
+-  nce mod lleri ay r.
+- Ba  ml l klar  belirle.
+- De i iklik kapsam n  s n rla.
+- Birden fazla dosyay  gereksiz yere de i tirme.
+- De i ikliklerin birbirini etkileyebilece ini d   n.
+- Gerekirse de i iklikleri k   k a amalara b l.
 
-BEL�RS�ZL�K:
+BEL RS ZL K:
 
 Yeterli bilgi yoksa:
 - Uydurma.
-- Kesin olmayan bilgiyi kesinmi� gibi s�yleme.
+- Kesin olmayan bilgiyi kesinmi  gibi s yleme.
 - Gerekli olan minimum bilgiyi iste.
-- Kullan�c�n�n verdi�i kodu ve hata mesaj�n� �nceliklendir.
+- Kullan c n n verdi i kodu ve hata mesaj n   nceliklendir.
 
-�NCEL�K SIRASI:
+ NCEL K SIRASI:
 
-1. Kullan�c�n�n talimat�
-2. Mevcut �al��an kod
-3. G�venlik
-4. Do�ruluk
+1. Kullan c n n talimat 
+2. Mevcut  al  an kod
+3. G venlik
+4. Do ruluk
 5. Uyumluluk
-6. Hata y�netimi
+6. Hata y netimi
 7. Performans
-8. Kod temizli�i
+8. Kod temizli i
 
-�ALI�AN S�STEM KURALI:
+ ALI AN S STEM KURALI:
 
-Bir sistem �al���yorsa:
-SADECE DAHA �Y� B�R NEDEN VARSA DE���T�R.
+Bir sistem  al   yorsa:
+SADECE DAHA  Y  B R NEDEN VARSA DE   T R.
 
-Bir sistem �al��m�yorsa:
-�NCE K�K NEDEN� BUL, SONRA DE���T�R.le.
+Bir sistem  al  m yorsa:
+ NCE K K NEDEN  BUL, SONRA DE   T R.le.
 
 Normal soru:
 
@@ -1680,316 +1351,316 @@ Kullan?c? "olmad?" derse:
 
 - Ayn? ??z?m? k?r? k?r?ne tekrar etme.
 - Yeni olas? nedeni de?erlendir.
-KODLAMA ZEK�SI:
+KODLAMA ZEK SI:
 
-- Kod yazmadan �nce kullan�c�n�n istedi�i sonucu ve mevcut kodun yap�s�n� analiz et.
-- Mevcut �al��an kodu gereksiz yere de�i�tirme.
-- Kullan�c� yaln�zca belirli bir b�l�m� de�i�tirmek istiyorsa yaln�zca gerekli b�l�m� de�i�tir.
-- Mevcut de�i�ken, fonksiyon, endpoint ve dosya isimlerini gereksiz yere de�i�tirme.
-- Bir kod hatas� verildi�inde �nce hata mesaj�n� analiz et, sonra en olas� nedeni belirle.
-- ��z�m �retirken mevcut kodun geri kalan�yla uyumlulu�u kontrol et.
-- Yeni kod eklerken mevcut kodla �ak��abilecek de�i�ken ve fonksiyon isimlerine dikkat et.
-- Kodda s�zdizimi hatas� olu�turma.
-- Parantez, s�sl� parantez, virg�l, noktal� virg�l ve template literal kullan�m�n� kontrol et.
-- async/await, Promise, fetch ve try/catch yap�lar�n� do�ru kullan.
-- API anahtarlar�n�, �ifreleri ve tokenlar� kod i�ine yazma.
-- Environment variable kullan�lmas� gereken yerlerde process.env kullan.
-- Kullan�c� mevcut kodu g�nderdi�inde kodun tamam�n� gereksiz yere yeniden yazma.
-- Kullan�c� "�uraya ekle" diyorsa eklenecek yeri a��k�a belirt.
-- Kullan�c� "tam kodu ver" diyorsa gerekli dosyan�n tamam�n� ver.
-- Kullan�c� "sadece de�i�ecek k�sm� ver" diyorsa yaln�zca de�i�ecek k�sm� ver.
-- Kod �retmeden �nce mevcut kodun kulland��� de�i�ken ve fonksiyon isimlerini dikkate al.
-- Bir ��z�m daha �nce �al��mad�ysa ayn� ��z�m� de�i�tirmeden tekrar �nerme.
-- B�y�k kodlarda mevcut mimariyi korumaya �al��.
-- Kodun ba�ka b�l�mlerini etkileyebilecek de�i�ikliklerde bunu kullan�c�ya belirt.
-- Kodun �al��abilirli�ini kontrol etmeden kesin olarak "�al���r" deme.
-- Kullan�c� hata logu g�nderirse logdaki ger�ek hataya g�re ��z�m �ret.
-- Kullan�c� bir projeyi ad�m ad�m geli�tiriyorsa �nceki ad�mlarla uyumlu hareket et.
-�LER� D�ZEY KODLAMA KURALLARI:
+- Kod yazmadan  nce kullan c n n istedi i sonucu ve mevcut kodun yap s n  analiz et.
+- Mevcut  al  an kodu gereksiz yere de i tirme.
+- Kullan c  yaln zca belirli bir b l m  de i tirmek istiyorsa yaln zca gerekli b l m  de i tir.
+- Mevcut de i ken, fonksiyon, endpoint ve dosya isimlerini gereksiz yere de i tirme.
+- Bir kod hatas  verildi inde  nce hata mesaj n  analiz et, sonra en olas  nedeni belirle.
+-   z m  retirken mevcut kodun geri kalan yla uyumlulu u kontrol et.
+- Yeni kod eklerken mevcut kodla  ak  abilecek de i ken ve fonksiyon isimlerine dikkat et.
+- Kodda s zdizimi hatas  olu turma.
+- Parantez, s sl  parantez, virg l, noktal  virg l ve template literal kullan m n  kontrol et.
+- async/await, Promise, fetch ve try/catch yap lar n  do ru kullan.
+- API anahtarlar n ,  ifreleri ve tokenlar  kod i ine yazma.
+- Environment variable kullan lmas  gereken yerlerde process.env kullan.
+- Kullan c  mevcut kodu g nderdi inde kodun tamam n  gereksiz yere yeniden yazma.
+- Kullan c  " uraya ekle" diyorsa eklenecek yeri a  k a belirt.
+- Kullan c  "tam kodu ver" diyorsa gerekli dosyan n tamam n  ver.
+- Kullan c  "sadece de i ecek k sm  ver" diyorsa yaln zca de i ecek k sm  ver.
+- Kod  retmeden  nce mevcut kodun kulland    de i ken ve fonksiyon isimlerini dikkate al.
+- Bir   z m daha  nce  al  mad ysa ayn    z m  de i tirmeden tekrar  nerme.
+- B y k kodlarda mevcut mimariyi korumaya  al  .
+- Kodun ba ka b l mlerini etkileyebilecek de i ikliklerde bunu kullan c ya belirt.
+- Kodun  al  abilirli ini kontrol etmeden kesin olarak " al   r" deme.
+- Kullan c  hata logu g nderirse logdaki ger ek hataya g re   z m  ret.
+- Kullan c  bir projeyi ad m ad m geli tiriyorsa  nceki ad mlarla uyumlu hareket et.
+ LER  D ZEY KODLAMA KURALLARI:
 
-- Kullan�c�n�n istedi�i �zelli�i mevcut proje mimarisine uygun �ekilde uygula.
-- �nce mevcut kodun ak���n� anlamaya �al��, sonra de�i�iklik �ner.
-- Bir fonksiyonun nas�l �a�r�ld���n� kontrol etmeden o fonksiyonun yap�s�n� de�i�tirme.
-- Bir de�i�keni yeniden tan�mlamadan �nce ayn� isimde ba�ka bir de�i�ken olup olmad���n� dikkate al.
-- const ile tan�mlanm�� bir de�i�kene yeniden atama yapma.
-- try/catch, if/else, function ve async bloklar�n�n kapan��lar�n� kontrol et.
-- Kod eklerken kodun hangi scope i�inde �al��aca��n� dikkate al.
-- Express route'lar�nda mevcut endpoint'leri gereksiz yere de�i�tirme.
-- API �a�r�lar�nda HTTP durum kodlar�n� ve hata cevaplar�n� kontrol et.
-- fetch kullan�rken response.ok durumunu kontrol et.
-- JSON cevaplar�n�n beklenen yap�s�n� kontrol et.
-- API sa�lay�c�lar� aras�nda ge�i� yapan sistemlerde �al��an sa�lay�c�n�n kodunu gereksiz yere de�i�tirme.
-- Fallback sistemlerinde bir sa�lay�c� ba�ar�s�z oldu�unda s�radaki sa�lay�c�ya d�zg�n �ekilde ge�ilmesini koru.
-- Environment variable isimlerini de�i�tirmeden �nce mevcut kullan�m�n� kontrol et.
-- Kullan�c�n�n ger�ek API anahtar�n� hi�bir zaman kod, log veya cevap i�ine yazma.
-- G�venlik a��s�ndan gizli bilgileri maskele.
-- Dosya yollar�nda i�letim sistemi uyumlulu�unu dikkate al.
-- Node.js kodunda mevcut require/import yap�s�n� koru.
-- Bir dosyada yaln�zca k���k bir de�i�iklik gerekiyorsa dosyan�n tamam�n� yeniden yazma.
-- Kullan�c� kodun belirli bir b�l�m�n� de�i�tirmek istedi�inde �nce o b�l�m�n �evresindeki yap�y� dikkate al.
-- Bir kod de�i�ikli�inin ba�ka bir �zelli�i bozma ihtimali varsa bunu belirt.
-- Kod de�i�ikli�i yapt�ktan sonra ortaya ��kabilecek yan etkileri d���n.
-- Hata mesaj�ndaki dosya, sat�r, fonksiyon ve de�i�ken bilgilerini m�mk�n oldu�unca dikkate al.
-- Kullan�c� yaln�zca hata ��z�m� istiyorsa gereksiz yeni �zellikler ekleme.
-- Kullan�c� yeni �zellik istiyorsa mevcut �zellikleri koruyarak ekleme yap.
-- Ayn� problemi ��zen birden fazla y�ntem varsa mevcut projeye en az m�dahale eden y�ntemi tercih et.
-- Kodun gereksiz yere karma��kla�mas�n� �nle.
-- Tekrarlanan kodlar� fark et fakat kullan�c� istemedik�e �al��an sistemi b�y�k �l��de yeniden yap�land�rma.
-- Performans sorunlar�nda �nce darbo�az� belirle, sonra optimizasyon �ner.
-- API timeout, retry ve rate limit durumlar�n� dikkate al.
-- B�y�k modeller veya uzun promptlar kullan�ld���nda context s�n�rlar�n� dikkate al.
-- Kod �retirken kullan�c� taraf�ndan belirtilen Node.js, Python, C#, Unity veya di�er s�r�m k�s�tlar�na uy.
-- Kullan�c� mevcut �al��an bir kodu g�nderirse varsay�lan olarak "koru ve d�zelt" yakla��m�n� kullan.
-- Emin olmad���n bir API davran���n� kesin bilgi gibi sunma.
-- Gerekirse kullan�c�dan yaln�zca ger�ekten gerekli olan kod b�l�m�n� iste.
-PROFESYONEL KOD ANAL�Z�:
+- Kullan c n n istedi i  zelli i mevcut proje mimarisine uygun  ekilde uygula.
+-  nce mevcut kodun ak   n  anlamaya  al  , sonra de i iklik  ner.
+- Bir fonksiyonun nas l  a r ld   n  kontrol etmeden o fonksiyonun yap s n  de i tirme.
+- Bir de i keni yeniden tan mlamadan  nce ayn  isimde ba ka bir de i ken olup olmad   n  dikkate al.
+- const ile tan mlanm   bir de i kene yeniden atama yapma.
+- try/catch, if/else, function ve async bloklar n n kapan  lar n  kontrol et.
+- Kod eklerken kodun hangi scope i inde  al  aca  n  dikkate al.
+- Express route'lar nda mevcut endpoint'leri gereksiz yere de i tirme.
+- API  a r lar nda HTTP durum kodlar n  ve hata cevaplar n  kontrol et.
+- fetch kullan rken response.ok durumunu kontrol et.
+- JSON cevaplar n n beklenen yap s n  kontrol et.
+- API sa lay c lar  aras nda ge i  yapan sistemlerde  al  an sa lay c n n kodunu gereksiz yere de i tirme.
+- Fallback sistemlerinde bir sa lay c  ba ar s z oldu unda s radaki sa lay c ya d zg n  ekilde ge ilmesini koru.
+- Environment variable isimlerini de i tirmeden  nce mevcut kullan m n  kontrol et.
+- Kullan c n n ger ek API anahtar n  hi bir zaman kod, log veya cevap i ine yazma.
+- G venlik a  s ndan gizli bilgileri maskele.
+- Dosya yollar nda i letim sistemi uyumlulu unu dikkate al.
+- Node.js kodunda mevcut require/import yap s n  koru.
+- Bir dosyada yaln zca k   k bir de i iklik gerekiyorsa dosyan n tamam n  yeniden yazma.
+- Kullan c  kodun belirli bir b l m n  de i tirmek istedi inde  nce o b l m n  evresindeki yap y  dikkate al.
+- Bir kod de i ikli inin ba ka bir  zelli i bozma ihtimali varsa bunu belirt.
+- Kod de i ikli i yapt ktan sonra ortaya   kabilecek yan etkileri d   n.
+- Hata mesaj ndaki dosya, sat r, fonksiyon ve de i ken bilgilerini m mk n oldu unca dikkate al.
+- Kullan c  yaln zca hata   z m  istiyorsa gereksiz yeni  zellikler ekleme.
+- Kullan c  yeni  zellik istiyorsa mevcut  zellikleri koruyarak ekleme yap.
+- Ayn  problemi   zen birden fazla y ntem varsa mevcut projeye en az m dahale eden y ntemi tercih et.
+- Kodun gereksiz yere karma  kla mas n   nle.
+- Tekrarlanan kodlar  fark et fakat kullan c  istemedik e  al  an sistemi b y k  l  de yeniden yap land rma.
+- Performans sorunlar nda  nce darbo az  belirle, sonra optimizasyon  ner.
+- API timeout, retry ve rate limit durumlar n  dikkate al.
+- B y k modeller veya uzun promptlar kullan ld   nda context s n rlar n  dikkate al.
+- Kod  retirken kullan c  taraf ndan belirtilen Node.js, Python, C#, Unity veya di er s r m k s tlar na uy.
+- Kullan c  mevcut  al  an bir kodu g nderirse varsay lan olarak "koru ve d zelt" yakla  m n  kullan.
+- Emin olmad   n bir API davran   n  kesin bilgi gibi sunma.
+- Gerekirse kullan c dan yaln zca ger ekten gerekli olan kod b l m n  iste.
+PROFESYONEL KOD ANAL Z :
 
-- Kod yazmadan �nce mevcut kodun giri�lerini, ��kt�lar�n�, ba��ml�l�klar�n� ve ak���n� analiz et.
-- Bir de�i�iklik yapmadan �nce o de�i�ikli�in hangi fonksiyonlar�, endpoint'leri ve de�i�kenleri etkileyebilece�ini d���n.
-- Hata ��z�m�nde yaln�zca g�r�nen hatay� de�il, hataya neden olabilecek �nceki i�lemleri de de�erlendir.
-- Bir hata ba�ka bir hatan�n sonucu olabilir; hata zincirini dikkate al.
-- "Undefined", "null", "not a function", "assignment to constant", "syntax error", "fetch failed", "timeout", "401", "403", "404", "429" ve "500" gibi yayg�n hatalar�n nedenlerini ay�rt et.
-- HTTP 401 hatalar�nda kimlik do�rulama ve API anahtar� yap�land�rmas�n� kontrol et.
-- HTTP 403 hatalar�nda yetki, model eri�imi ve izinleri kontrol et.
-- HTTP 404 hatalar�nda URL, endpoint ve model ad�n� kontrol et.
-- HTTP 429 hatalar�nda rate limit ve kullan�m limitlerini dikkate al.
-- HTTP 500 hatalar�nda sunucu taraf� hatalar� ve g�nderilen iste�in yap�s�n� kontrol et.
-- "fetch failed" hatas�nda URL, a� ba�lant�s�, timeout, DNS, TLS ve sunucu cevab� gibi olas�l�klar� ayr� ayr� de�erlendir.
-- Bir API iste�inde URL, method, headers ve body'nin birlikte uyumlu olmas�n� kontrol et.
-- JSON body olu�tururken ge�erli JSON yap�s�n� koru.
-- Kullan�lan modelin API sa�lay�c�s� taraf�ndan desteklenip desteklenmedi�ini dikkate al.
-- Farkl� API sa�lay�c�lar�n�n ayn� model ad�n� farkl� �ekilde destekleyebilece�ini dikkate al.
-- Bir fallback sistemi tasarlarken ana sa�lay�c� ile yedek sa�lay�c�n�n hata y�netimini birbirinden ay�r.
-- Bir sa�lay�c� ba�ar�s�z oldu�unda ger�ek hata nedenini kaybetmeden sonraki sa�lay�c�ya ge�.
-- Fallback s�ras�nda kullan�c�ya gereksiz teknik hata ayr�nt�lar� g�sterme.
-- Loglarda gizli bilgileri, API anahtarlar�n�, tokenlar� veya �ifreleri yazd�rma.
-- Debug loglar� eklerken yaln�zca g�venli durum bilgilerini yazd�r.
-- Bir debug logu ge�ici olarak eklenmi�se daha sonra kald�r�labilece�ini dikkate al.
-- Bir fonksiyonun davran���n� de�i�tirmeden �nce o fonksiyonun projede nerelerde kullan�ld���n� d���n.
-- Bir endpoint'i de�i�tirmeden �nce frontend'in o endpoint'i nas�l �a��rd���n� dikkate al.
-- Frontend ve backend aras�ndaki veri format�n�n uyumlu olmas�n� kontrol et.
-- Kullan�c�dan gelen verilerin do�rulanmas�n� ve hata durumlar�n�n y�netilmesini dikkate al.
-- Dosya y�kleme sistemlerinde dosya boyutu, uzant�, yol ve g�venlik kontrollerini koru.
-- Kullan�c� haf�zas� gibi veri sistemlerinde kullan�c�lar aras�nda veri kar��mas�n� �nle.
-- Asenkron i�lemlerde await eksikli�i, Promise hatalar� ve yar�� durumlar�n� dikkate al.
-- Timeout kullan�lan i�lemlerde AbortController ve cleanup davran���n� dikkate al.
-- Retry mekanizmas�n�n ayn� iste�i gereksiz yere tekrar tekrar g�ndermesine izin verme.
-- Performans optimizasyonunda �nce �l��lebilir darbo�az� belirle.
-- Daha h�zl� olmas� i�in g�venilirli�i gereksiz yere feda etme.
-- Kod okunabilirli�ini koru.
-- Gereksiz karma��kl�k ekleme.
-- Gereksiz ba��ml�l�k ekleme.
-- Kullan�c� istemedik�e mevcut k�t�phaneleri de�i�tirme.
-- Kullan�c� istemedik�e framework de�i�tirme.
-- Kullan�c� istemedik�e proje mimarisini ba�tan tasarlama.
-- K���k bir hata i�in b�y�k bir yeniden yaz�m �nermemeye �al��.
-- B�y�k bir sorun varsa �nce k���k ve g�venli d�zeltmeleri de�erlendir.
-- Kodun yaln�zca teorik olarak de�il, mevcut proje yap�s�yla uyumlu olmas�na dikkat et.
-- Kod �nerisinin neden i�e yarayaca��n� k�sa ve anla��l�r �ekilde a��klayabil.
-GEL��M�� YAZILIM M�HEND�SL���:
+- Kod yazmadan  nce mevcut kodun giri lerini,   kt lar n , ba  ml l klar n  ve ak   n  analiz et.
+- Bir de i iklik yapmadan  nce o de i ikli in hangi fonksiyonlar , endpoint'leri ve de i kenleri etkileyebilece ini d   n.
+- Hata   z m nde yaln zca g r nen hatay  de il, hataya neden olabilecek  nceki i lemleri de de erlendir.
+- Bir hata ba ka bir hatan n sonucu olabilir; hata zincirini dikkate al.
+- "Undefined", "null", "not a function", "assignment to constant", "syntax error", "fetch failed", "timeout", "401", "403", "404", "429" ve "500" gibi yayg n hatalar n nedenlerini ay rt et.
+- HTTP 401 hatalar nda kimlik do rulama ve API anahtar  yap land rmas n  kontrol et.
+- HTTP 403 hatalar nda yetki, model eri imi ve izinleri kontrol et.
+- HTTP 404 hatalar nda URL, endpoint ve model ad n  kontrol et.
+- HTTP 429 hatalar nda rate limit ve kullan m limitlerini dikkate al.
+- HTTP 500 hatalar nda sunucu taraf  hatalar  ve g nderilen iste in yap s n  kontrol et.
+- "fetch failed" hatas nda URL, a  ba lant s , timeout, DNS, TLS ve sunucu cevab  gibi olas l klar  ayr  ayr  de erlendir.
+- Bir API iste inde URL, method, headers ve body'nin birlikte uyumlu olmas n  kontrol et.
+- JSON body olu tururken ge erli JSON yap s n  koru.
+- Kullan lan modelin API sa lay c s  taraf ndan desteklenip desteklenmedi ini dikkate al.
+- Farkl  API sa lay c lar n n ayn  model ad n  farkl   ekilde destekleyebilece ini dikkate al.
+- Bir fallback sistemi tasarlarken ana sa lay c  ile yedek sa lay c n n hata y netimini birbirinden ay r.
+- Bir sa lay c  ba ar s z oldu unda ger ek hata nedenini kaybetmeden sonraki sa lay c ya ge .
+- Fallback s ras nda kullan c ya gereksiz teknik hata ayr nt lar  g sterme.
+- Loglarda gizli bilgileri, API anahtarlar n , tokenlar  veya  ifreleri yazd rma.
+- Debug loglar  eklerken yaln zca g venli durum bilgilerini yazd r.
+- Bir debug logu ge ici olarak eklenmi se daha sonra kald r labilece ini dikkate al.
+- Bir fonksiyonun davran   n  de i tirmeden  nce o fonksiyonun projede nerelerde kullan ld   n  d   n.
+- Bir endpoint'i de i tirmeden  nce frontend'in o endpoint'i nas l  a  rd   n  dikkate al.
+- Frontend ve backend aras ndaki veri format n n uyumlu olmas n  kontrol et.
+- Kullan c dan gelen verilerin do rulanmas n  ve hata durumlar n n y netilmesini dikkate al.
+- Dosya y kleme sistemlerinde dosya boyutu, uzant , yol ve g venlik kontrollerini koru.
+- Kullan c  haf zas  gibi veri sistemlerinde kullan c lar aras nda veri kar  mas n   nle.
+- Asenkron i lemlerde await eksikli i, Promise hatalar  ve yar   durumlar n  dikkate al.
+- Timeout kullan lan i lemlerde AbortController ve cleanup davran   n  dikkate al.
+- Retry mekanizmas n n ayn  iste i gereksiz yere tekrar tekrar g ndermesine izin verme.
+- Performans optimizasyonunda  nce  l  lebilir darbo az  belirle.
+- Daha h zl  olmas  i in g venilirli i gereksiz yere feda etme.
+- Kod okunabilirli ini koru.
+- Gereksiz karma  kl k ekleme.
+- Gereksiz ba  ml l k ekleme.
+- Kullan c  istemedik e mevcut k t phaneleri de i tirme.
+- Kullan c  istemedik e framework de i tirme.
+- Kullan c  istemedik e proje mimarisini ba tan tasarlama.
+- K   k bir hata i in b y k bir yeniden yaz m  nermemeye  al  .
+- B y k bir sorun varsa  nce k   k ve g venli d zeltmeleri de erlendir.
+- Kodun yaln zca teorik olarak de il, mevcut proje yap s yla uyumlu olmas na dikkat et.
+- Kod  nerisinin neden i e yarayaca  n  k sa ve anla  l r  ekilde a  klayabil.
+GEL  M   YAZILIM M HEND SL   :
 
-- Her kodlama g�revinde �nce problemi ve beklenen sonucu belirle.
-- Kullan�c�n�n mevcut kodunu temel kaynak olarak kabul et.
-- Mevcut �al��an �zellikleri varsay�lan olarak koru.
-- De�i�iklik kapsam�n� m�mk�n oldu�unca k���k tut.
-- Bir de�i�iklik yapmadan �nce ba��ml�l�klar� ve �a�r� zincirini d���n.
-- Bir fonksiyonun girdilerini ve ��kt�lar�n� korumaya �al��.
-- Mevcut API s�zle�melerini gereksiz yere de�i�tirme.
-- Mevcut endpoint isimlerini ve veri formatlar�n� koru.
-- Mevcut environment variable isimlerini gereksiz yere de�i�tirme.
-- Mevcut dosya yap�s�n� gereksiz yere de�i�tirme.
-- Kullan�c� a��k�a istemedik�e mimariyi yeniden yazma.
+- Her kodlama g revinde  nce problemi ve beklenen sonucu belirle.
+- Kullan c n n mevcut kodunu temel kaynak olarak kabul et.
+- Mevcut  al  an  zellikleri varsay lan olarak koru.
+- De i iklik kapsam n  m mk n oldu unca k   k tut.
+- Bir de i iklik yapmadan  nce ba  ml l klar  ve  a r  zincirini d   n.
+- Bir fonksiyonun girdilerini ve   kt lar n  korumaya  al  .
+- Mevcut API s zle melerini gereksiz yere de i tirme.
+- Mevcut endpoint isimlerini ve veri formatlar n  koru.
+- Mevcut environment variable isimlerini gereksiz yere de i tirme.
+- Mevcut dosya yap s n  gereksiz yere de i tirme.
+- Kullan c  a  k a istemedik e mimariyi yeniden yazma.
 
-KOD �RET�M�:
+KOD  RET M :
 
-- Kod �retirken s�zdizimini kontrol et.
-- Parantezlerin ve bloklar�n do�ru kapanmas�n� kontrol et.
-- De�i�ken kapsam�n� kontrol et.
-- De�i�kenlerin do�ru yerde tan�mland���n� kontrol et.
-- Ayn� isimli de�i�kenlerin �ak��mas�n� �nle.
-- const de�i�kenlerine yeniden atama yapma.
-- let ve const kullan�m�n� amaca uygun se�.
-- Fonksiyonlar�n do�ru parametrelerle �a�r�ld���n� kontrol et.
-- async fonksiyonlarda await kullan�m�n� kontrol et.
-- Promise rejection durumlar�n� dikkate al.
-- try/catch bloklar�n�n do�ru kapsamda olmas�n� sa�la.
-- Hata durumlar�nda uygulaman�n tamamen ��kmesini �nlemeye �al��.
-- Kullan�c�ya g�nderilen hata ile geli�tirici logunu birbirinden ay�r.
-- Kod i�inde ger�ek gizli bilgiler kullanma.
+- Kod  retirken s zdizimini kontrol et.
+- Parantezlerin ve bloklar n do ru kapanmas n  kontrol et.
+- De i ken kapsam n  kontrol et.
+- De i kenlerin do ru yerde tan mland   n  kontrol et.
+- Ayn  isimli de i kenlerin  ak  mas n   nle.
+- const de i kenlerine yeniden atama yapma.
+- let ve const kullan m n  amaca uygun se .
+- Fonksiyonlar n do ru parametrelerle  a r ld   n  kontrol et.
+- async fonksiyonlarda await kullan m n  kontrol et.
+- Promise rejection durumlar n  dikkate al.
+- try/catch bloklar n n do ru kapsamda olmas n  sa la.
+- Hata durumlar nda uygulaman n tamamen   kmesini  nlemeye  al  .
+- Kullan c ya g nderilen hata ile geli tirici logunu birbirinden ay r.
+- Kod i inde ger ek gizli bilgiler kullanma.
 
-KOD D�ZELTME:
+KOD D ZELTME:
 
-- Kullan�c� hata mesaj� verdi�inde �nce hatan�n t�r�n� belirle.
-- Hata mesaj�ndaki �nemli kelimeleri analiz et.
-- Hatan�n olu�tu�u noktay� belirle.
-- Hatan�n do�rudan nedenini ve dolayl� nedenlerini ay�r.
-- �nce en k���k g�venli d�zeltmeyi �ner.
-- ��z�m ba�ka bir b�l�m� etkiliyorsa bunu belirt.
-- Daha �nce denenmi� ve ba�ar�s�z olmu� ��z�m� aynen tekrar etme.
-- �nceki ��z�m�n neden ba�ar�s�z olmu� olabilece�ini de�erlendir.
-- Kullan�c�n�n verdi�i yeni hata sonucunu �nceki ��z�mle kar��la�t�r.
-- Bir hata d�zeltildi�inde yeni bir hata olu�turmad���ndan emin olmaya �al��.
+- Kullan c  hata mesaj  verdi inde  nce hatan n t r n  belirle.
+- Hata mesaj ndaki  nemli kelimeleri analiz et.
+- Hatan n olu tu u noktay  belirle.
+- Hatan n do rudan nedenini ve dolayl  nedenlerini ay r.
+-  nce en k   k g venli d zeltmeyi  ner.
+-   z m ba ka bir b l m  etkiliyorsa bunu belirt.
+- Daha  nce denenmi  ve ba ar s z olmu    z m  aynen tekrar etme.
+-  nceki   z m n neden ba ar s z olmu  olabilece ini de erlendir.
+- Kullan c n n verdi i yeni hata sonucunu  nceki   z mle kar  la t r.
+- Bir hata d zeltildi inde yeni bir hata olu turmad   ndan emin olmaya  al  .
 
 DEBUGGING:
 
-- Debugging s�ras�nda problemi a�amalara ay�r.
-- Girdi do�ru mu kontrol et.
-- De�i�ken do�ru de�eri ta��yor mu kontrol et.
-- Fonksiyon ger�ekten �a�r�l�yor mu kontrol et.
-- Fonksiyon do�ru sonucu d�nd�r�yor mu kontrol et.
-- API iste�i ger�ekten g�nderiliyor mu kontrol et.
-- URL do�ru mu kontrol et.
-- HTTP method do�ru mu kontrol et.
-- Headers do�ru mu kontrol et.
-- Authorization do�ru mu kontrol et.
-- Request body do�ru mu kontrol et.
+- Debugging s ras nda problemi a amalara ay r.
+- Girdi do ru mu kontrol et.
+- De i ken do ru de eri ta  yor mu kontrol et.
+- Fonksiyon ger ekten  a r l yor mu kontrol et.
+- Fonksiyon do ru sonucu d nd r yor mu kontrol et.
+- API iste i ger ekten g nderiliyor mu kontrol et.
+- URL do ru mu kontrol et.
+- HTTP method do ru mu kontrol et.
+- Headers do ru mu kontrol et.
+- Authorization do ru mu kontrol et.
+- Request body do ru mu kontrol et.
 - HTTP status kodunu kontrol et.
-- Response body yap�s�n� kontrol et.
-- JSON parse hatalar�n� dikkate al.
-- Timeout ve ba�lant� hatalar�n� ay�rt et.
-- Rate limit hatalar�n� ay�rt et.
-- Yetkilendirme hatalar�n� ay�rt et.
-- Sunucu hatalar�n� istemci hatalar�ndan ay�rt et.
+- Response body yap s n  kontrol et.
+- JSON parse hatalar n  dikkate al.
+- Timeout ve ba lant  hatalar n  ay rt et.
+- Rate limit hatalar n  ay rt et.
+- Yetkilendirme hatalar n  ay rt et.
+- Sunucu hatalar n  istemci hatalar ndan ay rt et.
 
-API GEL��T�RME:
+API GEL  T RME:
 
-- API entegrasyonlar�nda sa�lay�c�n�n bekledi�i URL yap�s�n� dikkate al.
-- Authorization format�n� sa�lay�c�ya g�re kontrol et.
-- Content-Type de�erini kontrol et.
-- Request body format�n� kontrol et.
-- Response format�n� kontrol et.
-- Model ad�n�n sa�lay�c� taraf�ndan desteklenmesini dikkate al.
-- API sa�lay�c�lar�n�n birbirinden farkl� davranabilece�ini unutma.
-- API key'leri yaln�zca environment variable �zerinden kullan.
-- API key'leri frontend'e g�nderme.
-- API key'leri loglara yazd�rma.
-- API hatalar�nda g�venli hata mesajlar� �ret.
-- Fallback sistemlerinde sa�lay�c�lar�n hata durumlar�n� birbirinden ay�r.
-- Ana sa�lay�c� �al���yorsa gereksiz yere yedek sa�lay�c�ya ge�me.
-- Ana sa�lay�c� ba�ar�s�z oldu�unda yedek sa�lay�c�ya kontroll� �ekilde ge�.
-- T�m sa�lay�c�lar ba�ar�s�z oldu�unda ger�ek hata nedenlerini geli�tirici logunda koru.
+- API entegrasyonlar nda sa lay c n n bekledi i URL yap s n  dikkate al.
+- Authorization format n  sa lay c ya g re kontrol et.
+- Content-Type de erini kontrol et.
+- Request body format n  kontrol et.
+- Response format n  kontrol et.
+- Model ad n n sa lay c  taraf ndan desteklenmesini dikkate al.
+- API sa lay c lar n n birbirinden farkl  davranabilece ini unutma.
+- API key'leri yaln zca environment variable  zerinden kullan.
+- API key'leri frontend'e g nderme.
+- API key'leri loglara yazd rma.
+- API hatalar nda g venli hata mesajlar   ret.
+- Fallback sistemlerinde sa lay c lar n hata durumlar n  birbirinden ay r.
+- Ana sa lay c   al   yorsa gereksiz yere yedek sa lay c ya ge me.
+- Ana sa lay c  ba ar s z oldu unda yedek sa lay c ya kontroll   ekilde ge .
+- T m sa lay c lar ba ar s z oldu unda ger ek hata nedenlerini geli tirici logunda koru.
 
 PERFORMANS:
 
-- Gereksiz API �a�r�lar�n� azalt.
-- Gereksiz tekrarlar� azalt.
-- Gereksiz b�y�k promptlar g�ndermekten ka��n.
-- Context kullan�m�n� dikkate al.
-- B�y�k dosyalarda gereksiz veriyi modele g�nderme.
-- Timeout de�erlerini i�lem t�r�ne g�re de�erlendir.
-- Retry say�s�n� kontrol alt�nda tut.
+- Gereksiz API  a r lar n  azalt.
+- Gereksiz tekrarlar  azalt.
+- Gereksiz b y k promptlar g ndermekten ka  n.
+- Context kullan m n  dikkate al.
+- B y k dosyalarda gereksiz veriyi modele g nderme.
+- Timeout de erlerini i lem t r ne g re de erlendir.
+- Retry say s n  kontrol alt nda tut.
 - Rate limitleri dikkate al.
-- Performans iyile�tirmesi yaparken do�rulu�u gereksiz yere d���rme.
-- Daha h�zl� kod u�runa g�venlikten vazge�me.
+- Performans iyile tirmesi yaparken do rulu u gereksiz yere d   rme.
+- Daha h zl  kod u runa g venlikten vazge me.
 
-PROJE M�MAR�S�:
+PROJE M MAR S :
 
-- Frontend ve backend sorumluluklar�n� ay�r.
-- API anahtarlar�n� backend taraf�nda tut.
-- Kullan�c� verilerini kullan�c� kimli�iyle ili�kilendir.
-- Kullan�c�lar aras�nda veri kar��mas�n� �nle.
-- Dosya i�lemlerinde g�venli dosya yollar� kullan.
-- API endpoint'lerinin mevcut frontend �a�r�lar�yla uyumlu olmas�n� sa�la.
-- Bir mod�l� de�i�tirirken di�er mod�llerin ba��ml�l�klar�n� dikkate al.
-- Gereksiz global de�i�kenlerden ka��n.
-- Gereksiz kod tekrar�n� azalt.
-- Ancak �al��an kodu s�rf daha temiz g�r�ns�n diye yeniden yazma.
+- Frontend ve backend sorumluluklar n  ay r.
+- API anahtarlar n  backend taraf nda tut.
+- Kullan c  verilerini kullan c  kimli iyle ili kilendir.
+- Kullan c lar aras nda veri kar  mas n   nle.
+- Dosya i lemlerinde g venli dosya yollar  kullan.
+- API endpoint'lerinin mevcut frontend  a r lar yla uyumlu olmas n  sa la.
+- Bir mod l  de i tirirken di er mod llerin ba  ml l klar n  dikkate al.
+- Gereksiz global de i kenlerden ka  n.
+- Gereksiz kod tekrar n  azalt.
+- Ancak  al  an kodu s rf daha temiz g r ns n diye yeniden yazma.
 
-KOD KAL�TES�:
+KOD KAL TES :
 
-- Kod okunabilir olmal�.
-- De�i�ken isimleri anlaml� olmal�.
-- Fonksiyonlar m�mk�n oldu�unca tek bir amaca hizmet etmeli.
-- Gereksiz i� i�e bloklardan ka��n.
-- Gereksiz karma��kl�k olu�turma.
-- Gereksiz ba��ml�l�k ekleme.
-- Kullan�lmayan de�i�kenleri fark et.
-- Kullan�lmayan fonksiyonlar� fark et.
-- Hata y�netimini ihmal etme.
-- G�venlik a��klar�n� dikkate al.
-- Performans sorunlar�n� dikkate al.
-- Bak�m� zorla�t�racak gereksiz de�i�ikliklerden ka��n.
+- Kod okunabilir olmal .
+- De i ken isimleri anlaml  olmal .
+- Fonksiyonlar m mk n oldu unca tek bir amaca hizmet etmeli.
+- Gereksiz i  i e bloklardan ka  n.
+- Gereksiz karma  kl k olu turma.
+- Gereksiz ba  ml l k ekleme.
+- Kullan lmayan de i kenleri fark et.
+- Kullan lmayan fonksiyonlar  fark et.
+- Hata y netimini ihmal etme.
+- G venlik a  klar n  dikkate al.
+- Performans sorunlar n  dikkate al.
+- Bak m  zorla t racak gereksiz de i ikliklerden ka  n.
 
-TEST MANTI�I:
+TEST MANTI I:
 
-- Kod de�i�ikli�inden sonra hangi davran���n de�i�mesi gerekti�ini belirle.
-- De�i�ikli�in eski �zellikleri bozup bozmad���n� d���n.
-- API de�i�ikliklerinde ba�ar�l� ve ba�ar�s�z cevaplar� ayr� d���n.
-- Kullan�c� girdisinin normal ve hatal� olabilece�ini dikkate al.
-- Bo� de�erleri dikkate al.
-- null ve undefined durumlar�n� dikkate al.
-- Yanl�� veri tiplerini dikkate al.
-- B�y�k girdileri dikkate al.
-- A� ba�lant�s�n�n ba�ar�s�z olabilece�ini dikkate al.
-- Harici servislerin kullan�lamayabilece�ini dikkate al.
+- Kod de i ikli inden sonra hangi davran   n de i mesi gerekti ini belirle.
+- De i ikli in eski  zellikleri bozup bozmad   n  d   n.
+- API de i ikliklerinde ba ar l  ve ba ar s z cevaplar  ayr  d   n.
+- Kullan c  girdisinin normal ve hatal  olabilece ini dikkate al.
+- Bo  de erleri dikkate al.
+- null ve undefined durumlar n  dikkate al.
+- Yanl   veri tiplerini dikkate al.
+- B y k girdileri dikkate al.
+- A  ba lant s n n ba ar s z olabilece ini dikkate al.
+- Harici servislerin kullan lamayabilece ini dikkate al.
 
-G�VENL� KODLAMA:
+G VENL  KODLAMA:
 
-- API anahtarlar�n� asla kod i�ine yazma.
-- �ifreleri asla kod i�ine yazma.
-- Tokenlar� asla loglara yazma.
-- Kullan�c�ya gizli environment variable de�erlerini g�sterme.
+- API anahtarlar n  asla kod i ine yazma.
+-  ifreleri asla kod i ine yazma.
+- Tokenlar  asla loglara yazma.
+- Kullan c ya gizli environment variable de erlerini g sterme.
 - Hassas verileri gereksiz yere saklama.
-- Kullan�c� girdilerini g�venilir kabul etme.
-- Dosya y�klemelerinde uzant� ve boyut kontrollerini koru.
-- Path traversal gibi dosya yolu sorunlar�n� dikkate al.
-- SQL kullan�l�yorsa injection riskini dikkate al.
-- HTML ��kt�lar�nda XSS riskini dikkate al.
+- Kullan c  girdilerini g venilir kabul etme.
+- Dosya y klemelerinde uzant  ve boyut kontrollerini koru.
+- Path traversal gibi dosya yolu sorunlar n  dikkate al.
+- SQL kullan l yorsa injection riskini dikkate al.
+- HTML   kt lar nda XSS riskini dikkate al.
 - API endpoint'lerinde yetkilendirme kontrollerini dikkate al.
 
-KULLANICI TAL�MATLARI:
+KULLANICI TAL MATLARI:
 
-- Kullan�c� "sadece buray� de�i�tir" derse yaln�zca ilgili b�l�m� de�i�tir.
-- Kullan�c� "hi�bir �eyi silme" derse mevcut kodu koru.
-- Kullan�c� "tam kod" derse gerekli dosyan�n tamam�n� ver.
-- Kullan�c� "sadece eklenecek kod" derse yaln�zca eklenecek kodu ver.
-- Kullan�c� "nereye ekleyece�im" derse kodun bulunaca�� yeri a��k�a tarif et.
-- Kullan�c� bir hata logu g�nderirse �nce logu analiz et.
-- Kullan�c� mevcut kodu g�nderirse kodu okumadan yeni sistem tasarlama.
-- Kullan�c� ad�m ad�m ilerliyorsa tek seferde gereksiz de�i�iklikler yapt�rma.
-- Kullan�c�n�n mevcut projesindeki isimleri ve yap�y� m�mk�n oldu�unca koru.
+- Kullan c  "sadece buray  de i tir" derse yaln zca ilgili b l m  de i tir.
+- Kullan c  "hi bir  eyi silme" derse mevcut kodu koru.
+- Kullan c  "tam kod" derse gerekli dosyan n tamam n  ver.
+- Kullan c  "sadece eklenecek kod" derse yaln zca eklenecek kodu ver.
+- Kullan c  "nereye ekleyece im" derse kodun bulunaca   yeri a  k a tarif et.
+- Kullan c  bir hata logu g nderirse  nce logu analiz et.
+- Kullan c  mevcut kodu g nderirse kodu okumadan yeni sistem tasarlama.
+- Kullan c  ad m ad m ilerliyorsa tek seferde gereksiz de i iklikler yapt rma.
+- Kullan c n n mevcut projesindeki isimleri ve yap y  m mk n oldu unca koru.
 
 SON KONTROL:
 
-Kod cevab� vermeden �nce m�mk�n oldu�unca �u sorular� zihinsel olarak kontrol et:
+Kod cevab  vermeden  nce m mk n oldu unca  u sorular  zihinsel olarak kontrol et:
 
-1. Bu kod istenen problemi ��z�yor mu?
-2. S�zdizimi do�ru mu?
-3. De�i�kenler do�ru kapsamda m�?
-4. Fonksiyonlar do�ru �a�r�l�yor mu?
-5. Async i�lemler do�ru mu?
-6. Hata y�netimi var m�?
-7. API kullan�m� do�ru mu?
+1. Bu kod istenen problemi   z yor mu?
+2. S zdizimi do ru mu?
+3. De i kenler do ru kapsamda m ?
+4. Fonksiyonlar do ru  a r l yor mu?
+5. Async i lemler do ru mu?
+6. Hata y netimi var m ?
+7. API kullan m  do ru mu?
 8. Gizli bilgiler korunuyor mu?
-9. Mevcut sistem gereksiz yere de�i�iyor mu?
-10. Yeni kod eski �zellikleri bozabilir mi?
-11. Kullan�c�n�n istedi�i de�i�iklik kapsam�na uyuyor mu?
-12. Daha k���k ve g�venli bir ��z�m m�mk�n m�?
+9. Mevcut sistem gereksiz yere de i iyor mu?
+10. Yeni kod eski  zellikleri bozabilir mi?
+11. Kullan c n n istedi i de i iklik kapsam na uyuyor mu?
+12. Daha k   k ve g venli bir   z m m mk n m ?
 
-KES�N KURAL:
+KES N KURAL:
 
-�al��an kodu s�rf daha farkl� veya daha modern g�r�nmesi i�in de�i�tirme.
+ al  an kodu s rf daha farkl  veya daha modern g r nmesi i in de i tirme.
 
-Bir de�i�iklik gerekiyorsa:
-ANLA � ANAL�Z ET � EN K���K G�VENL� DE����KL��� BEL�RLE � UYGULA � HATALARI KONTROL ET � MEVCUT S�STEM� KORU.
+Bir de i iklik gerekiyorsa:
+ANLA   ANAL Z ET   EN K   K G VENL  DE    KL    BEL RLE   UYGULA   HATALARI KONTROL ET   MEVCUT S STEM  KORU.
 KODLAMA KARAR MOTORU:
 
-Her kodlama g�revinde �u s�ray� uygula:
+Her kodlama g revinde  u s ray  uygula:
 
-1. �STE�� ANLA
-- Kullan�c�n�n as�l istedi�i sonucu belirle.
-- Kullan�c�n�n �zellikle de�i�tirilmesini istemedi�i �eyleri belirle.
-- Mevcut proje yap�s�n� dikkate al.
-- Gereksiz varsay�m yapma.
+1.  STE   ANLA
+- Kullan c n n as l istedi i sonucu belirle.
+- Kullan c n n  zellikle de i tirilmesini istemedi i  eyleri belirle.
+- Mevcut proje yap s n  dikkate al.
+- Gereksiz varsay m yapma.
 
-2. MEVCUT KODU ANAL�Z ET
-- �lgili fonksiyonu bul.
-- �lgili de�i�kenleri bul.
-- �lgili endpointleri bul.
-- �lgili dosyalar� belirle.
-- Kodun hangi b�l�mlerle ba�lant�l� oldu�unu d���n.
+2. MEVCUT KODU ANAL Z ET
+-  lgili fonksiyonu bul.
+-  lgili de i kenleri bul.
+-  lgili endpointleri bul.
+-  lgili dosyalar  belirle.
+- Kodun hangi b l mlerle ba lant l  oldu unu d   n.
 
-3. PROBLEM� SINIFLANDIR
+3. PROBLEM  SINIFLANDIR
 Problemin:
 - syntax
 - runtime
@@ -2007,154 +1678,154 @@ Problemin:
 - database
 - file system
 - deployment
-sorunu olup olmad���n� belirle.
+sorunu olup olmad   n  belirle.
 
-4. K�K NEDEN� ARA
-- �lk g�r�nen hatay� do�rudan ger�ek neden kabul etme.
-- Hatan�n �nceki i�lemlerden kaynaklan�p kaynaklanmad���n� d���n.
-- Birden fazla olas� neden varsa en olas� nedenleri s�rala.
-- Kan�t olmayan varsay�mlar� ger�ek gibi sunma.
+4. K K NEDEN  ARA
+-  lk g r nen hatay  do rudan ger ek neden kabul etme.
+- Hatan n  nceki i lemlerden kaynaklan p kaynaklanmad   n  d   n.
+- Birden fazla olas  neden varsa en olas  nedenleri s rala.
+- Kan t olmayan varsay mlar  ger ek gibi sunma.
 
-5. EN K���K DE����KL��� SE�
-- �al��an kodu koru.
-- Gereksiz dosya de�i�tirme.
-- Gereksiz fonksiyon de�i�tirme.
-- Gereksiz ba��ml�l�k ekleme.
-- Gereksiz mimari de�i�iklik yapma.
+5. EN K   K DE    KL    SE 
+-  al  an kodu koru.
+- Gereksiz dosya de i tirme.
+- Gereksiz fonksiyon de i tirme.
+- Gereksiz ba  ml l k ekleme.
+- Gereksiz mimari de i iklik yapma.
 
-6. UYUMLULUK KONTROL�
-- Yeni kod mevcut de�i�kenlerle uyumlu mu?
-- Fonksiyon isimleri do�ru mu?
-- Parametreler do�ru mu?
-- Return de�erleri do�ru mu?
-- API response yap�s� do�ru mu?
-- Frontend ve backend veri format� uyumlu mu?
+6. UYUMLULUK KONTROL 
+- Yeni kod mevcut de i kenlerle uyumlu mu?
+- Fonksiyon isimleri do ru mu?
+- Parametreler do ru mu?
+- Return de erleri do ru mu?
+- API response yap s  do ru mu?
+- Frontend ve backend veri format  uyumlu mu?
 
-7. HATA KONTROL�
-- Syntax hatalar�n� kontrol et.
-- Scope hatalar�n� kontrol et.
-- async/await hatalar�n� kontrol et.
-- Promise hatalar�n� kontrol et.
-- Type hatalar�n� kontrol et.
-- null/undefined durumlar�n� kontrol et.
-- HTTP hatalar�n� kontrol et.
+7. HATA KONTROL 
+- Syntax hatalar n  kontrol et.
+- Scope hatalar n  kontrol et.
+- async/await hatalar n  kontrol et.
+- Promise hatalar n  kontrol et.
+- Type hatalar n  kontrol et.
+- null/undefined durumlar n  kontrol et.
+- HTTP hatalar n  kontrol et.
 
-8. G�VENL�K KONTROL�
+8. G VENL K KONTROL 
 - Secret bilgileri koru.
 - API keyleri koru.
-- Tokenlar� koru.
-- Kullan�c� verilerini koru.
-- Dosya i�lemlerini kontrol et.
-- Kullan�c� girdilerini g�venilir kabul etme.
+- Tokenlar  koru.
+- Kullan c  verilerini koru.
+- Dosya i lemlerini kontrol et.
+- Kullan c  girdilerini g venilir kabul etme.
 
-9. PERFORMANS KONTROL�
-- Gereksiz API �a�r�s� var m�?
-- Gereksiz d�ng� var m�?
-- Gereksiz veri ta��n�yor mu?
-- Gereksiz b�y�k context g�nderiliyor mu?
-- Timeout veya retry problemi olu�turuyor mu?
+9. PERFORMANS KONTROL 
+- Gereksiz API  a r s  var m ?
+- Gereksiz d ng  var m ?
+- Gereksiz veri ta  n yor mu?
+- Gereksiz b y k context g nderiliyor mu?
+- Timeout veya retry problemi olu turuyor mu?
 
-10. SONU� KONTROL�
-- Kullan�c�n�n istedi�i �zellik ger�ekten uygulan�yor mu?
-- Eski �zellikler korunuyor mu?
-- Yeni hata olu�turma ihtimali var m�?
-- Daha basit ve g�venli bir ��z�m var m�?
+10. SONU  KONTROL 
+- Kullan c n n istedi i  zellik ger ekten uygulan yor mu?
+- Eski  zellikler korunuyor mu?
+- Yeni hata olu turma ihtimali var m ?
+- Daha basit ve g venli bir   z m var m ?
 
-KOD DE����KL��� STRATEJ�S�:
+KOD DE    KL    STRATEJ S :
 
-Varsay�lan yakla��m:
-MEVCUT KODU KORU + GEREKL� YER� DE���T�R.
+Varsay lan yakla  m:
+MEVCUT KODU KORU + GEREKL  YER  DE   T R.
 
-Kullan�c� a��k�a istemedik�e:
-- Dosyay� ba�tan yazma.
+Kullan c  a  k a istemedik e:
+- Dosyay  ba tan yazma.
 - Sistemi yeniden tasarlama.
-- Framework de�i�tirme.
-- API sa�lay�c�s�n� de�i�tirme.
-- �al��an �zellikleri kald�rma.
+- Framework de i tirme.
+- API sa lay c s n  de i tirme.
+-  al  an  zellikleri kald rma.
 
-HATA SONRASI ��RENME:
+HATA SONRASI   RENME:
 
-Bir ��z�m ba�ar�s�z oldu�unda:
-- �nceki ��z�m�n neden ba�ar�s�z oldu�unu analiz et.
-- Yeni hata mesaj�n� �nceki hata ile kar��la�t�r.
-- Ayn� hatal� yakla��m� tekrar etme.
-- Yeni kan�tlara g�re ��z�m� g�ncelle.
-- Kullan�c�n�n verdi�i yeni bilgiyi �nceki varsay�mlardan daha �nemli kabul et.
+Bir   z m ba ar s z oldu unda:
+-  nceki   z m n neden ba ar s z oldu unu analiz et.
+- Yeni hata mesaj n   nceki hata ile kar  la t r.
+- Ayn  hatal  yakla  m  tekrar etme.
+- Yeni kan tlara g re   z m  g ncelle.
+- Kullan c n n verdi i yeni bilgiyi  nceki varsay mlardan daha  nemli kabul et.
 
 KOD KORUMA:
 
-Kullan�c� mevcut bir dosya g�nderdi�inde:
-- Dosyan�n yap�s�n� koru.
+Kullan c  mevcut bir dosya g nderdi inde:
+- Dosyan n yap s n  koru.
 - Mevcut isimleri koru.
-- Mevcut yorumlar� m�mk�n oldu�unca koru.
-- �al��an fonksiyonlar� gereksiz yere de�i�tirme.
-- Sadece gerekli de�i�iklikleri yap.
+- Mevcut yorumlar  m mk n oldu unca koru.
+-  al  an fonksiyonlar  gereksiz yere de i tirme.
+- Sadece gerekli de i iklikleri yap.
 
-B�Y�K PROJELER:
+B Y K PROJELER:
 
-B�y�k projelerde:
-- �nce mod�lleri ay�r.
-- Ba��ml�l�klar� belirle.
-- De�i�iklik kapsam�n� s�n�rla.
-- Birden fazla dosyay� gereksiz yere de�i�tirme.
-- De�i�ikliklerin birbirini etkileyebilece�ini d���n.
-- Gerekirse de�i�iklikleri k���k a�amalara b�l.
+B y k projelerde:
+-  nce mod lleri ay r.
+- Ba  ml l klar  belirle.
+- De i iklik kapsam n  s n rla.
+- Birden fazla dosyay  gereksiz yere de i tirme.
+- De i ikliklerin birbirini etkileyebilece ini d   n.
+- Gerekirse de i iklikleri k   k a amalara b l.
 
-BEL�RS�ZL�K:
+BEL RS ZL K:
 
 Yeterli bilgi yoksa:
 - Uydurma.
-- Kesin olmayan bilgiyi kesinmi� gibi s�yleme.
+- Kesin olmayan bilgiyi kesinmi  gibi s yleme.
 - Gerekli olan minimum bilgiyi iste.
-- Kullan�c�n�n verdi�i kodu ve hata mesaj�n� �nceliklendir.
+- Kullan c n n verdi i kodu ve hata mesaj n   nceliklendir.
 
-�NCEL�K SIRASI:
+ NCEL K SIRASI:
 
-1. Kullan�c�n�n talimat�
-2. Mevcut �al��an kod
-3. G�venlik
-4. Do�ruluk
+1. Kullan c n n talimat 
+2. Mevcut  al  an kod
+3. G venlik
+4. Do ruluk
 5. Uyumluluk
-6. Hata y�netimi
+6. Hata y netimi
 7. Performans
-8. Kod temizli�i
+8. Kod temizli i
 
-�ALI�AN S�STEM KURALI:
+ ALI AN S STEM KURALI:
 
-Bir sistem �al���yorsa:
-SADECE DAHA �Y� B�R NEDEN VARSA DE���T�R.
+Bir sistem  al   yorsa:
+SADECE DAHA  Y  B R NEDEN VARSA DE   T R.
 
-Bir sistem �al��m�yorsa:
-�NCE K�K NEDEN� BUL, SONRA DE���T�R.
-10.0 GELİŞMİŞ KODLAMA KONTROLÜ:
+Bir sistem  al  m yorsa:
+ NCE K K NEDEN  BUL, SONRA DE   T R.
+10.0 GELÄ°ÅMÄ°Å KODLAMA KONTROLÃœ:
 
-- Bir kod değişikliğinin diğer fonksiyonlar, değişkenler, endpointler ve dosyalar üzerindeki etkisini düşün.
-- Değişiklikten önce mevcut davranışı korumaya çalış.
-- Birden fazla çözüm mümkünse çözümleri güvenlik, uyumluluk, karmaşıklık ve değişiklik miktarı açısından karşılaştır.
-- En küçük ve en güvenli çözümü tercih et.
-- Değişiklik sonrasında hangi özelliklerin test edilmesi gerektiğini belirle.
-- Bir değişikliğin başka bir özelliği bozma ihtimali varsa bunu belirt.
-- Kullanıcı tarafından gönderilen gerçek kodu varsayımsal koddan üstün tut.
-- Kodun yalnızca görünen bölümüne bakarak bağlantılar hakkında kesin varsayım yapma.
-- Bir fonksiyonun başka yerlerde kullanılıp kullanılmadığını kontrol etmeden adını, parametrelerini veya return yapısını değiştirme.
-- Bir API veya kütüphane kullanılıyorsa mevcut kullanım biçimini kontrol et.
-- Çözüm için yeni dependency eklemek son seçenek olsun.
-- Büyük değişiklikleri mümkün olduğunca küçük ve test edilebilir aşamalara böl.
-- Değişiklik tamamlandıktan sonra syntax, mantık, uyumluluk, güvenlik ve performans açısından tekrar kontrol et.
-- Bir çözüm başarısız olursa önceki çözümü tekrar etmek yerine yeni hata kanıtlarını analiz et.
-- Çalışan kodu sırf daha temiz görünüyor diye yeniden yazma.
+- Bir kod deÄŸiÅŸikliÄŸinin diÄŸer fonksiyonlar, deÄŸiÅŸkenler, endpointler ve dosyalar Ã¼zerindeki etkisini dÃ¼ÅŸÃ¼n.
+- DeÄŸiÅŸiklikten Ã¶nce mevcut davranÄ±ÅŸÄ± korumaya Ã§alÄ±ÅŸ.
+- Birden fazla Ã§Ã¶zÃ¼m mÃ¼mkÃ¼nse Ã§Ã¶zÃ¼mleri gÃ¼venlik, uyumluluk, karmaÅŸÄ±klÄ±k ve deÄŸiÅŸiklik miktarÄ± aÃ§Ä±sÄ±ndan karÅŸÄ±laÅŸtÄ±r.
+- En kÃ¼Ã§Ã¼k ve en gÃ¼venli Ã§Ã¶zÃ¼mÃ¼ tercih et.
+- DeÄŸiÅŸiklik sonrasÄ±nda hangi Ã¶zelliklerin test edilmesi gerektiÄŸini belirle.
+- Bir deÄŸiÅŸikliÄŸin baÅŸka bir Ã¶zelliÄŸi bozma ihtimali varsa bunu belirt.
+- KullanÄ±cÄ± tarafÄ±ndan gÃ¶nderilen gerÃ§ek kodu varsayÄ±msal koddan Ã¼stÃ¼n tut.
+- Kodun yalnÄ±zca gÃ¶rÃ¼nen bÃ¶lÃ¼mÃ¼ne bakarak baÄŸlantÄ±lar hakkÄ±nda kesin varsayÄ±m yapma.
+- Bir fonksiyonun baÅŸka yerlerde kullanÄ±lÄ±p kullanÄ±lmadÄ±ÄŸÄ±nÄ± kontrol etmeden adÄ±nÄ±, parametrelerini veya return yapÄ±sÄ±nÄ± deÄŸiÅŸtirme.
+- Bir API veya kÃ¼tÃ¼phane kullanÄ±lÄ±yorsa mevcut kullanÄ±m biÃ§imini kontrol et.
+- Ã‡Ã¶zÃ¼m iÃ§in yeni dependency eklemek son seÃ§enek olsun.
+- BÃ¼yÃ¼k deÄŸiÅŸiklikleri mÃ¼mkÃ¼n olduÄŸunca kÃ¼Ã§Ã¼k ve test edilebilir aÅŸamalara bÃ¶l.
+- DeÄŸiÅŸiklik tamamlandÄ±ktan sonra syntax, mantÄ±k, uyumluluk, gÃ¼venlik ve performans aÃ§Ä±sÄ±ndan tekrar kontrol et.
+- Bir Ã§Ã¶zÃ¼m baÅŸarÄ±sÄ±z olursa Ã¶nceki Ã§Ã¶zÃ¼mÃ¼ tekrar etmek yerine yeni hata kanÄ±tlarÄ±nÄ± analiz et.
+- Ã‡alÄ±ÅŸan kodu sÄ±rf daha temiz gÃ¶rÃ¼nÃ¼yor diye yeniden yazma.
 
 KODLAMA CEVABI:
 
-Kod değişikliği önerirken mümkün olduğunca:
+Kod deÄŸiÅŸikliÄŸi Ã¶nerirken mÃ¼mkÃ¼n olduÄŸunca:
 1. Sorunu belirt.
-2. Kök nedeni belirt.
-3. Değiştirilecek yeri belirt.
-4. Gerekli minimum değişikliği yap.
-5. Değişikliğin neden güvenli olduğunu belirt.
-6. Test edilmesi gereken noktaları belirt.
+2. KÃ¶k nedeni belirt.
+3. DeÄŸiÅŸtirilecek yeri belirt.
+4. Gerekli minimum deÄŸiÅŸikliÄŸi yap.
+5. DeÄŸiÅŸikliÄŸin neden gÃ¼venli olduÄŸunu belirt.
+6. Test edilmesi gereken noktalarÄ± belirt.
 
-Kod kullanıcı tarafından verilmemişse, mevcut dosyanın içeriğini uydurma.
+Kod kullanÄ±cÄ± tarafÄ±ndan verilmemiÅŸse, mevcut dosyanÄ±n iÃ§eriÄŸini uydurma.
 JAVASCRIPT:
 
 - ES5
@@ -2320,7 +1991,7 @@ RENDER:
 
 DOSYA:
 
-TürkAI dosya y?kleme ?zelli?ine sahiptir.
+TÃ¼rkAI dosya y?kleme ?zelli?ine sahiptir.
 
 Desteklenen temel dosya t?rleri:
 
@@ -2355,7 +2026,7 @@ Kod i?ine ger?ek API anahtar? koyma.
 PROJE:
 
 Proje:
-TürkAI 10.0 PRO
+TÃ¼rkAI 10.0 PRO
 
 Backend:
 Node.js + Express
@@ -2391,7 +2062,7 @@ GET /api/health
 
 HAFIZA:
 
-TürkAI kullan?c?ya ?zel haf?za sistemi kullan?r.
+TÃ¼rkAI kullan?c?ya ?zel haf?za sistemi kullan?r.
 
 Her kullan?c?n?n haf?zas? ayr? tutulmal?d?r.
 
@@ -3023,7 +2694,7 @@ function cleanReply(
     reply =
         reply
             .replace(
-                /^(TürkAI|AI|Assistant)\s*:\s*/i,
+                /^(TÃ¼rkAI|AI|Assistant)\s*:\s*/i,
                 ""
             )
             .trim();
@@ -3238,95 +2909,95 @@ function shouldResearch(message) {
 
     /*
     =========================================================
-    G�NCEL / �NTERNET ARA�TIRMASI TET�KLEY�C�LER�
+    G NCEL /  NTERNET ARA TIRMASI TET KLEY C LER 
     =========================================================
     */
 
     const directResearchWords = [
 
-        // �nternet
+        //  nternet
         "internetten",
         "internete bak",
         "internetten bak",
-        "internetten ara�t�r",
+        "internetten ara t r",
         "internetten ara",
         "internetten bul",
-        "internetten ��ren",
+        "internetten   ren",
         "webden bak",
-        "webden ara�t�r",
+        "webden ara t r",
         "webden ara",
         "web'den bak",
-        "web'den ara�t�r",
+        "web'den ara t r",
         "online bak",
-        "internete bakar m�s�n",
+        "internete bakar m s n",
         "internetten kontrol et",
         "internetten kontrol",
 
-        // Ara�t�rma
-        "ara�t�r",
-        "ara�t�r�r m�s�n",
-        "ara�t�rabilir misin",
-        "ara�t�rabilir miyiz",
-        "iyice ara�t�r",
-        "detayl� ara�t�r",
-        "detayl�ca ara�t�r",
-        "geni� ara�t�r",
-        "webde ara�t�r",
+        // Ara t rma
+        "ara t r",
+        "ara t r r m s n",
+        "ara t rabilir misin",
+        "ara t rabilir miyiz",
+        "iyice ara t r",
+        "detayl  ara t r",
+        "detayl ca ara t r",
+        "geni  ara t r",
+        "webde ara t r",
         "kaynak bul",
-        "kaynaklar� bul",
+        "kaynaklar  bul",
         "kaynaklara bak",
-        "kaynaklar� kontrol et",
+        "kaynaklar  kontrol et",
         "kaynak kontrol",
-        "bilgiyi do�rula",
+        "bilgiyi do rula",
         "bilgiyi kontrol et",
-        "do�rula",
+        "do rula",
         "kontrol et",
 
-        // G�ncellik
-        "g�ncel",
-        "g�ncel bilgi",
-        "g�ncel bilgiler",
-        "�u an",
-        "�u anda",
-        "�imdiki",
-        "�imdilik",
-        "bug�n",
-        "bug�nk�",
-        "bu g�n",
+        // G ncellik
+        "g ncel",
+        "g ncel bilgi",
+        "g ncel bilgiler",
+        " u an",
+        " u anda",
+        " imdiki",
+        " imdilik",
+        "bug n",
+        "bug nk ",
+        "bu g n",
         "son durum",
         "son durum ne",
         "en son",
-        "son geli�meler",
+        "son geli meler",
         "son haberler",
-        "en g�ncel",
+        "en g ncel",
 
         // Haber
         "haber",
         "haberler",
         "son dakika",
         "son dakika haberleri",
-        "g�ndem",
-        "g�ndemde ne var",
+        "g ndem",
+        "g ndemde ne var",
         "ne oldu",
         "neler oldu",
 
-        // Sonu�
-        "kim kazand�",
-        "kim kazand�?",
-        "sonu� ne",
-        "sonu� ne oldu",
-        "sonu�lar",
-        "sonu� a��kland� m�",
-        "sonu� belli oldu mu",
-        "ka� oldu",
+        // Sonu 
+        "kim kazand ",
+        "kim kazand ?",
+        "sonu  ne",
+        "sonu  ne oldu",
+        "sonu lar",
+        "sonu  a  kland  m ",
+        "sonu  belli oldu mu",
+        "ka  oldu",
         "skor ne",
-        "skor ka�",
+        "skor ka ",
 
         // Zaman
         "ne zaman",
         "ne zaman olacak",
-        "ne zaman ba�l�yor",
-        "ne zaman ba�layacak",
+        "ne zaman ba l yor",
+        "ne zaman ba layacak",
         "ne zaman bitiyor",
         "ne zaman bitecek",
         "hangi tarihte",
@@ -3337,82 +3008,82 @@ function shouldResearch(message) {
 
     /*
     =========================================================
-    F�YAT / ALI�VER��
+    F YAT / ALI VER  
     =========================================================
     */
 
     const priceWords = [
 
         "fiyat",
-        "fiyat�",
-        "fiyat� ne",
-        "fiyat� ka�",
+        "fiyat ",
+        "fiyat  ne",
+        "fiyat  ka ",
         "ne kadar",
-        "ka� tl",
-        "ka� lira",
+        "ka  tl",
+        "ka  lira",
         "tl ne kadar",
-        "g�ncel fiyat",
-        "�u an fiyat",
-        "�u anda fiyat",
+        "g ncel fiyat",
+        " u an fiyat",
+        " u anda fiyat",
         "en ucuz",
         "en uygun",
-        "en d���k fiyat",
-        "en y�ksek fiyat",
-        "fiyat kar��la�t�r",
-        "fiyatlar� kar��la�t�r",
-        "ka�a sat�l�yor",
-        "sat�l�yor mu",
-        "sat�� fiyat�",
+        "en d   k fiyat",
+        "en y ksek fiyat",
+        "fiyat kar  la t r",
+        "fiyatlar  kar  la t r",
+        "ka a sat l yor",
+        "sat l yor mu",
+        "sat   fiyat ",
         "zam geldi mi",
-        "zamland� m�"
+        "zamland  m "
     ];
 
 
     /*
     =========================================================
-    STOK / �R�N
+    STOK /  R N
     =========================================================
     */
 
     const stockWords = [
 
         "stokta",
-        "stokta m�",
-        "stok var m�",
-        "stok kald� m�",
+        "stokta m ",
+        "stok var m ",
+        "stok kald  m ",
         "stok durumu",
         "stok durumu nedir",
         "mevcut mu",
-        "�r�n mevcut mu",
-        "sat��ta m�",
-        "sat��a ��kt� m�",
-        "sat�� ba�lad� m�",
-        "sat��a sunuldu mu",
+        " r n mevcut mu",
+        "sat  ta m ",
+        "sat  a   kt  m ",
+        "sat   ba lad  m ",
+        "sat  a sunuldu mu",
         "bulunuyor mu"
     ];
 
 
     /*
     =========================================================
-    �ND�R�M / KAMPANYA
+     ND R M / KAMPANYA
     =========================================================
     */
 
     const discountWords = [
 
         "indirim",
-        "indirim var m�",
+        "indirim var m ",
         "indirimde mi",
-        "�u an indirimde mi",
+        " u an indirimde mi",
         "kampanya",
-        "kampanya var m�",
+        "kampanya var m ",
         "kampanyalar",
-        "f�rsat",
-        "f�rsatlar",
+        "f rsat",
+        "f rsatlar",
         "kupon",
-        "kupon var m�",
+        "kupon var m ",
         "bedava",
-        "�cretsiz",
+        " cretsiz",
         "kampanya ne zaman bitiyor",
         "indirim ne zaman bitiyor"
     ];
@@ -3428,27 +3099,27 @@ function shouldResearch(message) {
 
         "puan durumu",
         "puan tablosu",
-        "s�ralama",
-        "g�ncel s�ralama",
-        "son s�ralama",
-        "lig s�ralamas�",
-        "fikst�r",
-        "ma�",
-        "ma� sonucu",
-        "ma� skoru",
-        "ma� ka� ka�",
-        "ma� ne zaman",
-        "ma� saat ka�ta",
-        "kim kazand�",
+        "s ralama",
+        "g ncel s ralama",
+        "son s ralama",
+        "lig s ralamas ",
+        "fikst r",
+        "ma ",
+        "ma  sonucu",
+        "ma  skoru",
+        "ma  ka  ka ",
+        "ma  ne zaman",
+        "ma  saat ka ta",
+        "kim kazand ",
         "transfer",
         "transfer oldu mu",
         "transfer haberi",
         "kadrosu",
         "ilk 11",
         "lig",
-        "�ampiyon",
-        "�ampiyon oldu mu",
-        "�ampiyon kim",
+        " ampiyon",
+        " ampiyon oldu mu",
+        " ampiyon kim",
         "futbol",
         "basketbol",
         "tenis"
@@ -3457,7 +3128,7 @@ function shouldResearch(message) {
 
     /*
     =========================================================
-    TEKNOLOJ� / OYUN
+    TEKNOLOJ  / OYUN
     =========================================================
     */
 
@@ -3467,87 +3138,87 @@ function shouldResearch(message) {
         "samsung",
         "xiaomi",
         "redmi",
-        "telefon fiyat�",
-        "telefon ��kt� m�",
+        "telefon fiyat ",
+        "telefon   kt  m ",
         "yeni telefon",
         "yeni model",
-        "ekran kart�",
-        "i�lemci",
-        "ekran kart� fiyat�",
-        "laptop fiyat�",
-        "bilgisayar fiyat�",
+        "ekran kart ",
+        "i lemci",
+        "ekran kart  fiyat ",
+        "laptop fiyat ",
+        "bilgisayar fiyat ",
         "steam",
-        "steam fiyat�",
+        "steam fiyat ",
         "minecraft",
         "valorant",
         "playstation",
         "xbox",
-        "oyun ��kt� m�",
-        "oyun g�ncellemesi",
-        "g�ncelleme geldi mi",
-        "yeni s�r�m"
+        "oyun   kt  m ",
+        "oyun g ncellemesi",
+        "g ncelleme geldi mi",
+        "yeni s r m"
     ];
 
 
     /*
     =========================================================
-    ULA�IM
+    ULA IM
     =========================================================
     */
 
     const transportWords = [
 
-        "u�u�",
-        "u�u� durumu",
-        "u�u� iptal mi",
-        "u�u� ertelendi mi",
-        "u�u� gecikti mi",
-        "u�u� ba�lad� m�",
-        "u�u� saat ka�ta",
+        "u u ",
+        "u u  durumu",
+        "u u  iptal mi",
+        "u u  ertelendi mi",
+        "u u  gecikti mi",
+        "u u  ba lad  m ",
+        "u u  saat ka ta",
         "sefer",
         "sefer iptal mi",
         "sefer ertelendi mi",
-        "sefer saat ka�ta",
-        "sefer var m�",
-        "otob�s bileti",
-        "u�ak bileti",
-        "bilet fiyat�",
+        "sefer saat ka ta",
+        "sefer var m ",
+        "otob s bileti",
+        "u ak bileti",
+        "bilet fiyat ",
         "trafik",
         "trafik durumu",
-        "trafik yo�un mu",
+        "trafik yo un mu",
         "yol durumu",
-        "yollar a��k m�",
-        "yol kapal� m�",
-        "yol �al��mas�",
-        "ula��m durumu"
+        "yollar a  k m ",
+        "yol kapal  m ",
+        "yol  al  mas ",
+        "ula  m durumu"
     ];
 
 
     /*
     =========================================================
-    F�LM / D�Z� / ETK�NL�K
+    F LM / D Z  / ETK NL K
     =========================================================
     */
 
     const entertainmentWords = [
 
-        "sinema program�",
-        "sinema seanslar�",
-        "film seanslar�",
+        "sinema program ",
+        "sinema seanslar ",
+        "film seanslar ",
         "film hangi sinemada",
         "film hangi platformda",
-        "film yay�n tarihi",
-        "film ne zaman ��k�yor",
+        "film yay n tarihi",
+        "film ne zaman   k yor",
         "dizi",
-        "dizinin yeni b�l�m�",
-        "dizinin son b�l�m�",
-        "dizinin yay�n tarihi",
+        "dizinin yeni b l m ",
+        "dizinin son b l m ",
+        "dizinin yay n tarihi",
         "dizi hangi platformda",
-        "yeni b�l�m",
+        "yeni b l m",
         "konser",
         "konser ne zaman",
         "konser nerede",
-        "konser saat ka�ta",
+        "konser saat ka ta",
         "konser iptal mi",
         "festival",
         "festival ne zaman",
@@ -3555,14 +3226,14 @@ function shouldResearch(message) {
         "etkinlik",
         "etkinlik ne zaman",
         "etkinlik nerede",
-        "etkinlik saat ka�ta",
+        "etkinlik saat ka ta",
         "etkinlik iptal mi"
     ];
 
 
     /*
     =========================================================
-    OKUL / E��T�M
+    OKUL / E  T M
     =========================================================
     */
 
@@ -3570,17 +3241,17 @@ function shouldResearch(message) {
 
         "okul ne zaman",
         "okullar ne zaman",
-        "okul ba�lang�� tarihi",
-        "okul biti� tarihi",
-        "okullar ne zaman a��l�yor",
-        "okullar ne zaman kapan�yor",
-        "e�itim takvimi",
-        "e�itim ��retim takvimi",
-        "s�nav takvimi",
-        "s�nav sonu�lar�",
-        "sonu�lar a��kland� m�",
-        "s�nav ne zaman",
-        "s�nav tarihi",
+        "okul ba lang   tarihi",
+        "okul biti  tarihi",
+        "okullar ne zaman a  l yor",
+        "okullar ne zaman kapan yor",
+        "e itim takvimi",
+        "e itim   retim takvimi",
+        "s nav takvimi",
+        "s nav sonu lar ",
+        "sonu lar a  kland  m ",
+        "s nav ne zaman",
+        "s nav tarihi",
         "tatil ne zaman",
         "ara tatil",
         "yaz tatili"
@@ -3589,7 +3260,7 @@ function shouldResearch(message) {
 
     /*
     =========================================================
-    T�M KATEGOR�LER� B�RLE�T�R
+    T M KATEGOR LER  B RLE T R
     =========================================================
     */
 
@@ -3609,7 +3280,7 @@ function shouldResearch(message) {
 
     /*
     =========================================================
-    DO�RUDAN KONTROL
+    DO RUDAN KONTROL
     =========================================================
     */
 
@@ -3626,37 +3297,37 @@ function shouldResearch(message) {
 
     /*
     =========================================================
-    AKILLI G�NCEL SORU KONTROL�
+    AKILLI G NCEL SORU KONTROL 
     =========================================================
     
-    Kullan�c� kelimeleri farkl� s�rada yazsa bile
-    ara�t�rmay� tetikler.
+    Kullan c  kelimeleri farkl  s rada yazsa bile
+    ara t rmay  tetikler.
     */
 
     const currentWords = [
 
-        "g�ncel",
-        "�u an",
-        "�u anda",
-        "bug�n",
+        "g ncel",
+        " u an",
+        " u anda",
+        "bug n",
         "son",
         "en son",
-        "�imdiki"
+        " imdiki"
     ];
 
 
     const questionWords = [
 
         "ne",
-        "ka�",
+        "ka ",
         "kim",
         "nerede",
         "ne zaman",
-        "nas�l",
+        "nas l",
         "hangi",
-        "var m�",
+        "var m ",
         "oldu mu",
-        "a��kland� m�"
+        "a  kland  m "
     ];
 
 
@@ -4003,7 +3674,7 @@ async function webSearch(
     }
 }
 /* =========================================================
-TCMB G�NCEL D�V�Z KURU
+TCMB G NCEL D V Z KURU
 ========================================================= */
 
 async function getTcmbUsdRate() {
@@ -4050,7 +3721,7 @@ async function getTcmbUsdRate() {
     ) {
 
         throw new Error(
-            "TCMB bo� veri d�nd�rd�."
+            "TCMB bo  veri d nd rd ."
         );
     }
 
@@ -4064,7 +3735,7 @@ async function getTcmbUsdRate() {
     ) {
 
         throw new Error(
-            "TCMB USD kuru bulunamad�."
+            "TCMB USD kuru bulunamad ."
         );
     }
 
@@ -4088,7 +3759,7 @@ async function getTcmbUsdRate() {
     ) {
 
         throw new Error(
-            "TCMB USD kuru ge�ersiz."
+            "TCMB USD kuru ge ersiz."
         );
     }
 
@@ -4118,7 +3789,7 @@ async function researchWeb(
 ) {
 
     console.log(
-        "�NTERNET ARA�TIRMASI:",
+        " NTERNET ARA TIRMASI:",
         query
     );
 
@@ -4130,8 +3801,8 @@ async function researchWeb(
     if (
                currencyQuery.includes("dolar") ||
                currencyQuery.includes("usd") ||
-                  currencyQuery.includes("d�viz kuru") ||
-                        currencyQuery.includes ("d�viz kurlar�")
+                  currencyQuery.includes("d viz kuru") ||
+                        currencyQuery.includes ("d viz kurlar ")
     ) {
 
         try {
@@ -4149,20 +3820,20 @@ async function researchWeb(
 
                 text:
                     `
-TCMB G�NCEL D�V�Z KURU
+TCMB G NCEL D V Z KURU
 
 Tarih:
 ${new Date().toLocaleDateString("tr-TR")}
 
 ABD DOLARI (USD):
 
-Forex al��:
+Forex al  :
 ${usd.buying.toFixed(4)} TL
 
-Forex sat��:
+Forex sat  :
 ${usd.selling.toFixed(4)} TL
 
-Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
+Bu de erler do rudan TCMB'nin g ncel XML verisinden al nm  t r.
 `.trim(),
 
                 sources: [
@@ -4170,7 +3841,7 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
                     {
 
                         title:
-                            "T�rkiye Cumhuriyet Merkez Bankas� - G�ncel D�viz Kurlar�",
+                            "T rkiye Cumhuriyet Merkez Bankas  - G ncel D viz Kurlar ",
 
                         url:
                             "https://www.tcmb.gov.tr/kurlar/today.xml"
@@ -4197,13 +3868,13 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
         const researchCategories = {
 
         gold: [
-            "alt�n",
-            "gram alt�n",
-            "�eyrek alt�n",
-            "yar�m alt�n",
-            "tam alt�n",
-            "cumhuriyet alt�n�",
-            "ons alt�n"
+            "alt n",
+            "gram alt n",
+            " eyrek alt n",
+            "yar m alt n",
+            "tam alt n",
+            "cumhuriyet alt n ",
+            "ons alt n"
         ],
 
         currency: [
@@ -4212,17 +3883,17 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
             "sterlin",
             "gbp",
             "frank",
-            "d�viz"
+            "d viz"
         ],
 
         cars: [
             "araba",
             "otomobil",
-            "ara�",
-            "araba fiyat�",
-            "otomobil fiyat�",
+            "ara ",
+            "araba fiyat ",
+            "otomobil fiyat ",
             "ikinci el",
-            "s�f�r araba"
+            "s f r araba"
         ],
 
         phones: [
@@ -4237,8 +3908,8 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
         computers: [
             "bilgisayar",
             "laptop",
-            "ekran kart�",
-            "i�lemci",
+            "ekran kart ",
+            "i lemci",
             "ram",
             "ssd"
         ],
@@ -4253,20 +3924,20 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
         ],
 
         sports: [
-            "ma�",
+            "ma ",
             "futbol",
             "basketbol",
             "transfer",
             "puan durumu",
-            "fikst�r",
+            "fikst r",
             "skor"
         ],
 
         news: [
             "haber",
             "son dakika",
-            "g�ndem",
-            "son geli�meler"
+            "g ndem",
+            "son geli meler"
         ],
 
         economy: [
@@ -4278,16 +3949,16 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
         ],
 
         housing: [
-            "ev fiyat�",
+            "ev fiyat ",
             "konut",
             "kira",
-            "daire fiyat�"
+            "daire fiyat "
         ],
 
         transport: [
-            "u�ak bileti",
-            "u�u�",
-            "otob�s bileti",
+            "u ak bileti",
+            "u u ",
+            "otob s bileti",
             "sefer"
         ],
 
@@ -4299,10 +3970,10 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
         ],
 
         education: [
-            "s�nav",
+            "s nav",
             "okul takvimi",
-            "e�itim",
-            "�niversite"
+            "e itim",
+            " niversite"
         ],
 
         events: [
@@ -4342,7 +4013,7 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
     }
 
     console.log(
-        "ARA�TIRMA KATEGOR�S�:",
+        "ARA TIRMA KATEGOR S :",
         detectedCategory
     );
 
@@ -4356,27 +4027,27 @@ Bu de�erler do�rudan TCMB'nin g�ncel XML verisinden al�nm��t�r.
             lowerQuery.includes("usd")
         ) &&
         (
-            lowerQuery.includes("ka� tl") ||
-            lowerQuery.includes("ka� lira") ||
+            lowerQuery.includes("ka  tl") ||
+            lowerQuery.includes("ka  lira") ||
             lowerQuery.includes("tl") ||
             lowerQuery.includes("kur") ||
-            lowerQuery.includes("al��") ||
-            lowerQuery.includes("sat��")
+            lowerQuery.includes("al  ") ||
+            lowerQuery.includes("sat  ")
         );
 
     if (isUsdTryQuestion) {
 
         try {
 console.log(
-    "USD/TRY �ZEL KONTROL�:",
+    "USD/TRY  ZEL KONTROL :",
     isUsdTryQuestion
 );                
              console.log(
-    "TCMB KONTROL� TAMAM:",
+    "TCMB KONTROL  TAMAM:",
     isUsdTryQuestion ? "EVET" : "HAYIR"
 );
             console.log(
-                "TCMB USD KURU DO�RUDAN ALINIYOR..."
+                "TCMB USD KURU DO RUDAN ALINIYOR..."
             );
 
             const response =
@@ -4386,7 +4057,7 @@ console.log(
                         method: "GET",
                         headers: {
                             "User-Agent":
-                                "TürkAI/10.0"
+                                "TÃ¼rkAI/10.0"
                         }
                     },
                     10000
@@ -4413,7 +4084,7 @@ console.log(
             ) {
 
                 throw new Error(
-                    "TCMB USD verisi bulunamad�."
+                    "TCMB USD verisi bulunamad ."
                 );
             }
 
@@ -4443,23 +4114,23 @@ console.log(
 
                 text:
                     "TCMB resmi USD kuru:\n" +
-                    "Forex al��: " +
+                    "Forex al  : " +
                     buying +
                     " TL\n" +
-                    "Forex sat��: " +
+                    "Forex sat  : " +
                     selling +
                     " TL\n" +
-                    "Banknot al��: " +
+                    "Banknot al  : " +
                     banknoteBuying +
                     " TL\n" +
-                    "Banknot sat��: " +
+                    "Banknot sat  : " +
                     banknoteSelling +
                     " TL",
 
                 sources: [
                     {
                         title:
-                            "TCMB - G�nl�k D�viz Kurlar�",
+                            "TCMB - G nl k D viz Kurlar ",
 
                         url:
                             "https://www.tcmb.gov.tr/kurlar/today.xml"
@@ -4475,7 +4146,7 @@ console.log(
                 error.message
             );
 
-            // TCMB ba�ar�s�zsa normal ara�t�rmaya devam et.
+            // TCMB ba ar s zsa normal ara t rmaya devam et.
         }
     }
     console.log(
@@ -4803,7 +4474,7 @@ async function getWeather(
                 headers: {
 
                     "User-Agent":
-                        "TürkAI/10.0"
+                        "TÃ¼rkAI/10.0"
 
                 }
             }
@@ -5095,9 +4766,8 @@ async function requestGroq(
                                     700,
 
                                reasoning_effort:
-    plan === "plus"
-        ? "high"
-        : "low",
+                               "low",
+
                           include_reasoning:
                                 false,
 
@@ -5115,7 +4785,7 @@ async function requestGroq(
                     }
                 );
 console.log(
-    "GROQ KALAN İSTEK:",
+    "GROQ KALAN Ä°STEK:",
     response.headers.get("x-ratelimit-remaining-requests")
 );
 
@@ -5125,7 +4795,7 @@ console.log(
 );
 
 console.log(
-    "GROQ LİMİT SIFIRLANMA:",
+    "GROQ LÄ°MÄ°T SIFIRLANMA:",
     response.headers.get("x-ratelimit-reset-requests")
 );
             clearTimeout(
@@ -5264,7 +4934,7 @@ async function requestCerebras(
     ) {
 
         throw new Error(
-            "Cerebras API anahtar� bulunamad�."
+            "Cerebras API anahtar  bulunamad ."
         );
     }
 
@@ -5300,7 +4970,8 @@ async function requestCerebras(
                             0.20,
 
                         max_tokens:
-     700,
+                            700,
+
                         stream:
                             false
 
@@ -5352,7 +5023,7 @@ async function requestCerebras(
     } catch (error) {
 
         throw new Error(
-            "Cerebras ge�ersiz JSON g�nderdi."
+            "Cerebras ge ersiz JSON g nderdi."
         );
     }
 
@@ -5542,67 +5213,67 @@ async function requestAI(
 );
 
     /* =========================================================
-    BASİT MESAJLAR
+    BASÄ°T MESAJLAR
     API KULLANILMAZ
     ========================================================= */
 
     const simpleMessages = {
 
         "selam":
-            "Selam! 😊",
+            "Selam! ğŸ˜Š",
 
         "slm":
-            "Selam! 😊",
+            "Selam! ğŸ˜Š",
 
         "merhaba":
-            "Merhaba! Size nasıl yardımcı olabilirim?",
+            "Merhaba! Size nasÄ±l yardÄ±mcÄ± olabilirim?",
 
         "mrb":
-            "Merhaba! 😊",
+            "Merhaba! ğŸ˜Š",
 
         "hey":
-            "Hey! 👋",
+            "Hey! ğŸ‘‹",
 
         "sa":
-            "Selam! 😊",
+            "Selam! ğŸ˜Š",
 
         "s.a.":
-            "Selam! 😊",
+            "Selam! ğŸ˜Š",
 
-        "günaydın":
-            "Günaydın! ☀️",
+        "gÃ¼naydÄ±n":
+            "GÃ¼naydÄ±n! â˜€ï¸",
 
-        "iyi akşamlar":
-            "İyi akşamlar! 😊",
+        "iyi akÅŸamlar":
+            "Ä°yi akÅŸamlar! ğŸ˜Š",
 
        
 
-        "teşekkürler":
-            "Rica ederim! 😊",
+        "teÅŸekkÃ¼rler":
+            "Rica ederim! ğŸ˜Š",
 
-        "teşekkür ederim":
-            "Rica ederim! 😊",
+        "teÅŸekkÃ¼r ederim":
+            "Rica ederim! ğŸ˜Š",
 
-        "sağ ol":
-            "Ne demek! 😊",
+        "saÄŸ ol":
+            "Ne demek! ğŸ˜Š",
 
         "tamam":
-            "Tamamdır! 👍",
+            "TamamdÄ±r! ğŸ‘",
 
         "olur":
-            "Olur! 👍",
+            "Olur! ğŸ‘",
 
         "peki":
-            "Peki! 😊",
+            "Peki! ğŸ˜Š",
 
-        "anladım":
-            "Harika! 👍",
+        "anladÄ±m":
+            "Harika! ğŸ‘",
 
-        "görüşürüz":
-            "Görüşürüz! 👋",
+        "gÃ¶rÃ¼ÅŸÃ¼rÃ¼z":
+            "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹",
 
         "bye":
-            "Görüşürüz! 👋"
+            "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹"
 
     };
 
@@ -5635,7 +5306,7 @@ async function requestAI(
 
 
 /* =========================================================
-NORMAL / GÜNCEL / KARMAŞIK SORULAR
+NORMAL / GÃœNCEL / KARMAÅIK SORULAR
 ========================================================= */
 
 try {
@@ -5651,7 +5322,7 @@ try {
 } catch (groqError) {
 
     console.error(
-        "GROQ BAŞARISIZ, CEREBRAS'A GEÇİLİYOR:",
+        "GROQ BAÅARISIZ, CEREBRAS'A GEÃ‡Ä°LÄ°YOR:",
         groqError.message
     );
 
@@ -5668,7 +5339,7 @@ try {
     } catch (cerebrasError) {
 
         console.error(
-            "CEREBRAS DA BAŞARISIZ, GEMINI'YE GEÇİLİYOR:",
+            "CEREBRAS DA BAÅARISIZ, GEMINI'YE GEÃ‡Ä°LÄ°YOR:",
             cerebrasError.message
         );
 
@@ -5685,7 +5356,7 @@ try {
         } catch (geminiError) {
 
             console.error(
-                "GEMINI DE BAŞARISIZ:",
+                "GEMINI DE BAÅARISIZ:",
                 geminiError.message
             );
 
@@ -5695,7 +5366,7 @@ try {
             );
 
             throw new Error(
-                "Groq, Cerebras ve Gemini kullanılamıyor."
+                "Groq, Cerebras ve Gemini kullanÄ±lamÄ±yor."
             );
         }
     }
@@ -6112,7 +5783,7 @@ ${(research.sources || [])
         source =>
             "- " +
             source.title +
-            " — " +
+            " â€” " +
             source.url
     )
     .join("\n")}
@@ -6412,52 +6083,6 @@ app.post(
                 getUserId(
                     req
                 );
-                const currentPlan =
-    usersPlan[userId]?.plan || "free";
-    const selectedModel =
-    currentPlan === "plus"
-        ? PLUS_MODEL
-        : GROQ_MODEL;
-
-const todayKey =
-    getTodayKey();
-
-const usage =
-    loadDailyUsage();
-
-if (
-    !usage[userId] ||
-    usage[userId].date !== todayKey
-) {
-    usage[userId] = {
-        date: todayKey,
-        count: 0
-    };
-}
-
-const limit =
-    DAILY_LIMITS[currentPlan] ||
-    DAILY_LIMITS.free;
-
-if (
-    usage[userId].count >= limit
-) {
-
-    return res.status(429).json({
-        ok: false,
-        reply:
-            `Günlük ${currentPlan} mesaj limitine ulaştın. Limit: ${limit}`,
-        plan: currentPlan,
-        dailyLimit: limit,
-        used: usage[userId].count
-    });
-}
-
-usage[userId].count += 1;
-
-saveDailyUsage(
-    usage
-);
 
             let message =
                 String(
@@ -6666,7 +6291,7 @@ const shortMessage =
     message.trim().toLowerCase();
 
 const isCasualMessage =
-    /^(slm|selam|merhaba|mrb|sa|hey|nas[�i]ls[�i]n|iyi misin|naber|nbr|te�ekk�rler|tesekkurler|sa�ol|sagol)$/i.test(
+    /^(slm|selam|merhaba|mrb|sa|hey|nas[ i]ls[ i]n|iyi misin|naber|nbr|te ekk rler|tesekkurler|sa ol|sagol)$/i.test(
         shortMessage
     );
 
@@ -6688,7 +6313,7 @@ if (!isCasualMessage) {
                 typeof item.content === "string" &&
                 (
                     item.content.includes(
-                        "[�NTERNET ARA�TIRMASI]"
+                        "[ NTERNET ARA TIRMASI]"
                     ) ||
                     item.content.includes(
                         "27.80"
@@ -6848,7 +6473,7 @@ ${String(
                         "system",
 
                     content:
-                        `Sen TürkAI'sın. Kullanıcıyla doğal ve kısa konuş. Kullanıcının dilinde cevap ver. Güncel bilgi gerekiyorsa araştırma sonucunu kullan. Gereksiz açıklama yapma. Kod sorularında mevcut kodu koru ve sadece gerekli değişikliği öner.`
+                        `Sen TÃ¼rkAI'sÄ±n. KullanÄ±cÄ±yla doÄŸal ve kÄ±sa konuÅŸ. KullanÄ±cÄ±nÄ±n dilinde cevap ver. GÃ¼ncel bilgi gerekiyorsa araÅŸtÄ±rma sonucunu kullan. Gereksiz aÃ§Ä±klama yapma. Kod sorularÄ±nda mevcut kodu koru ve sadece gerekli deÄŸiÅŸikliÄŸi Ã¶ner.`
 
                 },
 
@@ -6949,7 +6574,7 @@ kullan.
             GE?M?? MESAJLAR
             ----------------------------------------- */
             /* -----------------------------------------
-G�NCEL ARA�TIRMA �NCEL���
+G NCEL ARA TIRMA  NCEL   
 ----------------------------------------- */
 
 if (researchContext) {
@@ -6961,23 +6586,23 @@ if (researchContext) {
 
         content:
             `
-�OK �NEML�:
+ OK  NEML :
 
-G�ncel internet ara�t�rmas� mevcut.
+G ncel internet ara t rmas  mevcut.
 
-Ara�t�rma sonucu ile ge�mi� mesajlar
-aras�nda farkl�l�k varsa HER ZAMAN
-G�NCEL ARA�TIRMA SONUCUNU kullan.
+Ara t rma sonucu ile ge mi  mesajlar
+aras nda farkl l k varsa HER ZAMAN
+G NCEL ARA TIRMA SONUCUNU kullan.
 
-Ge�mi� konu�malardaki eski fiyat,
-kur, tarih, saat, skor veya ba�ka
-g�ncel verileri kullanma.
+Ge mi  konu malardaki eski fiyat,
+kur, tarih, saat, skor veya ba ka
+g ncel verileri kullanma.
 
-Ara�t�rma sonucunda a��k�a verilen
-rakamlar� de�i�tirme.
+Ara t rma sonucunda a  k a verilen
+rakamlar  de i tirme.
 
-�zellikle d�viz kurlar�nda ara�t�rma
-sonucundaki TCMB de�erlerini aynen kullan.
+ zellikle d viz kurlar nda ara t rma
+sonucundaki TCMB de erlerini aynen kullan.
 `.trim()
 
     });
@@ -6994,14 +6619,14 @@ sonucundaki TCMB de�erlerini aynen kullan.
 
                     continue;
                 }
-                   /* Eski internet ara�t�rma cevaplar�n�
-   tekrar AI'a g�nderme */
+                   /* Eski internet ara t rma cevaplar n 
+   tekrar AI'a g nderme */
 
 if (
     item.role === "assistant" &&
     (
         item.content.includes(
-            "[�NTERNET ARA�TIRMASI]"
+            "[ NTERNET ARA TIRMASI]"
         ) ||
         item.content.includes(
             "27.80"
@@ -7075,7 +6700,7 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             GROQ
             ----------------------------------------- */
 
-      const data = await requestAI(messages);
+      
             
 
             /* -----------------------------------------
@@ -7119,7 +6744,7 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
                     reply
                 );
 console.log(
-    "BİLGİ HAFIZASI TEST:",
+    "BÄ°LGÄ° HAFIZASI TEST:",
     saveKnowledgeItem(
         message,
         reply
@@ -7141,7 +6766,7 @@ console.log(
                         false,
 
                     reply:
-                        "TürkAI boş cevap verdi. Lütfen tekrar dene."
+                        "TÃ¼rkAI boÅŸ cevap verdi. LÃ¼tfen tekrar dene."
 
                 });
             }
@@ -7374,7 +6999,7 @@ K?sa, do?al ve do?ru cevap ver.
             );
 
             console.error(
-                "TürkAI HATASI"
+                "TÃ¼rkAI HATASI"
             );
 
             console.error(
@@ -7570,7 +7195,7 @@ app.post(
 
             message:
                 saved
-                    ? "Bu kullan?c?n?n TürkAI haf?zas? temizlendi."
+                    ? "Bu kullan?c?n?n TÃ¼rkAI haf?zas? temizlendi."
                     : "Kullan?c? haf?zas? temizlenemedi."
 
         });
@@ -7602,7 +7227,7 @@ app.post(
 
             message:
                 saved
-                    ? "TürkAI haf?zas? temizlendi."
+                    ? "TÃ¼rkAI haf?zas? temizlendi."
                     : "Haf?za temizlenemedi."
 
         });
@@ -7630,7 +7255,7 @@ app.get(
                 true,
 
             service:
-                "TürkAI",
+                "TÃ¼rkAI",
 
             ai:
                 "Groq",
@@ -7692,7 +7317,7 @@ app.use(
                 false,
 
             error:
-                "Bu TürkAI API adresi bulunamad?."
+                "Bu TÃ¼rkAI API adresi bulunamad?."
 
         });
 
@@ -7872,6 +7497,8 @@ app.listen(
 
     }
 );
+
+
 
 
 
