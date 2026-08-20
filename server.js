@@ -7242,11 +7242,11 @@ const isCasualMessage =
 
 if (!isCasualMessage) {
 
-    recentMessages =
-        userMemory
-            .slice(
-                -2
-            );
+  recentMessages =
+    userMemory
+        .slice(
+            -contextMessages
+        );
 
 }
         const cleanRecentMessages =
