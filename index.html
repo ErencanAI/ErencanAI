@@ -252,7 +252,7 @@
     <!-- PRO KODU -->
 
     <div class="pro-code-card">
-
+</div>
         <strong>TürkAI Pro</strong>
 
         <small>
@@ -312,7 +312,6 @@
     class="sidebar-button"
     id="purchaseButton"
     type="button"
-    onclick="document.getElementById('purchaseModal').classList.add('active')"
 >
     💳
     <span>Plus / Pro Satın Al</span>
@@ -2048,11 +2047,9 @@ document.addEventListener(
 </div>
 </body>
 </html>
-<script>
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+        /* =====================================================
+           PLUS / PRO SATIN ALMA
+           ===================================================== */
 
         const purchaseButton =
             document.getElementById(
@@ -2073,6 +2070,10 @@ document.addEventListener(
                 "click",
                 function () {
 
+                    console.log(
+                        "SATIN ALMA BUTONUNA BASILDI"
+                    );
+
                     purchaseModal.classList.add(
                         "active"
                     );
@@ -2081,8 +2082,3 @@ document.addEventListener(
             );
 
         }
-
-    }
-);
-
-</script>
