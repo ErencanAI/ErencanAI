@@ -3386,6 +3386,19 @@ const directLiveQuestions = [
     "gram altın ne kadar",
     "çeyrek altın kaç",
     "çeyrek altın ne kadar",
+    "gram altın kaç tl",
+"gram altın ne kadar tl",
+"gram altın bugün kaç",
+"gram altın bugün ne kadar",
+"çeyrek altın kaç tl",
+"çeyrek altın ne kadar tl",
+"çeyrek altın bugün kaç",
+"çeyrek altın bugün ne kadar",
+"yarım altın kaç",
+"tam altın kaç",
+"cumhuriyet altını kaç",
+"altın gramı kaç",
+"altının gramı kaç",
     "bitcoin kaç",
     "bitcoin ne kadar",
     "btc kaç",
@@ -8032,7 +8045,6 @@ app.listen(
 
     }
 );
-
 
 
 
