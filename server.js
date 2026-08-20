@@ -968,7 +968,7 @@ const MAX_USER_MEMORY_MESSAGES =
     400;
 
 const USER_CONTEXT_MESSAGES = 2;
-    30;
+    
 
 /* =========================================================
 API AYARLARI
