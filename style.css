@@ -1778,3 +1778,80 @@ input:focus-visible {
         0 0 35px rgba(160, 124, 255, 0.35);
 
 }
+/* =========================================================
+   TÜRKAI PREMIUM ANİMASYON KATMANI
+========================================================= */
+
+.model-title,
+#accountPlanText {
+    will-change: transform, filter, text-shadow;
+}
+
+/* Üstteki TürkAI */
+.model-title {
+    animation:
+        turkAIShine 3s linear infinite,
+        turkAIPulse 2.5s ease-in-out infinite,
+        premiumFloat 3.5s ease-in-out infinite;
+}
+
+/* Hesap planı */
+#accountPlanText {
+    animation:
+        planShine 3s linear infinite,
+        planFloat 2s ease-in-out infinite,
+        premiumPulse 2.2s ease-in-out infinite;
+}
+
+/* Daha yumuşak süzülme */
+@keyframes premiumFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-1.5px) scale(1.025);
+    }
+}
+
+/* Parlaklık nabzı */
+@keyframes premiumPulse {
+    0%, 100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.22);
+    }
+}
+
+/* Hover = ekstra enerji */
+.model-title:hover,
+#accountPlanText:hover {
+    filter: brightness(1.3) saturate(1.2);
+
+    text-shadow:
+        0 0 6px rgba(124, 92, 255, 0.9),
+        0 0 14px rgba(124, 92, 255, 0.7),
+        0 0 28px rgba(160, 124, 255, 0.5),
+        0 0 45px rgba(160, 124, 255, 0.25);
+
+    transform:
+        translateY(-2px)
+        scale(1.07);
+
+    transition:
+        transform 0.25s ease,
+        filter 0.25s ease,
+        text-shadow 0.25s ease;
+}
+
+/* Hassas cihazlarda animasyonu azalt */
+@media (prefers-reduced-motion: reduce) {
+
+    .model-title,
+    #accountPlanText {
+        animation: none !important;
+        transition: none !important;
+    }
+}
