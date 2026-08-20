@@ -1967,29 +1967,7 @@ document.addEventListener(
 
     }
 );
-if (data.ok) {
 
-    localStorage.setItem(
-        "turkai_plan",
-        "pro"
-    );
-
-    proCodeMessage.textContent =
-        "Pro başarıyla etkinleştirildi! ??";
-
-    proCodeInput.value = "";
-
-    setTimeout(() => {
-        location.reload();
-    }, 500);
-
-} else {
-
-    proCodeMessage.textContent =
-        data.message ||
-        "Pro kodu geçersiz.";
-
-}
 </script>
 <script>
 
