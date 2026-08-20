@@ -657,7 +657,10 @@ console.log(
     "merhaba"        â†’ hazÄ±r cevap
     "merhaba nasÄ±lsÄ±n" â†’ API
     */
-
+console.log(
+    "BASİT MESAJ TEST:",
+    JSON.stringify(lastUserMessage)
+);
     if (
         Object.prototype.hasOwnProperty.call(
             simpleMessages,
