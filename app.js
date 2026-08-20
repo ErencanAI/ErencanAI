@@ -385,7 +385,19 @@ function getUserId() {
 ===================================================== */
 
 function init() {
+console.log("🔥 INIT ÇALIŞTI");
 
+document.addEventListener("click", function (event) {
+    if (
+        event.target &&
+        (
+            event.target.id === "voiceButton" ||
+            event.target.closest("#voiceButton")
+        )
+    ) {
+        console.log("🎤🎤🎤 VOICE BUTTON TIKLANDI!", event.target);
+    }
+});
     /* =================================================
        USER ID
     ================================================= */
