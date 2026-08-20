@@ -6701,7 +6701,7 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             ----------------------------------------- */
 
       
-            
+            const data = await requestGroq(messages);
 
             /* -----------------------------------------
             CEVAP
