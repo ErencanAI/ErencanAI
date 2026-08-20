@@ -2046,3 +2046,41 @@ document.addEventListener(
 </div>
 </body>
 </html>
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const purchaseButton =
+            document.getElementById(
+                "purchaseButton"
+            );
+
+        const purchaseModal =
+            document.getElementById(
+                "purchaseModal"
+            );
+
+        if (
+            purchaseButton &&
+            purchaseModal
+        ) {
+
+            purchaseButton.addEventListener(
+                "click",
+                function () {
+
+                    purchaseModal.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
