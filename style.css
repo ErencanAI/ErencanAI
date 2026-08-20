@@ -3404,3 +3404,19 @@ button:active {
         transition: none !important;
     }
 }
+#purchaseModal {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+}
+
+#purchaseModal:not(.active) {
+    display: none !important;
+}
+
+#purchaseModal.active {
+    display: flex !important;
+}
