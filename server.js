@@ -3738,7 +3738,38 @@ function shouldResearch(message) {
     DO RUDAN KONTROL
     =========================================================
     */
+// =========================================================
+// AÇIK İNTERNET ARAŞTIRMASI İSTEĞİ
+// Kullanıcı açıkça araştırma isterse kesinlikle araştır.
+// =========================================================
 
+const explicitResearchRequest =
+    [
+        "internetten araştır",
+        "internetten ara",
+        "internetten bak",
+        "internetten bul",
+        "webden araştır",
+        "webden ara",
+        "webden bak",
+        "internete bak",
+        "online araştır",
+        "online bak",
+        "araştır bunu",
+        "bunu araştır",
+        "iyice araştır",
+        "detaylı araştır",
+        "güncel internet araştırması yap",
+        "internet araştırması yap",
+        "kaynak bul",
+        "bilgiyi doğrula"
+    ].some(
+        phrase => text.includes(phrase)
+    );
+
+if (explicitResearchRequest) {
+    return true;
+}
     if (
         allResearchWords.some(
             word =>
