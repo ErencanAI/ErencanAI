@@ -6968,6 +6968,10 @@ if (
                     ? "AKT?F"
                     : "GEREKM?YOR"
             );
+            console.log(
+    "ARAŞTIRMA SONUCU GROQ'A GİDİYOR:",
+    researchContext
+);
         if (researchContext) {
     messages.push({
         role: "system",
