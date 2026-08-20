@@ -3232,4 +3232,30 @@ document.addEventListener(
 
         }
     );
+document.addEventListener("DOMContentLoaded", function () {
 
+    const purchaseButton =
+        document.getElementById("purchaseButton");
+
+    const purchaseModal =
+        document.getElementById("purchaseModal");
+
+    if (!purchaseButton) {
+        console.error("SATIN ALMA BUTONU BULUNAMADI");
+        return;
+    }
+
+    if (!purchaseModal) {
+        console.error("SATIN ALMA MODALI BULUNAMADI");
+        return;
+    }
+
+    purchaseButton.onclick = function () {
+
+        console.log("SATIN ALMA BUTONUNA BASILDI");
+
+        purchaseModal.classList.add("active");
+
+    };
+
+});
