@@ -255,6 +255,109 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+<!-- =====================================================
+     PREMIUM FOTOĞRAF OLUŞTURMA MODALI
+     ===================================================== -->
+
+<div
+    class="modal"
+    id="imageCreateModal"
+>
+
+    <div class="modal-box image-create-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Fotoğraf Oluştur</h2>
+
+                <p>
+                    TürkAI ile hayalindeki görseli oluştur.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="imageCreateModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="image-create-content">
+
+            <label for="imagePrompt">
+                Ne oluşturmak istiyorsun?
+            </label>
+
+            <textarea
+                id="imagePrompt"
+                class="image-prompt-input"
+                rows="5"
+                placeholder="Örneğin: Gece vakti neon ışıklarla aydınlatılmış futuristik bir İstanbul..."
+            ></textarea>
+
+            <div class="image-create-options">
+
+                <button
+                    type="button"
+                    class="image-option active"
+                    data-size="1024x1024"
+                >
+                    Kare
+                </button>
+
+                <button
+                    type="button"
+                    class="image-option"
+                    data-size="1536x1024"
+                >
+                    Yatay
+                </button>
+
+                <button
+                    type="button"
+                    class="image-option"
+                    data-size="1024x1536"
+                >
+                    Dikey
+                </button>
+
+            </div>
+
+            <button
+                type="button"
+                id="generateImageButton"
+                class="generate-image-button"
+            >
+                <svg
+                    class="ui-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M12 3v18"></path>
+                    <path d="M3 12h18"></path>
+                    <path d="M5 5l14 14"></path>
+                    <path d="M19 5L5 19"></path>
+                </svg>
+
+                Fotoğraf Oluştur
+            </button>
+
+            <div
+                id="imageGenerationStatus"
+                class="image-generation-status"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
 <body>
 
 <div id="premiumSplash">
