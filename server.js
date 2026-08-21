@@ -1084,7 +1084,117 @@ const USER_CONTEXT_MESSAGES = 2;
 const FREE_CONTEXT_MESSAGES = 2;
 const PRO_CONTEXT_MESSAGES = 5;
 const PLUS_CONTEXT_MESSAGES = 15;
+
+const DAILY_MESSAGE_LIMITS = {
+    free: 50,
+    pro: 100,
+    plus: 200
+};
+const DAILY_USAGE_FILE =
+    path.join(
+        __dirname,
+        "daily_usage.json"
+    );
+    function getDailyUsageDate() {
+    return new Intl.DateTimeFormat("tr-TR", {
+        timeZone: "Europe/Istanbul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(new Date());
+}
+function loadDailyUsage() {
+    try {
+        if (!fs.existsSync(DAILY_USAGE_FILE)) {
+            return {};
+        }
+
+        const data = JSON.parse(
+            fs.readFileSync(
+                DAILY_USAGE_FILE,
+                "utf8"
+            )
+        );
+
+        return data && typeof data === "object"
+            ? data
+            : {};
+
+    } catch (error) {
+        console.error(
+            "GÜNLÜK KULLANIM OKUMA HATASI:",
+            error.message
+        );
+
+        return {};
+    }
+}
+function saveDailyUsage(data) {
+    try {
+        fs.writeFileSync(
+            DAILY_USAGE_FILE,
+            JSON.stringify(
+                data,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "GÜNLÜK KULLANIM KAYDETME HATASI:",
+            error.message
+        );
+
+        return false;
+    }
+   
+}
     
+function checkDailyMessageLimit(userId, plan) {
+    const usage = loadDailyUsage();
+    const today = getDailyUsageDate();
+
+    const cleanPlan =
+        normalizeSubscriptionPlan(plan);
+
+    const limit =
+        DAILY_MESSAGE_LIMITS[cleanPlan];
+
+    if (!usage[userId] || usage[userId].date !== today) {
+        usage[userId] = {
+            date: today,
+            count: 0
+        };
+    }
+
+    return {
+        allowed: usage[userId].count < limit,
+        used: usage[userId].count,
+        limit: limit
+    };
+}
+function incrementDailyMessageUsage(userId, plan) {
+    const usage = loadDailyUsage();
+    const today = getDailyUsageDate();
+
+    const cleanPlan =
+        normalizeSubscriptionPlan(plan);
+
+    if (!usage[userId] || usage[userId].date !== today) {
+        usage[userId] = {
+            date: today,
+            count: 0
+        };
+    }
+
+    usage[userId].count += 1;
+
+    saveDailyUsage(usage);
+}
 
 /* =========================================================
 API AYARLARI
@@ -1281,6 +1391,140 @@ Basitle?tirilmi? ?ince
 Geleneksel ?ince
 Japonca
 Korece
+Azerbaycanca
+Kazakça
+Kırgızca
+Özbekçe
+Türkmence
+Tacikçe
+Moğolca
+Gürcüce
+Ermenice
+Arnavutça
+Makedonca
+Litvanca
+Letonca
+Estonca
+İzlandaca
+İrlandaca
+Galce
+Slovence
+Baskça
+Katalanca
+Galiçyaca
+Çince
+Malayalamca
+Kannadaca
+Nepalce
+Sinhala
+Tamilce
+Teluguca
+Marathice
+Gujarati
+Bengalce
+Pencapça
+Urduca
+Peştuca
+Kürtçe
+Svahili
+Somalice
+Amharca
+Yorubaca
+Zulu dili
+Afrikaanca
+Hausa
+Endonezce
+Malayca
+Filipince
+Tagalog
+Vietnamca
+Tayca
+Laoca
+Kmerce
+Burma dili
+Abhazca
+Avarca
+Başkurtça
+Çeçence
+Çuvaşça
+Dağıtça
+Kabardeyce
+Karaçay-Balkarca
+Komi
+Lezgice
+Tatarca
+Udmurtça
+Yakutça
+Çeçence
+Kırım Tatarcası
+Gagavuzca
+Kırmançça
+Zazaca
+Lazca
+Balochice
+Belucice
+Bhojpuri
+Assamca
+Oriya
+Odia
+Konkani
+Keşmirce
+Sindhice
+Marvarice
+Sanskritçe
+Tibetçe
+Dzongkha
+Uygurca
+Peştuca
+Dari
+Klasik Farsça
+İbranice
+Aramice
+Yidiş
+Malta dili
+Latince
+Esperanto
+Frizce
+Lüksemburgca
+Faroec
+Bretonca
+Korsikaca
+Sarduca
+Sicilyaca
+Napolice
+Venedikçe
+Friulce
+Romanşça
+Katalanca
+Valensiyaca
+Asturyasça
+Galisyaca
+Baskça
+Manksça
+Māori
+Samoaca
+Tongaca
+Fijice
+Hawaiice
+Tahiti dili
+Endonezce
+Cavaca
+Sundaca
+Balice
+Maduraca
+Tagalogca
+Cebuano
+Hiligaynon
+Ilocano
+Waray
+Chamorro
+Kantonca
+Wu Çincesi
+Min Nan Çincesi
+Hakka
+Moğolca
+Korece
+Japonca
 
 Bu dillerden biriyle konu?uldu?unda m?mk?n oldu?unca o dilde do?al cevap ver.
 
@@ -7118,13 +7362,23 @@ app.post(
                 getUserId(
                     req
                 );
-                const userPlan =
-    normalizeSubscriptionPlan(
-        req.body &&
-        req.body.plan
-            ? req.body.plan
-            : "free"
+             const userPlan =
+    getUserPlan(userId);
+    const dailyLimit =
+    checkDailyMessageLimit(
+        userId,
+        userPlan
     );
+
+if (!dailyLimit.allowed) {
+    return res.status(429).json({
+        ok: false,
+        reply:
+            `Günlük mesaj limitine ulaştın. ` +
+            `Planın: ${userPlan.toUpperCase()} ` +
+            `Limit: ${dailyLimit.limit} mesaj.`
+    });
+}
 
 const contextMessages =
     isPlus(userPlan)
@@ -7181,11 +7435,14 @@ console.log(
                         false,
 
                     reply:
-                        "Mesaj ?ok uzun. L?tfen daha k?sa bir mesaj g?nder."
+                        "Mesaj çok uzun. Lütfen daha kısa bir mesaj gönder."
 
                 });
             }
-
+incrementDailyMessageUsage(
+    userId,
+    userPlan
+);
             if (
                 !GROQ_API_KEY
             ) {
