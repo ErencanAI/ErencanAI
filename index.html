@@ -526,7 +526,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const status =
         document.getElementById("imageGenerationStatus");
+<button
+    id="videoCreateButton"
+    class="premium-create-button"
+    type="button"
+>
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+    >
+        <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+        <path d="M15 12l-5-3v6l5-3z"></path>
+    </svg>
 
+    <span>Video Oluştur</span>
+</button>
 
     /* =========================================
        FOTOĞRAF EKRANINI AÇ
@@ -2527,7 +2544,112 @@ window.addEventListener("load", function () {
     class="modal"
     id="imageCreateModal"
 >
+<!-- =====================================================
+     PREMIUM VIDEO OLUŞTURMA MODALI
+     ===================================================== -->
 
+<div
+    class="modal"
+    id="videoCreateModal"
+>
+
+    <div class="modal-box image-create-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Video Oluştur</h2>
+
+                <p>
+                    TürkAI ile hayalindeki videoyu tasarla.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="videoCreateModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="image-create-content">
+
+            <label for="videoPrompt">
+                Videoda ne görmek istiyorsun?
+            </label>
+
+            <textarea
+                id="videoPrompt"
+                class="image-prompt-input"
+                rows="5"
+                placeholder="Örneğin: Gece İstanbul sokaklarında ilerleyen futuristik bir araba..."
+            ></textarea>
+
+
+            <div class="image-create-options">
+
+                <button
+                    type="button"
+                    class="video-option active"
+                    data-duration="5"
+                >
+                    5 saniye
+                </button>
+
+                <button
+                    type="button"
+                    class="video-option"
+                    data-duration="10"
+                >
+                    10 saniye
+                </button>
+
+                <button
+                    type="button"
+                    class="video-option"
+                    data-duration="15"
+                >
+                    15 saniye
+                </button>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="generateVideoButton"
+                class="generate-image-button"
+            >
+
+                <svg
+                    class="ui-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M8 5v14l11-7z"></path>
+                </svg>
+
+                Video Oluştur
+
+            </button>
+
+
+            <div
+                id="videoGenerationStatus"
+                class="image-generation-status"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
     <div class="modal-box small image-create-box">
 
         <div class="modal-header">
