@@ -2,6 +2,12 @@
 require("dotenv").config();
 
 const express = require("express");
+const Iyzipay = require("iyzipay");
+const iyzipay = new Iyzipay({
+    apiKey: process.env.IYZICO_API_KEY,
+    secretKey: process.env.IYZICO_SECRET_KEY,
+    uri: process.env.IYZICO_BASE_URL
+});
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
@@ -6809,6 +6815,29 @@ app.get(
 );
 
 /* =========================================================
+IYZICO TEST
+========================================================= */
+
+app.get(
+    
+    "/api/payment/test",
+    function (req, res) {
+
+        console.log(
+            "🔥 IYZICO TEST ÇALIŞTI"
+        );
+
+        return res.json({
+            ok: true,
+            paymentSystem: "iyzico",
+            mode: "sandbox",
+            message: "Ödeme sistemi hazır."
+        });
+
+    }
+);
+console.log("🔥🔥🔥 IYZICO DOSYASI OKUNDU 🔥🔥🔥");
+/* =========================================================
 TEST API
 ========================================================= */
 
@@ -7375,10 +7404,15 @@ app.post(
     }
 );
 
+
+
+
 /* =========================================================
 CHAT API
 ========================================================= */
-
+app.get("/test123", (req, res) => {
+    res.send("TEST ÇALIŞIYOR");
+});
 app.post(
     "/api/chat",
     async function (
@@ -7411,7 +7445,10 @@ if (!dailyLimit.allowed) {
             `Planın: ${userPlan.toUpperCase()} ` +
             `Limit: ${dailyLimit.limit} mesaj.`
     });
-}
+   
+
+    }
+
 
 const contextMessages =
     isPlus(userPlan)
