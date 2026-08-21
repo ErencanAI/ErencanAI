@@ -1072,7 +1072,7 @@ function saveChats() {
         localStorage.setItem(
             STORAGE_KEY,
             JSON.stringify(
-               chats 
+               TürkAI.chats 
             )
         );
 
@@ -2918,10 +2918,11 @@ console.log("PRO BUTONUNA BASILDI");
                                         "application/json"
                                 },
 
-                                body:
-                                    JSON.stringify({
-                                        code: code
-                                    })
+                               body:
+    JSON.stringify({
+        code: code,
+        userId: TürkAI.userId
+    })
                             }
                         );
 console.log(
@@ -3196,9 +3197,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedPlan =
         localStorage.getItem("turkai_plan");
 
-    if (savedPlan !== "pro") {
-        return;
-    }
+   if (
+    savedPlan !== "pro" &&
+    savedPlan !== "plus"
+) {
+    return;
+}
 
     const proStatusBadge =
         document.querySelector(".pro-active-badge");
