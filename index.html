@@ -735,16 +735,45 @@ document.addEventListener("DOMContentLoaded", function () {
     <span>Plus / Pro Satın Al</span>
 </button>
 <script>
-document.getElementById("purchaseButton").addEventListener("click", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-    const modal = document.getElementById("purchaseModal");
+    const purchaseButton =
+        document.getElementById("purchaseButton");
 
-    if (modal) {
-        modal.classList.add("active");
-        console.log("SATIN ALMA EKRANI AÇILDI");
-    } else {
-        console.error("purchaseModal BULUNAMADI!");
+    const purchaseModal =
+        document.getElementById("purchaseModal");
+
+    if (!purchaseButton) {
+        console.error(
+            "purchaseButton BULUNAMADI!"
+        );
+        return;
     }
+
+    purchaseButton.addEventListener(
+        "click",
+        function () {
+
+            if (purchaseModal) {
+
+                purchaseModal.classList.add(
+                    "active"
+                );
+
+                console.log(
+                    "SATIN ALMA EKRANI AÇILDI"
+                );
+
+            } else {
+
+                console.error(
+                    "purchaseModal BULUNAMADI!"
+                );
+
+            }
+
+        }
+    );
 
 });
 </script>
@@ -756,6 +785,26 @@ document.getElementById("purchaseButton").addEventListener("click", function () 
     display: inline-block;
 }
 </style>
+<button
+    class="sidebar-button"
+    id="purchaseButton"
+    type="button"
+>
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+        <path d="M3 10h18"></path>
+        <path d="M7 15h3"></path>
+    </svg>
+
+    <span>Plus / Pro Satın Al</span>
+</button>
         <button
             class="sidebar-button"
             id="clearChatButton"
@@ -2709,4 +2758,184 @@ window.addEventListener("load", function () {
     </div>
 
 </div>
-       
+       <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const videoButton =
+        document.getElementById(
+            "videoCreateButton"
+        );
+
+    const videoModal =
+        document.getElementById(
+            "videoCreateModal"
+        );
+
+    const videoPrompt =
+        document.getElementById(
+            "videoPrompt"
+        );
+
+    const generateVideoButton =
+        document.getElementById(
+            "generateVideoButton"
+        );
+
+    const videoStatus =
+        document.getElementById(
+            "videoGenerationStatus"
+        );
+
+
+    /* =========================================
+       VIDEO EKRANINI AÇ
+       ========================================= */
+
+    if (
+        videoButton &&
+        videoModal
+    ) {
+
+        videoButton.addEventListener(
+            "click",
+            function () {
+
+                videoModal.classList.add(
+                    "active"
+                );
+
+                if (videoPrompt) {
+
+                    setTimeout(
+                        function () {
+
+                            videoPrompt.focus();
+
+                        },
+                        100
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       SÜRE SEÇ
+       ========================================= */
+
+    document
+        .querySelectorAll(".video-option")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    document
+                        .querySelectorAll(
+                            ".video-option"
+                        )
+                        .forEach(
+                            function (item) {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* =========================================
+       VIDEO OLUŞTUR
+       ========================================= */
+
+    if (generateVideoButton) {
+
+        generateVideoButton.addEventListener(
+            "click",
+            function () {
+
+                const prompt =
+                    videoPrompt
+                        ? videoPrompt.value.trim()
+                        : "";
+
+                if (!prompt) {
+
+                    if (videoStatus) {
+
+                        videoStatus.textContent =
+                            "Önce videoda ne görmek istediğini yaz.";
+
+                    }
+
+                    if (videoPrompt) {
+                        videoPrompt.focus();
+                    }
+
+                    return;
+                }
+
+
+                /*
+                 * GERÇEK VIDEO API'SI HENÜZ BAĞLI DEĞİL.
+                 */
+
+                if (videoStatus) {
+
+                    videoStatus.classList.add(
+                        "loading"
+                    );
+
+                    videoStatus.textContent =
+                        "TürkAI videoyu hazırlıyor...";
+
+                }
+
+
+                generateVideoButton.disabled =
+                    true;
+
+
+                setTimeout(
+                    function () {
+
+                        if (videoStatus) {
+
+                            videoStatus.classList.remove(
+                                "loading"
+                            );
+
+                            videoStatus.textContent =
+                                "Video üretim API'si henüz bağlanmadı.";
+
+                        }
+
+                        generateVideoButton.disabled =
+                            false;
+
+                    },
+                    1800
+                );
+
+            }
+        );
+
+    }
+
+});
+</script>
