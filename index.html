@@ -187,7 +187,7 @@
 
 </head>
 
-
+<script src="/app.js"></script>
 <body>
 
 
@@ -277,25 +277,7 @@
 
 </div>
 
-        <small>
-            Pro kodun varsa buradan etkinleştirebilirsin.
-        </small>
 
-    <input
-    id="proCodeInput"
-    type="password"
-    placeholder="Pro veya Plus kodunu gir"
-    autocomplete="off"
->
-
-<button
-    id="proActivateButton"
-    type="button"
->
-    Pro / Plus'ı Etkinleştir
-</button>
-
-<div id="proCodeMessage"></div>
 
     <!-- YENİ SOHBET -->
 
@@ -335,7 +317,19 @@
     id="purchaseButton"
     type="button"
 >
-    💳
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+        <path d="M3 10h18"></path>
+        <path d="M7 15h3"></path>
+    </svg>
+
     <span>Plus / Pro Satın Al</span>
 </button>
 <script>
@@ -353,12 +347,11 @@ document.getElementById("purchaseButton").addEventListener("click", function () 
 });
 </script>
 <style>
-#purchaseButton {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
-    z-index: 9999 !important;
+.ui-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: inline-block;
 }
 </style>
         <button
@@ -861,7 +854,19 @@ function updatePlanAnimation(plan) {
     title="TürkAI ile konuş"
     aria-label="TürkAI ile konuş"
 >
-    🎤
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <rect x="9" y="3" width="6" height="11" rx="3"></rect>
+        <path d="M5 11a7 7 0 0 0 14 0"></path>
+        <path d="M12 18v3"></path>
+        <path d="M8 21h8"></path>
+    </svg>
 </button>
                     <div class="composer-info">
 
@@ -1915,12 +1920,23 @@ document.addEventListener(
 
             <div class="purchase-plan">
 
-                <div class="purchase-plan-title">
-                    ⭐ TürkAI Plus
-                </div>
+               <div class="purchase-plan-title">
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 18.3 6.4 21.2l1.1-6.2L3 9.6l6.2-.9L12 3z"></path>
+    </svg>
+
+    TürkAI Plus
+</div>
 
                 <div class="purchase-price">
-                    <strong>100 TL</strong>
+                    <strong>500 TL</strong>
                     <span>/ ay</span>
                 </div>
 
@@ -1949,11 +1965,23 @@ document.addEventListener(
             <div class="purchase-plan purchase-plan-pro">
 
                 <div class="purchase-plan-title">
-                    👑 TürkAI Pro
-                </div>
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <path d="M3 7l4 4 5-7 5 7 4-4-2 12H5L3 7z"></path>
+        <path d="M5 19h14"></path>
+    </svg>
+
+    TürkAI Pro
+</div>
 
                 <div class="purchase-price">
-                    <strong>200 TL</strong>
+                    <strong>250 TL</strong>
                     <span>/ ay</span>
                 </div>
 
@@ -2092,34 +2120,4 @@ document.addEventListener(
 </div>
 
 
-        const purchaseButton =
-            document.getElementById(
-                "purchaseButton"
-            );
-
-        const purchaseModal =
-            document.getElementById(
-                "purchaseModal"
-            );
-
-        if (
-            purchaseButton &&
-            purchaseModal
-        ) {
-
-            purchaseButton.addEventListener(
-                "click",
-                function () {
-
-                    console.log(
-                        "SATIN ALMA BUTONUNA BASILDI"
-                    );
-
-                    purchaseModal.classList.add(
-                        "active"
-                    );
-
-                }
-            );
-
-        }
+       
