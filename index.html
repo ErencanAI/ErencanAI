@@ -2195,5 +2195,72 @@ window.addEventListener("load", function () {
 
 });
 </script>
+<!-- =========================================================
+     TÜRKAI FOTOĞRAF OLUŞTURMA MODALI
+     ========================================================= -->
 
+<div
+    class="modal"
+    id="imageCreateModal"
+>
+
+    <div class="modal-box small image-create-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Fotoğraf Oluştur</h2>
+
+                <p>
+                    Ne oluşturmak istediğini yaz.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="imageCreateModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="image-create-content">
+
+            <textarea
+                id="imagePromptInput"
+                class="image-prompt-input"
+                rows="5"
+                placeholder="Örneğin: Gece şehir manzarasında neon ışıklarla aydınlatılmış futuristik bir TürkAI logosu..."
+            ></textarea>
+
+
+            <button
+                type="button"
+                id="generateImageButton"
+                class="generate-image-button"
+            >
+                <span>▣</span>
+                Fotoğraf Oluştur
+            </button>
+
+
+            <div
+                id="imageGenerationStatus"
+                class="payment-status-message"
+            ></div>
+
+
+            <div
+                id="generatedImageContainer"
+                class="generated-image-container"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
        
