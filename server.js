@@ -8,39 +8,152 @@ const crypto = require("crypto");
 const app = express();
 const TURKAI_PRO_CODE = process.env.TURKAI_PRO_CODE || "";
 
+const USER_PLANS_FILE = "./user_plans.json";
+
+function loadUserPlans() {
+
+    if (!fs.existsSync(USER_PLANS_FILE)) {
+
+        fs.writeFileSync(
+            USER_PLANS_FILE,
+            JSON.stringify({}, null, 2),
+            "utf8"
+        );
+
+        return {};
+    }
+
+    try {
+
+        return JSON.parse(
+            fs.readFileSync(
+                USER_PLANS_FILE,
+                "utf8"
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "KULLANICI PLANLARI OKUNAMADI:",
+            error.message
+        );
+
+        return {};
+    }
+}
+
+
+function saveUserPlans(plans) {
+
+    fs.writeFileSync(
+        USER_PLANS_FILE,
+        JSON.stringify(
+            plans,
+            null,
+            2
+        ),
+        "utf8"
+    );
+}
+
+
 app.post(
     "/api/pro/activate",
     express.json(),
     (req, res) => {
 
         const enteredCode =
-            String(req.body?.code || "").trim();
+            String(
+                req.body?.code || ""
+            ).trim();
+
+        const userId =
+            String(
+                req.body?.userId || ""
+            ).trim();
+
 
         if (
             !enteredCode ||
             !TURKAI_PRO_CODE ||
             enteredCode !== TURKAI_PRO_CODE
         ) {
+
             return res.status(403).json({
                 ok: false,
-                message: "GeÃ§ersiz Pro kodu."
+                message: "Geçersiz Pro kodu."
             });
         }
 
-        return res.json({
-            ok: true,
+
+        if (!userId) {
+
+            return res.status(400).json({
+                ok: false,
+                message: "Kullanıcı bulunamadı."
+            });
+        }
+
+
+        const plans =
+            loadUserPlans();
+
+
+        plans[userId] = {
+
             plan: "pro",
-            message: "TÃ¼rkAI Pro etkinleÅŸtirildi! ğŸš€"
+
+            activatedAt:
+                Date.now()
+        };
+
+
+        saveUserPlans(plans);
+
+
+        console.log(
+            "PRO AKTİF EDİLDİ:",
+            userId
+        );
+
+
+        return res.json({
+
+            ok: true,
+
+            plan: "pro",
+
+            message:
+                "TürkAI Pro etkinleştirildi! 🚀"
         });
     }
 );
 // TÃœRKAI GÃœNLÃœK MESAJ LÄ°MÄ°TLERÄ°
 const DAILY_LIMITS = {
-    free: 200,
-    pro: 400,
-    developer: 500
+    free: 50,
+    pro: 100,
+    plus:200,
+    developer:400
 };
+function getUserPlan(userId) {
 
+    if (!userId) {
+        return "free";
+    }
+
+    const plans =
+        loadUserPlans();
+
+    if (
+        plans[userId] &&
+        plans[userId].plan
+    ) {
+        return plans[userId].plan;
+    }
+
+    return "free";
+}
 function getTodayKey() {
     const now = new Date();
 
@@ -459,13 +572,13 @@ console.log(
         "HoÅŸÃ§a kal! ğŸ‘‹",
 
     // =========================
-    // ERencanaAI
+    // TürkAI
     // =========================
 
-    "erencanai":
+    "türkai":
         "BuradayÄ±m! ğŸ¤–",
 
-    "erencan ai":
+    "türk ai":
         "BuradayÄ±m! ğŸ¤–",
 
     "test":
