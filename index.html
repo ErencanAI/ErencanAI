@@ -188,7 +188,38 @@
 </head>
 
 <script src="/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const imageButton =
+        document.getElementById("imageCreateButton");
+
+    const imageModal =
+        document.getElementById("imageCreateModal");
+
+    if (imageButton && imageModal) {
+
+        imageButton.addEventListener("click", function () {
+
+            imageModal.classList.add("active");
+
+            const input =
+                document.getElementById("imagePromptInput");
+
+            if (input) {
+                setTimeout(function () {
+                    input.focus();
+                }, 150);
+            }
+
+        });
+
+    }
+
+});
+</script>
 <body>
+
 <div id="premiumSplash">
 
     <div class="premium-splash-content">
