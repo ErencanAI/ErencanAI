@@ -509,20 +509,160 @@ document.addEventListener("DOMContentLoaded", function () {
         <!-- PREMIUM ÖZELLİKLER -->
 
 <div class="premium-preview">
-<button
-    id="imageCreateButton"
-    class="premium-create-button"
-    type="button"
->
-    <svg class="ui-icon" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="18" height="18" rx="3"></rect>
-        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-        <path d="M21 15l-5-5L5 21"></path>
-    </svg>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    <span>Fotoğraf Oluştur</span>
-</button>
+    const imageButton =
+        document.getElementById("imageCreateButton");
+
+    const imageModal =
+        document.getElementById("imageCreateModal");
+
+    const imagePrompt =
+        document.getElementById("imagePrompt");
+
+    const generateButton =
+        document.getElementById("generateImageButton");
+
+    const status =
+        document.getElementById("imageGenerationStatus");
+
+
+    /* =========================================
+       FOTOĞRAF EKRANINI AÇ
+       ========================================= */
+
+    if (imageButton && imageModal) {
+
+        imageButton.addEventListener(
+            "click",
+            function () {
+
+                imageModal.classList.add("active");
+
+                if (imagePrompt) {
+                    setTimeout(function () {
+                        imagePrompt.focus();
+                    }, 100);
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       BOYUT SEÇ
+       ========================================= */
+
+    document
+        .querySelectorAll(".image-option")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    document
+                        .querySelectorAll(".image-option")
+                        .forEach(function (item) {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                        });
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* =========================================
+       OLUŞTUR
+       ========================================= */
+
+    if (generateButton) {
+
+        generateButton.addEventListener(
+            "click",
+            function () {
+
+                const prompt =
+                    imagePrompt
+                        ? imagePrompt.value.trim()
+                        : "";
+
+                if (!prompt) {
+
+                    if (status) {
+
+                        status.classList.remove(
+                            "loading"
+                        );
+
+                        status.textContent =
+                            "Önce ne oluşturmak istediğini yaz.";
+
+                    }
+
+                    if (imagePrompt) {
+                        imagePrompt.focus();
+                    }
+
+                    return;
+                }
+
+
+                /*
+                 * GERÇEK API HENÜZ BAĞLI DEĞİL.
+                 * SADECE PREMIUM ARAYÜZ TESTİ.
+                 */
+
+                if (status) {
+
+                    status.classList.add(
+                        "loading"
+                    );
+
+                    status.textContent =
+                        "TürkAI görseli hazırlıyor...";
+                }
+
+
+                generateButton.disabled = true;
+
+
+                setTimeout(function () {
+
+                    if (status) {
+
+                        status.classList.remove(
+                            "loading"
+                        );
+
+                        status.textContent =
+                            "Görsel üretim API'si henüz bağlanmadı.";
+
+                    }
+
+                    generateButton.disabled = false;
+
+                }, 1800);
+
+            }
+        );
+
+    }
+
+});
+</script>
     <div class="premium-feature-card">
 
         <div class="premium-feature-icon">
