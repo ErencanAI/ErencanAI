@@ -5285,3 +5285,348 @@ button:active {
     font-size: 13px;
     color: var(--muted);
 }
+/* =====================================================
+   TÜRKAI PREMIUM IMAGE STUDIO
+   ===================================================== */
+
+.image-create-box {
+    width: min(680px, calc(100vw - 30px)) !important;
+    max-width: 680px !important;
+    overflow: hidden;
+}
+
+.image-create-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.image-create-content label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.image-prompt-input {
+    width: 100%;
+    min-height: 145px;
+    box-sizing: border-box;
+
+    resize: vertical;
+
+    padding: 15px 16px;
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--panel-2),
+            var(--panel-3)
+        );
+
+    color: var(--text);
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.image-prompt-input::placeholder {
+    color: var(--muted);
+}
+
+.image-prompt-input:focus {
+    border-color: rgba(100, 180, 255, .65);
+
+    box-shadow:
+        0 0 0 3px rgba(80, 160, 255, .08),
+        0 0 30px rgba(80, 160, 255, .12);
+}
+
+
+/* =====================================================
+   BOYUT SEÇİMİ
+   ===================================================== */
+
+.image-create-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+}
+
+.image-option {
+    min-height: 42px;
+
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    background: var(--panel-2);
+    color: var(--muted);
+
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    transition:
+        .2s ease;
+}
+
+.image-option:hover {
+    color: var(--text);
+
+    border-color:
+        rgba(100, 180, 255, .4);
+
+    transform: translateY(-1px);
+}
+
+.image-option.active {
+    color: var(--text);
+
+    border-color:
+        rgba(100, 180, 255, .7);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(70, 140, 255, .18),
+            rgba(130, 80, 255, .14)
+        );
+
+    box-shadow:
+        0 0 18px rgba(80, 150, 255, .08);
+}
+
+
+/* =====================================================
+   OLUŞTUR BUTONU
+   ===================================================== */
+
+.generate-image-button {
+    position: relative;
+
+    width: 100%;
+    min-height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    border: 1px solid
+        rgba(110, 190, 255, .45);
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(70, 140, 255, .25),
+            rgba(130, 80, 255, .20)
+        );
+
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.generate-image-button::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: -120%;
+
+    width: 80%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.12),
+            transparent
+        );
+
+    transform: skewX(-20deg);
+
+    transition: left .6s ease;
+}
+
+.generate-image-button:hover::before {
+    left: 140%;
+}
+
+.generate-image-button:hover {
+    transform: translateY(-1px);
+
+    border-color:
+        rgba(110, 200, 255, .75);
+
+    box-shadow:
+        0 0 28px rgba(80, 160, 255, .16);
+}
+
+.generate-image-button:active {
+    transform: scale(.985);
+}
+
+.generate-image-button .ui-icon {
+    width: 19px;
+    height: 19px;
+}
+
+
+/* =====================================================
+   DURUM ALANI
+   ===================================================== */
+
+.image-generation-status {
+    min-height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   SAHTE ÜRETİM ANİMASYONU
+   ===================================================== */
+
+.image-generation-status.loading {
+    gap: 6px;
+}
+
+.image-generation-status.loading::after {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+
+    animation:
+        imageLoadingDot 1s infinite ease-in-out;
+}
+
+@keyframes imageLoadingDot {
+
+    0%,
+    100% {
+        opacity: .25;
+        transform: scale(.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+
+/* =====================================================
+   MOBİL
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .image-create-box {
+        width: calc(100vw - 20px) !important;
+        max-width: none !important;
+    }
+
+    .image-prompt-input {
+        min-height: 125px;
+    }
+
+    .image-create-options {
+        gap: 6px;
+    }
+
+    .image-option {
+        font-size: 11px;
+    }
+
+}
+/* =====================================================
+   PREMIUM VIDEO SEÇENEKLERİ
+   ===================================================== */
+
+.video-option {
+    flex: 1;
+
+    min-height: 42px;
+
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    background: var(--panel-2);
+    color: var(--muted);
+
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    transition: .2s ease;
+}
+
+.video-option:hover {
+    color: var(--text);
+
+    border-color:
+        rgba(100, 180, 255, .4);
+
+    transform: translateY(-1px);
+}
+
+.video-option.active {
+    color: var(--text);
+
+    border-color:
+        rgba(100, 180, 255, .7);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(70, 140, 255, .18),
+            rgba(130, 80, 255, .14)
+        );
+
+    box-shadow:
+        0 0 18px rgba(80, 150, 255, .08);
+}
