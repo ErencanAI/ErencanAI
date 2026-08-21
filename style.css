@@ -3420,3 +3420,284 @@ button:active {
 #purchaseModal.active {
     display: flex !important;
 }
+.purchase-features div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.purchase-features div::before {
+    content: "✓";
+    font-weight: 700;
+}
+/* =========================================================
+   TÜRKAI PREMIUM AÇILIŞ ANİMASYONU
+   ========================================================= */
+
+#premiumSplash {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(70, 130, 255, 0.12),
+            transparent 35%
+        ),
+        #05070b;
+
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+        opacity 0.7s ease,
+        visibility 0.7s ease;
+}
+
+
+/* ANA İÇERİK */
+
+.premium-splash-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    animation:
+        splashContentIn 1s ease forwards;
+}
+
+
+/* E LOGOSU */
+
+.premium-splash-logo {
+    width: 92px;
+    height: 92px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 26px;
+
+    font-size: 42px;
+    font-weight: 800;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #151b2b,
+            #0b101b
+        );
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    box-shadow:
+        0 0 30px rgba(80,140,255,0.18),
+        0 0 80px rgba(80,140,255,0.08);
+
+    animation:
+        splashLogo 1.5s ease-in-out infinite alternate;
+}
+
+
+/* TÜRKAI */
+
+.premium-splash-title {
+    margin-top: 22px;
+
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -1px;
+
+    color: #ffffff;
+
+    opacity: 0;
+
+    animation:
+        splashTitle 0.8s ease 0.35s forwards;
+}
+
+
+/* ALT YAZI */
+
+.premium-splash-subtitle {
+    margin-top: 8px;
+
+    font-size: 13px;
+    letter-spacing: 2px;
+
+    color: rgba(255,255,255,0.55);
+
+    opacity: 0;
+
+    animation:
+        splashSubtitle 0.8s ease 0.65s forwards;
+}
+
+
+/* YÜKLENİYOR NOKTALARI */
+
+.premium-splash-loading {
+    margin-top: 25px;
+
+    display: flex;
+    gap: 6px;
+
+    opacity: 0;
+
+    animation:
+        splashLoading 0.5s ease 0.9s forwards;
+}
+
+
+.premium-splash-loading span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+
+    animation:
+        splashDot 1s ease-in-out infinite;
+}
+
+
+.premium-splash-loading span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.premium-splash-loading span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+
+/* KAPANMA */
+
+#premiumSplash.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ANİMASYONLAR
+   ========================================================= */
+
+@keyframes splashContentIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+@keyframes splashLogo {
+
+    from {
+        transform: scale(1);
+        box-shadow:
+            0 0 25px rgba(80,140,255,0.15);
+    }
+
+    to {
+        transform: scale(1.04);
+        box-shadow:
+            0 0 40px rgba(80,140,255,0.28),
+            0 0 90px rgba(80,140,255,0.10);
+    }
+
+}
+
+
+@keyframes splashTitle {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+@keyframes splashSubtitle {
+
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+@keyframes splashLoading {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+
+@keyframes splashDot {
+
+    0%,
+    100% {
+        opacity: 0.25;
+        transform: translateY(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+
+}
+
+
+/* MOBİL */
+
+@media (max-width: 600px) {
+
+    .premium-splash-logo {
+        width: 78px;
+        height: 78px;
+        border-radius: 22px;
+        font-size: 36px;
+    }
+
+    .premium-splash-title {
+        font-size: 29px;
+    }
+
+}
