@@ -1,13 +1,13 @@
 "use strict";
 
 /* =====================================================
-   TÜRKAI 10.0
-   SOHBET + HAFIZA + İNTERNET ARAŞTIRMASI + SES
+   TÃœRKAI 10.0
+   SOHBET + HAFIZA + Ä°NTERNET ARAÅTIRMASI + SES
 ===================================================== */
 
 
 /* =====================================================
-   SESLENDİRME
+   SESLENDÄ°RME
 ===================================================== */
 
 function speakText(text) {
@@ -1765,7 +1765,9 @@ async function sendMessage() {
 
 
     try {
-
+console.log("📨 MESAJ GÖNDERİLİYOR:", text);
+console.log("👤 USER ID:", TürkAI.userId);
+console.log("🌐 API:", API_URL);
         const response =
             await fetch(
                 API_URL,
