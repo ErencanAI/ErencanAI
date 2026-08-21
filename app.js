@@ -1,13 +1,13 @@
 "use strict";
 
 /* =====================================================
-   TÃœRKAI 10.0
-   SOHBET + HAFIZA + Ä°NTERNET ARAÅTIRMASI + SES
+   TÜRKAI 10.0
+   SOHBET + HAFIZA + İNTERNET ARAŞTIRMASI + SES
 ===================================================== */
 
 
 /* =====================================================
-   SESLENDÄ°RME
+   SESLENDİRME
 ===================================================== */
 
 function speakText(text) {
