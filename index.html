@@ -218,6 +218,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const imageButton =
+        document.getElementById("imageCreateButton");
+
+    if (!imageButton) {
+        console.error("imageCreateButton bulunamadı!");
+        return;
+    }
+
+    imageButton.addEventListener("click", function () {
+
+        const prompt =
+            window.prompt(
+                "Fotoğraf oluşturmak için ne çizmemi istersin?"
+            );
+
+        if (!prompt || !prompt.trim()) {
+            return;
+        }
+
+        console.log(
+            "FOTOĞRAF İSTEĞİ:",
+            prompt
+        );
+
+        alert(
+            "Fotoğraf oluşturma sistemi hazırlanıyor...\n\n" +
+            "İstek: " +
+            prompt
+        );
+
+    });
+
+});
+</script>
 <body>
 
 <div id="premiumSplash">
