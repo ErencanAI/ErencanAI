@@ -5096,3 +5096,66 @@ button:active {
 
     border-radius: 12px;
 }
+/* =====================================================
+   PREMIUM FOTOĞRAF OLUŞTUR BUTONU
+   ===================================================== */
+
+.premium-create-button {
+    width: 100%;
+    margin-top: 10px;
+    min-height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    border: 1px solid rgba(100, 180, 255, 0.35);
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(70, 140, 255, 0.16),
+            rgba(130, 80, 255, 0.12)
+        );
+
+    color: var(--text);
+
+    cursor: pointer;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.premium-create-button .ui-icon {
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+}
+
+.premium-create-button:hover {
+    transform: translateY(-1px);
+
+    border-color: rgba(100, 190, 255, 0.75);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(70, 140, 255, 0.25),
+            rgba(130, 80, 255, 0.20)
+        );
+
+    box-shadow:
+        0 0 18px rgba(80, 160, 255, 0.18);
+}
+
+.premium-create-button:active {
+    transform: scale(0.98);
+}
