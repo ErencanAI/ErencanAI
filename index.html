@@ -189,7 +189,31 @@
 
 <script src="/app.js"></script>
 <body>
+<div id="premiumSplash">
 
+    <div class="premium-splash-content">
+
+        <div class="premium-splash-logo">
+            E
+        </div>
+
+        <div class="premium-splash-title">
+            TürkAI
+        </div>
+
+        <div class="premium-splash-subtitle">
+            YAPAY ZEKA HAZIRLANIYOR
+        </div>
+
+        <div class="premium-splash-loading">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+    </div>
+
+</div>
 
 <div class="app">
 
@@ -2118,6 +2142,21 @@ document.addEventListener(
     </div>
 
 </div>
+<script>
+window.addEventListener("load", function () {
 
+    setTimeout(function () {
+
+        const splash =
+            document.getElementById("premiumSplash");
+
+        if (splash) {
+            splash.classList.add("hide");
+        }
+
+    }, 1700);
+
+});
+</script>
 
        
