@@ -3,11 +3,67 @@
 require("dotenv").config();
 
 const express = require("express");
+const Iyzipay = require("iyzipay");
+const iyzipay = new Iyzipay({
+    apiKey: process.env.IYZICO_API_KEY,
+    secretKey: process.env.IYZICO_SECRET_KEY,
+    uri: process.env.IYZICO_BASE_URL
+});
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const app = express();
 const TURKAI_PRO_CODE = process.env.TURKAI_PRO_CODE || "";
+
+const USER_PLANS_FILE = "./user_plans.json";
+
+function loadUserPlans() {
+
+    if (!fs.existsSync(USER_PLANS_FILE)) {
+
+        fs.writeFileSync(
+            USER_PLANS_FILE,
+            JSON.stringify({}, null, 2),
+            "utf8"
+        );
+
+        return {};
+    }
+
+    try {
+
+        return JSON.parse(
+            fs.readFileSync(
+                USER_PLANS_FILE,
+                "utf8"
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "KULLANICI PLANLARI OKUNAMADI:",
+            error.message
+        );
+
+        return {};
+    }
+}
+
+
+function saveUserPlans(plans) {
+
+    fs.writeFileSync(
+        USER_PLANS_FILE,
+        JSON.stringify(
+            plans,
+            null,
+            2
+        ),
+        "utf8"
+    );
+}
+
 
 app.post(
     "/api/pro/activate",
@@ -15,33 +71,96 @@ app.post(
     (req, res) => {
 
         const enteredCode =
-            String(req.body?.code || "").trim();
+            String(
+                req.body?.code || ""
+            ).trim();
+
+        const userId =
+            String(
+                req.body?.userId || ""
+            ).trim();
+
 
         if (
             !enteredCode ||
             !TURKAI_PRO_CODE ||
             enteredCode !== TURKAI_PRO_CODE
         ) {
+
             return res.status(403).json({
                 ok: false,
-                message: "GeÃ§ersiz Pro kodu."
+                message: "Geçersiz Pro kodu."
             });
         }
 
-        return res.json({
-            ok: true,
+
+        if (!userId) {
+
+            return res.status(400).json({
+                ok: false,
+                message: "Kullanıcı bulunamadı."
+            });
+        }
+
+
+        const plans =
+            loadUserPlans();
+
+
+        plans[userId] = {
+
             plan: "pro",
-            message: "TÃ¼rkAI Pro etkinleÅŸtirildi! ğŸš€"
+
+            activatedAt:
+                Date.now()
+        };
+
+
+        saveUserPlans(plans);
+
+
+        console.log(
+            "PRO AKTİF EDİLDİ:",
+            userId
+        );
+
+
+        return res.json({
+
+            ok: true,
+
+            plan: "pro",
+
+            message:
+                "TürkAI Pro etkinleştirildi! 🚀"
         });
     }
 );
 // TÃœRKAI GÃœNLÃœK MESAJ LÄ°MÄ°TLERÄ°
 const DAILY_LIMITS = {
-    free: 200,
-    pro: 400,
-    developer: 500
+    free: 50,
+    pro: 100,
+    plus:200,
+    developer:400
 };
+function getUserPlan(userId) {
 
+    if (!userId) {
+        return "free";
+    }
+
+    const plans =
+        loadUserPlans();
+
+    if (
+        plans[userId] &&
+        plans[userId].plan
+    ) {
+        return plans[userId].plan;
+    }
+
+    return "free";
+}
 function getTodayKey() {
     const now = new Date();
 
@@ -460,13 +579,13 @@ console.log(
         "HoÅŸÃ§a kal! ğŸ‘‹",
 
     // =========================
-    // ERencanaAI
+    // TürkAI
     // =========================
 
-    "erencanai":
+    "türkai":
         "BuradayÄ±m! ğŸ¤–",
 
-    "erencan ai":
+    "türk ai":
         "BuradayÄ±m! ğŸ¤–",
 
     "test":
@@ -658,7 +777,10 @@ console.log(
     "merhaba"        â†’ hazÄ±r cevap
     "merhaba nasÄ±lsÄ±n" â†’ API
     */
-
+console.log(
+    "BASİT MESAJ TEST:",
+    JSON.stringify(lastUserMessage)
+);
     if (
         Object.prototype.hasOwnProperty.call(
             simpleMessages,
@@ -878,7 +1000,77 @@ let knowledge =
     loadKnowledge();
 const MAX_MEMORY_MESSAGES =
     400;
+/* =========================================================
+   ABONELİK SİSTEMİ
+   FREE / PRO / PLUS
+========================================================= */
 
+const SUBSCRIPTION_PLANS = {
+    free: {
+        name: "Free",
+        price: 0,
+        currency: "TRY",
+        period: "monthly"
+    },
+
+    pro: {
+        name: "Pro",
+        price: 100,
+        currency: "TRY",
+        period: "monthly"
+    },
+
+    plus: {
+        name: "Plus",
+        price: 400,
+        currency: "TRY",
+        period: "monthly"
+    }
+};
+
+function normalizeSubscriptionPlan(plan) {
+
+    const cleanPlan =
+        String(plan || "")
+            .toLowerCase()
+            .trim();
+
+    if (
+        cleanPlan === "pro" ||
+        cleanPlan === "plus"
+    ) {
+        return cleanPlan;
+    }
+
+    return "free";
+}
+
+function getSubscriptionPlan(plan) {
+
+    const cleanPlan =
+        normalizeSubscriptionPlan(plan);
+
+    return SUBSCRIPTION_PLANS[cleanPlan];
+}
+
+function isProOrHigher(plan) {
+
+    const cleanPlan =
+        normalizeSubscriptionPlan(plan);
+
+    return (
+        cleanPlan === "pro" ||
+        cleanPlan === "plus"
+    );
+}
+
+function isPlus(plan) {
+
+    return (
+        normalizeSubscriptionPlan(plan) ===
+        "plus"
+    );
+}
 const CONTEXT_MESSAGES =
     30;
 
@@ -896,7 +1088,120 @@ const MAX_USER_MEMORY_MESSAGES =
     400;
 
 const USER_CONTEXT_MESSAGES = 2;
-    30;
+const FREE_CONTEXT_MESSAGES = 2;
+const PRO_CONTEXT_MESSAGES = 5;
+const PLUS_CONTEXT_MESSAGES = 15;
+
+const DAILY_MESSAGE_LIMITS = {
+    free: 50,
+    pro: 100,
+    plus: 200
+};
+const DAILY_USAGE_FILE =
+    path.join(
+        __dirname,
+        "daily_usage.json"
+    );
+    function getDailyUsageDate() {
+    return new Intl.DateTimeFormat("tr-TR", {
+        timeZone: "Europe/Istanbul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(new Date());
+}
+function loadDailyUsage() {
+    try {
+        if (!fs.existsSync(DAILY_USAGE_FILE)) {
+            return {};
+        }
+
+        const data = JSON.parse(
+            fs.readFileSync(
+                DAILY_USAGE_FILE,
+                "utf8"
+            )
+        );
+
+        return data && typeof data === "object"
+            ? data
+            : {};
+
+    } catch (error) {
+        console.error(
+            "GÜNLÜK KULLANIM OKUMA HATASI:",
+            error.message
+        );
+
+        return {};
+    }
+}
+function saveDailyUsage(data) {
+    try {
+        fs.writeFileSync(
+            DAILY_USAGE_FILE,
+            JSON.stringify(
+                data,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "GÜNLÜK KULLANIM KAYDETME HATASI:",
+            error.message
+        );
+
+        return false;
+    }
+   
+}
+    
+function checkDailyMessageLimit(userId, plan) {
+    const usage = loadDailyUsage();
+    const today = getDailyUsageDate();
+
+    const cleanPlan =
+        normalizeSubscriptionPlan(plan);
+
+    const limit =
+        DAILY_MESSAGE_LIMITS[cleanPlan];
+
+    if (!usage[userId] || usage[userId].date !== today) {
+        usage[userId] = {
+            date: today,
+            count: 0
+        };
+    }
+
+    return {
+        allowed: usage[userId].count < limit,
+        used: usage[userId].count,
+        limit: limit
+    };
+}
+function incrementDailyMessageUsage(userId, plan) {
+    const usage = loadDailyUsage();
+    const today = getDailyUsageDate();
+
+    const cleanPlan =
+        normalizeSubscriptionPlan(plan);
+
+    if (!usage[userId] || usage[userId].date !== today) {
+        usage[userId] = {
+            date: today,
+            count: 0
+        };
+    }
+
+    usage[userId].count += 1;
+
+    saveDailyUsage(usage);
+}
 
 /* =========================================================
 API AYARLARI
@@ -1093,6 +1398,140 @@ Basitle?tirilmi? ?ince
 Geleneksel ?ince
 Japonca
 Korece
+Azerbaycanca
+Kazakça
+Kırgızca
+Özbekçe
+Türkmence
+Tacikçe
+Moğolca
+Gürcüce
+Ermenice
+Arnavutça
+Makedonca
+Litvanca
+Letonca
+Estonca
+İzlandaca
+İrlandaca
+Galce
+Slovence
+Baskça
+Katalanca
+Galiçyaca
+Çince
+Malayalamca
+Kannadaca
+Nepalce
+Sinhala
+Tamilce
+Teluguca
+Marathice
+Gujarati
+Bengalce
+Pencapça
+Urduca
+Peştuca
+Kürtçe
+Svahili
+Somalice
+Amharca
+Yorubaca
+Zulu dili
+Afrikaanca
+Hausa
+Endonezce
+Malayca
+Filipince
+Tagalog
+Vietnamca
+Tayca
+Laoca
+Kmerce
+Burma dili
+Abhazca
+Avarca
+Başkurtça
+Çeçence
+Çuvaşça
+Dağıtça
+Kabardeyce
+Karaçay-Balkarca
+Komi
+Lezgice
+Tatarca
+Udmurtça
+Yakutça
+Çeçence
+Kırım Tatarcası
+Gagavuzca
+Kırmançça
+Zazaca
+Lazca
+Balochice
+Belucice
+Bhojpuri
+Assamca
+Oriya
+Odia
+Konkani
+Keşmirce
+Sindhice
+Marvarice
+Sanskritçe
+Tibetçe
+Dzongkha
+Uygurca
+Peştuca
+Dari
+Klasik Farsça
+İbranice
+Aramice
+Yidiş
+Malta dili
+Latince
+Esperanto
+Frizce
+Lüksemburgca
+Faroec
+Bretonca
+Korsikaca
+Sarduca
+Sicilyaca
+Napolice
+Venedikçe
+Friulce
+Romanşça
+Katalanca
+Valensiyaca
+Asturyasça
+Galisyaca
+Baskça
+Manksça
+Māori
+Samoaca
+Tongaca
+Fijice
+Hawaiice
+Tahiti dili
+Endonezce
+Cavaca
+Sundaca
+Balice
+Maduraca
+Tagalogca
+Cebuano
+Hiligaynon
+Ilocano
+Waray
+Chamorro
+Kantonca
+Wu Çincesi
+Min Nan Çincesi
+Hakka
+Moğolca
+Korece
+Japonca
 
 Bu dillerden biriyle konu?uldu?unda m?mk?n oldu?unca o dilde do?al cevap ver.
 
@@ -2917,8 +3356,7 @@ function cleanUrl(
 /* =========================================================
 ?NTERNET ARA?TIRMASI GEREK?YOR MU?
 ========================================================= */
-
-function shouldResearch(message) {
+function isWeatherQuestion(message) {
 
     const text =
         String(message || "")
@@ -2929,6 +3367,618 @@ function shouldResearch(message) {
         return false;
     }
 
+    const weatherWords = [
+        "hava durumu",
+        "hava nasıl",
+        "hava nasil",
+        "sıcaklık",
+        "sicaklik",
+        "kaç derece",
+        "kac derece",
+        "derece",
+        "yağmur",
+        "yagmur",
+        "kar yağacak",
+        "kar yagacak",
+        "yağış",
+        "yagis",
+        "rüzgar",
+        "ruzgar",
+        "nem",
+        "meteoroloji",
+        "bugün hava",
+        "bugun hava",
+        "yarın hava",
+        "yarin hava",
+        "hava tahmini",
+        "hava tahmin"
+    ];
+
+    return weatherWords.some(
+        word => text.includes(word)
+    );
+}
+
+function isWeatherQuestion(message) {
+    const text =
+        String(message || "")
+            .toLowerCase()
+            .trim();
+
+    if (!text) {
+        return false;
+    }
+
+    const weatherWords = [
+        "hava durumu",
+        "hava nasıl",
+        "hava nasil",
+        "bugün hava",
+        "bugun hava",
+        "şu an hava",
+        "su an hava",
+        "şimdiki hava",
+        "simdiki hava",
+        "sıcaklık",
+        "sicaklik",
+        "kaç derece",
+        "kac derece",
+        "yağmur",
+        "yagmur",
+        "kar yağacak",
+        "kar yagacak",
+        "yağış",
+        "yagis",
+        "rüzgar",
+        "ruzgar",
+        "nem",
+        "meteoroloji",
+        "hava tahmini",
+        "hava tahmin"
+    ];
+
+    return weatherWords.some(
+        word => text.includes(word)
+    );
+}
+function shouldResearch(message) {
+
+    const text =
+        String(message || "")
+            .toLowerCase()
+            .trim();
+
+    if (!text) {
+        return false;
+    }
+    // =========================================================
+    // BASİT / GÜNLÜK MESAJLAR
+    // Bunlarda internet araştırması yapılmaz.
+    // =========================================================
+
+    const simpleMessages = [
+        // Selamlaşma
+        "slm",
+        "selam",
+        "selamlar",
+        "merhaba",
+        "merhabalar",
+        "mrb",
+        "sa",
+        "s.a",
+        "as",
+        "a.s",
+        "hey",
+        "hello",
+        "hi",
+
+        // Hal hatır
+        "nasılsın",
+        "nasilsin",
+        "iyi misin",
+        "naber",
+        "ne haber",
+        "napıyorsun",
+        "napıyosun",
+        "ne yapıyorsun",
+        "ne yapiyorsun",
+
+        // Kısa cevaplar
+        "tamam",
+        "ok",
+        "okay",
+        "okey",
+        "olur",
+        "aynen",
+        "evet",
+        "hayır",
+        "hayir",
+        "yok",
+        "var",
+        "anladım",
+        "anladim",
+        "biliyorum",
+        "bilmiyorum",
+        "doğru",
+        "dogru",
+
+        // Teşekkür
+        "teşekkürler",
+        "tesekkurler",
+        "teşekkür ederim",
+        "tesekkur ederim",
+        "sağ ol",
+        "sag ol",
+        "eyvallah",
+
+        // Vedalaşma
+        "görüşürüz",
+        "gorusuruz",
+        "bay bay",
+        "bye",
+        "hoşça kal",
+        "hosca kal",
+        "iyi geceler",
+        "günaydın",
+        "gunaydin",
+        "iyi akşamlar",
+        "iyi aksamlar",
+
+        // Tepkiler
+        "haha",
+        "hahaha",
+        "lol",
+        "vay",
+        "oha",
+        "wow",
+        "vay be",
+        "çok iyi",
+        "cok iyi",
+        "süper",
+        "super",
+        "harika",
+        "mükemmel",
+        "mukemmel",
+
+        // Kısa konuşmalar
+        "ne",
+        "neden",
+        "nasıl",
+        "nasil",
+        "niye",
+        "kim",
+        "anladın mı",
+        "anladin mi",
+                // Günlük konuşma
+        "he",
+        "hee",
+        "hee tamam",
+        "hı hı",
+        "hıhı",
+        "hmm",
+        "hmmm",
+        "hımm",
+        "hmm tamam",
+        "peki",
+        "peki tamam",
+        "tabii",
+        "tabi",
+        "tabii ki",
+        "tabi ki",
+        "olabilir",
+        "bence de",
+        "ben de",
+        "evet ya",
+        "aynen ya",
+        "haklısın",
+        "haklisin",
+        "doğru diyorsun",
+        "dogru diyorsun",
+        "tamamdır",
+        "tamamdir",
+        "sıkıntı yok",
+        "sikinti yok",
+        "sorun yok",
+        "problem yok",
+
+        // Kısa tepkiler
+        "cidden",
+        "gerçekten",
+        "gercekten",
+        "şaka mı",
+        "saka mi",
+        "ciddi misin",
+        "emin misin",
+        "eminim",
+        "vay canına",
+        "vay be",
+        "yuh",
+        "haha",
+        "hahaha",
+        "hehe",
+        "hehehe",
+        "xd",
+        "xD",
+        "😂",
+        "🤣",
+        "😎",
+        "👍",
+        "❤️",
+
+        // Kısa istekler / konuşmalar
+        "bak",
+        "dinle",
+        "bir bak",
+        "dur",
+        "bekle",
+        "gel",
+        "git",
+        "devam",
+        "devam et",
+        "başla",
+        "basla",
+        "hazırım",
+        "hazirim",
+        "hazır mısın",
+        "hazir misin",
+
+        // Teşekkür / rica
+        "çok sağ ol",
+        "cok sag ol",
+        "eyvallah knk",
+        "sağolasın",
+        "sagolasin",
+        "rica ederim",
+        "sağ ol knk",
+        "eyvallah kardeşim",
+
+        // Vedalaşma
+        "bb",
+        "by",
+        "bye bye",
+        "bay",
+        "görüşürüz knk",
+        "gorusuruz knk",
+        "yarın görüşürüz",
+        "iyi günler",
+        "iyi günler knk",
+
+        // Günlük kısa sorular
+        "orada mısın",
+        "orada misin",
+        "burada mısın",
+        "burada misin",
+        "uyuyor musun",
+        "uyanık mısın",
+        "uyanık misin",
+        "beni duyuyor musun",
+        "beni duyuyor musun",
+        "hazır mısın",
+        "hazir misin",
+        "çalışıyor musun",
+        "calisiyor musun"
+    ];
+
+    if (simpleMessages.includes(text)) {
+        return false;
+    }
+        // =========================================================
+    // AKILLI GÜNCELLİK KONTROLÜ
+    // =========================================================
+
+    const currentInfoWords = [
+        "bugün",
+        "bu gün",
+        "şu an",
+        "şu anda",
+        "şimdiki",
+        "güncel",
+        "güncel bilgi",
+        "en güncel",
+        "en son",
+        "son durum",
+        "son gelişme",
+        "son gelişmeler",
+        "şimdi",
+        "2026",
+        "bu yıl",
+        "bu ay",
+        "bu hafta",
+        "dün",
+        "yarın"
+    ];
+
+    const liveDataWords = [
+        "fiyat",
+        "kaç tl",
+        "kaç lira",
+        "ne kadar",
+        "dolar",
+        "euro",
+        "sterlin",
+        "kur",
+        "hava",
+        "hava durumu",
+        "sıcaklık",
+        "yağmur",
+        "kar yağıyor",
+        "maç",
+        "skor",
+        "sonuç",
+        "puan durumu",
+        "transfer",
+        "haber",
+        "haberler",
+        "son dakika",
+        "istatistik",
+        "sıralama",
+        "program",
+        "etkinlik"
+    ];
+
+    const hasCurrentInfoWord =
+        currentInfoWords.some(
+            word => text.includes(word)
+        );
+
+    const hasLiveDataWord =
+        liveDataWords.some(
+            word => text.includes(word)
+        );
+
+    if (
+        hasCurrentInfoWord &&
+        hasLiveDataWord
+    ) {
+        return true;
+    }
+    // =========================================================
+// CANLI VERİ GEREKTİREN DOĞRUDAN SORULAR
+// =========================================================
+
+const directLiveQuestions = [
+    "dolar kaç",
+    "dolar ne kadar",
+    "dolar kaç tl",
+    "dolar kaç lira",
+    "1 dolar kaç tl",
+    "1 dolar ne kadar",
+    "euro kaç",
+    "euro ne kadar",
+    "euro kaç tl",
+    "1 euro kaç tl",
+    "sterlin kaç",
+    "sterlin ne kadar",
+    "sterlin kaç tl",
+    "altın kaç",
+    "altın ne kadar",
+    "gram altın kaç",
+    "gram altın ne kadar",
+    "çeyrek altın kaç",
+    "çeyrek altın ne kadar",
+    "gram altın fiyat",
+"gram altın fiyatı",
+"gram altın ne kadar",
+"gram altın kaç tl",
+"gram altın ne kadar tl",
+"gram altın bugün ne kadar",
+"gram altın bugün kaç",
+"altın fiyat",
+"altın fiyatı",
+"altın ne kadar",
+"altın kaç tl",
+"altın bugün ne kadar",
+"altın bugün kaç",
+    "gram altın kaç tl",
+"gram altın ne kadar tl",
+"gram altın bugün kaç",
+"gram altın bugün ne kadar",
+"çeyrek altın kaç tl",
+"çeyrek altın ne kadar tl",
+"çeyrek altın bugün kaç",
+"çeyrek altın bugün ne kadar",
+"yarım altın kaç",
+"tam altın kaç",
+"cumhuriyet altını kaç",
+"altın gramı kaç",
+"altının gramı kaç",
+    "bitcoin kaç",
+    "bitcoin ne kadar",
+    "btc kaç",
+    "hava nasıl",
+    "hava durumu",
+    "sıcaklık kaç",
+    "yağmur yağıyor mu",
+    "maç kaç kaç",
+    "maç sonucu",
+    "skor kaç",
+    // =========================================================
+// DÖVİZ
+// =========================================================
+
+"dolar fiyatı",
+"dolar kuru",
+"dolar bugün kaç",
+"dolar bugün ne kadar",
+"1 dolar kaç",
+"1 dolar ne kadar",
+"euro fiyatı",
+"euro kuru",
+"euro bugün kaç",
+"euro bugün ne kadar",
+"1 euro kaç",
+"1 euro ne kadar",
+"sterlin fiyatı",
+"sterlin kuru",
+"sterlin bugün kaç",
+"sterlin bugün ne kadar",
+"1 sterlin kaç",
+"1 sterlin ne kadar",
+
+// =========================================================
+// ALTIN
+// =========================================================
+
+"gram altın fiyatı",
+"gram altın fiyat",
+"gram altın kaç",
+"gram altın ne kadar",
+"gram altın bugün kaç",
+"gram altın bugün ne kadar",
+"çeyrek altın fiyatı",
+"çeyrek altın fiyat",
+"çeyrek altın kaç",
+"çeyrek altın ne kadar",
+"yarım altın fiyatı",
+"yarım altın kaç",
+"yarım altın ne kadar",
+"tam altın fiyatı",
+"tam altın kaç",
+"tam altın ne kadar",
+"cumhuriyet altını fiyatı",
+"cumhuriyet altını kaç",
+"cumhuriyet altını ne kadar",
+"ons altın kaç",
+"ons altın ne kadar",
+
+// =========================================================
+// KRİPTO
+// =========================================================
+
+"bitcoin fiyatı",
+"bitcoin kaç",
+"bitcoin ne kadar",
+"bitcoin bugün kaç",
+"btc fiyatı",
+"btc kaç",
+"ethereum fiyatı",
+"ethereum kaç",
+"ethereum ne kadar",
+"eth fiyatı",
+"eth kaç",
+"kripto fiyatları",
+
+// =========================================================
+// SPOR
+// =========================================================
+
+"maç sonucu",
+"maç skoru",
+"maç kaç kaç",
+"maç ne zaman",
+"maç saat kaçta",
+"kim kazandı",
+"puan durumu",
+"lig sıralaması",
+"fikstür",
+"transfer oldu mu",
+"transfer haberi",
+"son maç",
+"son maç sonucu",
+"bugünkü maçlar",
+
+// =========================================================
+// HABER
+// =========================================================
+
+"son haberler",
+"son dakika",
+"son dakika haberleri",
+"bugünkü haberler",
+"bugün ne oldu",
+"gündemde ne var",
+"son gelişmeler",
+"son gelişme",
+"güncel haberler",
+"haberleri araştır",
+
+// =========================================================
+// TEKNOLOJİ
+// =========================================================
+
+"yeni iphone",
+"yeni samsung",
+"yeni telefon",
+"telefon fiyatı",
+"laptop fiyatı",
+"ekran kartı fiyatı",
+"işlemci fiyatı",
+"yeni ekran kartı",
+"yeni işlemci",
+"yeni teknoloji",
+"teknoloji haberleri",
+"yeni sürüm",
+"güncelleme geldi mi",
+
+// =========================================================
+// OYUN
+// =========================================================
+
+"minecraft güncellemesi",
+"minecraft yeni sürüm",
+"valorant güncellemesi",
+"valorant yeni ajan",
+"steam fiyatı",
+"oyun fiyatı",
+"yeni oyun",
+"oyun çıktı mı",
+"oyun güncellemesi",
+
+// =========================================================
+// ULAŞIM
+// =========================================================
+
+"uçuş durumu",
+"uçuş iptal mi",
+"uçuş ertelendi mi",
+"uçuş saat kaçta",
+"uçak bileti",
+"uçak bileti fiyatı",
+"otobüs bileti",
+"otobüs bileti fiyatı",
+"sefer saat kaçta",
+"sefer iptal mi",
+"trafik durumu",
+"yol durumu",
+
+// =========================================================
+// ETKİNLİK
+// =========================================================
+
+"konser ne zaman",
+"konser nerede",
+"konser saat kaçta",
+"festival ne zaman",
+"festival nerede",
+"etkinlik ne zaman",
+"etkinlik nerede",
+"etkinlik saat kaçta",
+"sinema seansları",
+"film seansları",
+"film hangi platformda",
+
+// =========================================================
+// EĞİTİM / TAKVİM
+// =========================================================
+
+"okullar ne zaman açılıyor",
+"okullar ne zaman kapanıyor",
+"okul ne zaman başlıyor",
+"okul ne zaman bitiyor",
+"sınav tarihi",
+"sınav takvimi",
+"tatil ne zaman",
+"ara tatil ne zaman",
+"yaz tatili ne zaman"
+];
+
+if (
+    directLiveQuestions.some(
+        question => text.includes(question)
+    )
+) {
+    return true;
+}
     /*
     =========================================================
     G NCEL /  NTERNET ARA TIRMASI TET KLEY C LER 
@@ -3024,7 +4074,151 @@ function shouldResearch(message) {
         "ne zaman bitecek",
         "hangi tarihte",
         "tarihi ne",
-        "tarih ne"
+        "tarih ne",
+        // =========================================================
+// HAVA DURUMU
+// =========================================================
+
+"hava nasıl",
+"hava durumu nasıl",
+"bugün hava nasıl",
+"bugün hava durumu",
+"yarın hava nasıl",
+"yarın hava durumu",
+"şu an hava nasıl",
+"şu anda hava nasıl",
+"sıcaklık kaç",
+"kaç derece",
+"yağmur yağacak mı",
+"yağmur yağıyor mu",
+"kar yağacak mı",
+"kar yağıyor mu",
+"fırtına var mı",
+"rüzgar kaç",
+"rüzgar hızı kaç",
+
+// =========================================================
+// ALIŞVERİŞ
+// =========================================================
+
+"en ucuz",
+"en uygun fiyat",
+"en ucuz fiyat",
+"nereden alınır",
+"nerede satılıyor",
+"satışta mı",
+"stokta mı",
+"stok var mı",
+"hangi mağazada",
+"hangi sitede",
+"kampanya var mı",
+"indirim var mı",
+"indirimde mi",
+"kupon var mı",
+
+// =========================================================
+// FİNANS
+// =========================================================
+
+"borsa kaç",
+"borsa bugün",
+"bist kaç",
+"bist bugün",
+"bitcoin bugün",
+"ethereum bugün",
+"kripto bugün",
+"altın bugün",
+"gümüş fiyatı",
+"gümüş kaç",
+"petrol fiyatı",
+"petrol kaç",
+"brent petrol",
+"faiz oranı",
+"mevduat faizi",
+"enflasyon oranı",
+
+// =========================================================
+// RESMİ BİLGİLER
+// =========================================================
+
+"resmi gazete",
+"yeni kanun",
+"yeni yasa",
+"yasa çıktı mı",
+"kanun çıktı mı",
+"yönetmelik",
+"resmi açıklama",
+"bakanlık açıklaması",
+"bakan açıkladı",
+"cumhurbaşkanı açıkladı",
+
+// =========================================================
+// BİLİM / UZAY
+// =========================================================
+
+"uzay haberleri",
+"nasa haberleri",
+"spacex",
+"roket fırlatıldı mı",
+"roket ne zaman",
+"yeni keşif",
+"bilim haberleri",
+"bilimsel gelişmeler",
+"yeni bilimsel gelişme",
+
+// =========================================================
+// SOSYAL MEDYA / İNTERNET
+// =========================================================
+
+"instagram çöktü mü",
+"youtube çöktü mü",
+"whatsapp çöktü mü",
+"discord çöktü mü",
+"internet çöktü mü",
+"site çöktü mü",
+"sunucular çöktü mü",
+"erişim sorunu var mı",
+
+// =========================================================
+// ÜRÜN / MODEL
+// =========================================================
+
+"hangi model çıktı",
+"yeni model çıktı mı",
+"yeni telefon çıktı mı",
+"yeni ekran kartı çıktı mı",
+"yeni işlemci çıktı mı",
+"fiyatı ne kadar",
+"kaç paraya satılıyor",
+"satış fiyatı",
+"güncel fiyatı",
+
+// =========================================================
+// TARİH / ZAMAN
+// =========================================================
+
+"bugünün tarihi",
+"bugün hangi gün",
+"yarın hangi gün",
+"bu hafta hangi gün",
+"hangi aydayız",
+"kaç gün kaldı",
+"ne kadar kaldı",
+
+// =========================================================
+// GÜNCEL KİŞİ / KURUM
+// =========================================================
+
+"şu an kim",
+"şu an nerede",
+"görevde mi",
+"istifa etti mi",
+"görevden alındı mı",
+"kim seçildi",
+"kim atandı",
+"kim kazandı",
+"kim kaybetti"
+
     ];
 
 
@@ -3305,7 +4499,38 @@ function shouldResearch(message) {
     DO RUDAN KONTROL
     =========================================================
     */
+// =========================================================
+// AÇIK İNTERNET ARAŞTIRMASI İSTEĞİ
+// Kullanıcı açıkça araştırma isterse kesinlikle araştır.
+// =========================================================
 
+const explicitResearchRequest =
+    [
+        "internetten araştır",
+        "internetten ara",
+        "internetten bak",
+        "internetten bul",
+        "webden araştır",
+        "webden ara",
+        "webden bak",
+        "internete bak",
+        "online araştır",
+        "online bak",
+        "araştır bunu",
+        "bunu araştır",
+        "iyice araştır",
+        "detaylı araştır",
+        "güncel internet araştırması yap",
+        "internet araştırması yap",
+        "kaynak bul",
+        "bilgiyi doğrula"
+    ].some(
+        phrase => text.includes(phrase)
+    );
+
+if (explicitResearchRequest) {
+    return true;
+}
     if (
         allResearchWords.some(
             word =>
@@ -5218,17 +6443,50 @@ async function requestAI(
     messages
 ) {
 
-    const lastUserMessage =
-        messages
-            .filter(
-                m =>
-                    m &&
-                    m.role === "user"
-            )
-            .pop()
-            ?.content
-            ?.trim()
-            .toLowerCase() || "";
+   
+   const lastUser =
+    messages
+        .filter(
+            m =>
+                m &&
+                m.role === "user"
+        )
+        .pop();
+
+let lastUserMessage = "";
+
+if (lastUser) {
+
+    if (typeof lastUser.content === "string") {
+
+        lastUserMessage =
+            lastUser.content
+                .trim()
+                .toLowerCase();
+
+    } else if (
+        Array.isArray(lastUser.content)
+    ) {
+
+        lastUserMessage =
+            lastUser.content
+                .map(item =>
+                    typeof item === "string"
+                        ? item
+                        : item?.text || ""
+                )
+                .join(" ")
+                .trim()
+                .toLowerCase();
+
+    }
+
+}
+
+console.log(
+    "YEREL TEST MESAJI:",
+    JSON.stringify(lastUserMessage)
+);
            console.log(
     "YEREL TEST MESAJI:",
     JSON.stringify(lastUserMessage)
@@ -5241,63 +6499,102 @@ async function requestAI(
 
     const simpleMessages = {
 
-        "selam":
-            "Selam! ğŸ˜Š",
+    // SELAMLAŞMA
+    "selam": "Selam! 😎",
+    "slm": "Selam! 😎",
+    "merhaba": "Merhaba! 👋",
+    "merhabalar": "Merhabalar! 👋",
+    "mrb": "Merhaba! 😎",
+    "hey": "Hey! 👋",
+    "hello": "Hello! 👋",
+    "hi": "Hi! 👋",
+    "sa": "Selam! 😎",
+    "s.a.": "Selam! 😎",
 
-        "slm":
-            "Selam! ğŸ˜Š",
+    // HAL HATIR
+    "nasılsın": "İyiyim knk 😎 Sen nasılsın?",
+    "nasilsin": "İyiyim knk 😎 Sen nasılsın?",
+    "iyi misin": "İyiyim 😎 Sen nasılsın?",
+    "naber": "İyilik knk 😎 Senden naber?",
+    "ne haber": "İyilik knk 😎 Senden ne haber?",
+    "napıyorsun": "Buradayım knk 😎 Sen ne yapıyorsun?",
+    "napıyosun": "Buradayım 😎",
+    "ne yapıyorsun": "Buradayım, seni dinliyorum 😎",
+    "ne yapiyorsun": "Buradayım, seni dinliyorum 😎",
 
-        "merhaba":
-            "Merhaba! Size nasÄ±l yardÄ±mcÄ± olabilirim?",
+    // TEŞEKKÜR
+    "teşekkürler": "Rica ederim! 😎",
+    "tesekkurler": "Rica ederim! 😎",
+    "teşekkür ederim": "Ne demek! 😎",
+    "tesekkur ederim": "Ne demek! 😎",
+    "sağ ol": "Ne demek knk! 😎",
+    "sag ol": "Ne demek knk! 😎",
+    "eyvallah": "Eyvallah knk 😎",
 
-        "mrb":
-            "Merhaba! ğŸ˜Š",
+    // KISA CEVAPLAR
+    "tamam": "Tamamdır! 👍",
+    "tamamdır": "Tamamdır! 👍",
+    "tamamdir": "Tamamdır! 👍",
+    "ok": "Tamam! 👍",
+    "okay": "Tamam! 👍",
+    "okey": "Okey! 👍",
+    "olur": "Olur knk! 👍",
+    "aynen": "Aynen 😎",
+    "evet": "Süper! 👍",
+    "hayır": "Tamam 😄",
+    "hayir": "Tamam 😄",
+    "yok": "Tamam knk 😄",
+    "peki": "Peki! 😎",
+    "peki tamam": "Tamamdır! 👍",
+    "anladım": "Harika! 👍",
+    "anladim": "Harika! 👍",
 
-        "hey":
-            "Hey! ğŸ‘‹",
+    // TEPKİLER
+    "haha": "😂",
+    "hahaha": "😂😂",
+    "lol": "😂",
+    "vay": "Vay be! 😎",
+    "oha": "Oha 😄",
+    "wow": "Vay be! 😎",
+    "vay be": "Aynen, vay be! 😎",
+    "çok iyi": "😎🔥",
+    "cok iyi": "😎🔥",
+    "süper": "Süper! 🔥",
+    "super": "Süper! 🔥",
+    "harika": "Harika! 🔥",
+    "mükemmel": "Mükemmel! 😎🔥",
+    "mukemmel": "Mükemmel! 😎🔥",
 
-        "sa":
-            "Selam! ğŸ˜Š",
+    // VEDALAŞMA
+    "görüşürüz": "Görüşürüz knk! 👋",
+    "gorusuruz": "Görüşürüz knk! 👋",
+    "bye": "Görüşürüz! 👋",
+    "bye bye": "Görüşürüz! 👋",
+    "bb": "Görüşürüz! 👋",
+    "bay bay": "Bay bay! 👋",
+    "hoşça kal": "Hoşça kal! 👋",
+    "hosca kal": "Hoşça kal! 👋",
 
-        "s.a.":
-            "Selam! ğŸ˜Š",
+    // ZAMAN / GÜN
+    "günaydın": "Günaydın! ☀️",
+    "gunaydin": "Günaydın! ☀️",
+    "iyi akşamlar": "İyi akşamlar! 🌆",
+    "iyi aksamlar": "İyi akşamlar! 🌆",
+    "iyi geceler": "İyi geceler! 🌙",
 
-        "gÃ¼naydÄ±n":
-            "GÃ¼naydÄ±n! â˜€ï¸",
-
-        "iyi akÅŸamlar":
-            "Ä°yi akÅŸamlar! ğŸ˜Š",
-
-       
-
-        "teÅŸekkÃ¼rler":
-            "Rica ederim! ğŸ˜Š",
-
-        "teÅŸekkÃ¼r ederim":
-            "Rica ederim! ğŸ˜Š",
-
-        "saÄŸ ol":
-            "Ne demek! ğŸ˜Š",
-
-        "tamam":
-            "TamamdÄ±r! ğŸ‘",
-
-        "olur":
-            "Olur! ğŸ‘",
-
-        "peki":
-            "Peki! ğŸ˜Š",
-
-        "anladÄ±m":
-            "Harika! ğŸ‘",
-
-        "gÃ¶rÃ¼ÅŸÃ¼rÃ¼z":
-            "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹",
-
-        "bye":
-            "GÃ¶rÃ¼ÅŸÃ¼rÃ¼z! ğŸ‘‹"
-
-    };
+    // KISA GÜNLÜK MESAJLAR
+    "hazır mısın": "Hazırım knk! 😎",
+    "hazir misin": "Hazırım knk! 😎",
+    "hazırım": "Ben hazırım! 😎",
+    "hazirim": "Ben hazırım! 😎",
+    "orada mısın": "Buradayım! 👋",
+    "orada misin": "Buradayım! 👋",
+    "burada mısın": "Evet, buradayım! 😎",
+    "burada misin": "Evet, buradayım! 😎",
+    "çalışıyor musun": "Evet, çalışıyorum! ⚡",
+    "calisiyor musun": "Evet, çalışıyorum! ⚡",
+    "beni duyuyor musun": "Evet, seni görüyorum ve mesajını okuyorum! 😎"
+};
 
 
   if (
@@ -5518,6 +6815,29 @@ app.get(
     }
 );
 
+/* =========================================================
+IYZICO TEST
+========================================================= */
+
+app.get(
+    
+    "/api/payment/test",
+    function (req, res) {
+
+        console.log(
+            "🔥 IYZICO TEST ÇALIŞTI"
+        );
+
+        return res.json({
+            ok: true,
+            paymentSystem: "iyzico",
+            mode: "sandbox",
+            message: "Ödeme sistemi hazır."
+        });
+
+    }
+);
+console.log("🔥🔥🔥 IYZICO DOSYASI OKUNDU 🔥🔥🔥");
 /* =========================================================
 TEST API
 ========================================================= */
@@ -6085,10 +7405,15 @@ app.post(
     }
 );
 
+
+
+
 /* =========================================================
 CHAT API
 ========================================================= */
-
+app.get("/test123", (req, res) => {
+    res.send("TEST ÇALIŞIYOR");
+});
 app.post(
     "/api/chat",
     async function (
@@ -6105,6 +7430,43 @@ app.post(
                 getUserId(
                     req
                 );
+             const userPlan =
+    getUserPlan(userId);
+    const dailyLimit =
+    checkDailyMessageLimit(
+        userId,
+        userPlan
+    );
+
+if (!dailyLimit.allowed) {
+    return res.status(429).json({
+        ok: false,
+        reply:
+            `Günlük mesaj limitine ulaştın. ` +
+            `Planın: ${userPlan.toUpperCase()} ` +
+            `Limit: ${dailyLimit.limit} mesaj.`
+    });
+   
+
+    }
+
+
+const contextMessages =
+    isPlus(userPlan)
+        ? PLUS_CONTEXT_MESSAGES
+        : userPlan === "pro"
+            ? PRO_CONTEXT_MESSAGES
+            : FREE_CONTEXT_MESSAGES;
+
+console.log(
+    "KULLANICI PLANI:",
+    userPlan.toUpperCase()
+);
+
+console.log(
+    "CONTEXT MESAJ SAYISI:",
+    contextMessages
+);
 
             let message =
                 String(
@@ -6144,11 +7506,14 @@ app.post(
                         false,
 
                     reply:
-                        "Mesaj ?ok uzun. L?tfen daha k?sa bir mesaj g?nder."
+                        "Mesaj çok uzun. Lütfen daha kısa bir mesaj gönder."
 
                 });
             }
-
+incrementDailyMessageUsage(
+    userId,
+    userPlan
+);
             if (
                 !GROQ_API_KEY
             ) {
@@ -6319,11 +7684,11 @@ const isCasualMessage =
 
 if (!isCasualMessage) {
 
-    recentMessages =
-        userMemory
-            .slice(
-                -2
-            );
+  recentMessages =
+    userMemory
+        .slice(
+            -contextMessages
+        );
 
 }
         const cleanRecentMessages =
@@ -6546,7 +7911,53 @@ kullanabilirsin.
                 }
 
             ];
+for (
+    const item of cleanRecentMessages.slice(
+        -contextMessages
+    )
+) {
 
+    if (
+        !item ||
+        !item.content ||
+        typeof item.content !== "string"
+    ) {
+        continue;
+    }
+
+    messages.push({
+        role:
+            item.role === "assistant"
+                ? "assistant"
+                : "user",
+
+        content:
+            String(item.content)
+    });
+}
+if (researchContext) {
+
+    messages.push({
+        role: "system",
+
+        content: `
+ÖNEMLİ: AŞAĞIDAKİ BİLGİ GÜNCEL İNTERNET ARAŞTIRMASI SONUCUDUR.
+
+${researchContext}
+
+ARAŞTIRMA KURALLARI:
+
+1. Cevabını öncelikle araştırma sonucuna dayanarak ver.
+2. Araştırmada bulunmayan güncel bilgileri uydurma.
+3. Araştırmada bulunan sayı, fiyat, kur, tarih ve skorları değiştirme.
+4. Eski hafızadaki bilgiler araştırma sonucuyla çelişirse araştırma sonucunu kullan.
+5. Kaynaklarda bulunmayan bir kurumu kaynak olarak gösterme.
+6. Araştırma yeterliyse kısa ve doğrudan cevap ver.
+7. Kullanıcı kaynak isterse mevcut kaynakları belirt.
+`.trim()
+    });
+
+}
             /* -----------------------------------------
             ARA?TIRMA SONU?LARINI AI'A VER
             ----------------------------------------- */
@@ -6630,7 +8041,7 @@ sonucundaki TCMB de erlerini aynen kullan.
     });
 
 }
-            for (const item of cleanRecentMessages.slice(-USER_CONTEXT_MESSAGES)) {
+           for (const item of cleanRecentMessages.slice(-contextMessages)) {
 
                 if (
                     !item ||
@@ -6689,30 +8100,12 @@ if (
                     ? "AKT?F"
                     : "GEREKM?YOR"
             );
-        if (researchContext) {
-    messages.push({
-        role: "system",
-        content: `?NEML?: A?A?IDAK? MET?N G?NCEL ?NTERNET ARA?TIRMASI SONUCUDUR.
+            console.log(
+    "ARAŞTIRMA SONUCU GROQ'A GİDİYOR:",
+    researchContext
+);
 
-${researchContext}
 
-ARA?TIRMA KURALLARI:
-
-1. Cevab?n? ?ncelikle yukar?daki ara?t?rma metnine dayanarak ver.
-2. Ara?t?rma metninde a??k?a bulunmayan hi?bir say?, fiyat, kur, tarih, saat, istatistik veya olay bilgisini UYDURMA.
-3. Ara?t?rma metninde bir bilgi bulunmuyorsa, bunu varm?? gibi g?sterme.
-4. Bir kayna??n ad? ara?t?rma metninde ger?ekten ge?miyorsa o kayna??n ad?n? kullanma.
-5. Bloomberg, Reuters, TCMB, MGM veya ba?ka bir kurumdan al?nm?? gibi bilgi UYDURMA.
-6. Ara?t?rma metnindeki kaynaklar birbiriyle ?eli?iyorsa bunu a??k?a belirt ve kesin olmayan bilgiyi kesinmi? gibi sunma.
-7. G?ncel bilgi sorusunda eski model bilgini kullanarak ara?t?rma sonucunu de?i?tirme.
-8. Emin olmad???n g?ncel bir bilgiyi tahmin etme. "Ara?t?rma kaynaklar?nda do?rulanamad?" de.
-9. Kullan?c? yaln?zca ara?t?rma sonucunu soruyorsa k?sa ve do?rudan cevap ver.
-10. Kaynakta 47 TL yaz?yorsa 27 TL gibi ba?ka bir rakam ?retme.
-
-?ZELL?KLE:
-Kaynak metninde bulunmayan kesin rakamlar? veya kaynaklar? asla kendin olu?turma.`
-    });
-}
 console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             console.log(
                 "GROQ ?STE?? G?NDER?L?YOR..."
@@ -6723,7 +8116,7 @@ console.log("GROQ MESSAGES:", JSON.stringify(messages, null, 2));
             ----------------------------------------- */
 
       
-            const data = await requestGroq(messages);
+          const data = await requestAI(messages);
 
             /* -----------------------------------------
             CEVAP
@@ -7519,6 +8912,19 @@ app.listen(
 
     }
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -187,13 +187,227 @@
 
 </head>
 
+<script src="/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    const imageButton =
+        document.getElementById("imageCreateButton");
+
+    const imageModal =
+        document.getElementById("imageCreateModal");
+
+    if (imageButton && imageModal) {
+
+        imageButton.addEventListener("click", function () {
+
+            imageModal.classList.add("active");
+
+            const input =
+                document.getElementById("imagePromptInput");
+
+            if (input) {
+                setTimeout(function () {
+                    input.focus();
+                }, 150);
+            }
+
+        });
+
+    }
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const imageButton =
+        document.getElementById("imageCreateButton");
+
+    if (!imageButton) {
+        console.error("imageCreateButton bulunamadý!");
+        return;
+    }
+
+    imageButton.addEventListener("click", function () {
+
+        const prompt =
+            window.prompt(
+                "Fotoðraf oluþturmak için ne çizmemi istersin?"
+            );
+
+        if (!prompt || !prompt.trim()) {
+            return;
+        }
+
+        console.log(
+            "FOTOÐRAF ÝSTEÐÝ:",
+            prompt
+        );
+
+        alert(
+            "Fotoðraf oluþturma sistemi hazýrlanýyor...\n\n" +
+            "Ýstek: " +
+            prompt
+        );
+
+    });
+
+});
+</script>
+<!-- =====================================================
+     PREMIUM FOTOÐRAF OLUÞTURMA MODALI
+     ===================================================== -->
+
+<div
+    class="modal"
+    id="imageCreateModal"
+>
+
+    <div class="modal-box image-create-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Fotoðraf Oluþtur</h2>
+
+                <p>
+                    TürkAI ile hayalindeki görseli oluþtur.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="imageCreateModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="image-create-content">
+
+            <label for="imagePrompt">
+                Ne oluþturmak istiyorsun?
+            </label>
+
+            <textarea
+                id="imagePrompt"
+                class="image-prompt-input"
+                rows="5"
+                placeholder="Örneðin: Gece vakti neon ýþýklarla aydýnlatýlmýþ futuristik bir Ýstanbul..."
+            ></textarea>
+
+            <div class="image-create-options">
+
+                <button
+                    type="button"
+                    class="image-option active"
+                    data-size="1024x1024"
+                >
+                    Kare
+                </button>
+
+                <button
+                    type="button"
+                    class="image-option"
+                    data-size="1536x1024"
+                >
+                    Yatay
+                </button>
+
+                <button
+                    type="button"
+                    class="image-option"
+                    data-size="1024x1536"
+                >
+                    Dikey
+                </button>
+
+            </div>
+
+            <button
+                type="button"
+                id="generateImageButton"
+                class="generate-image-button"
+            >
+                <svg
+                    class="ui-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M12 3v18"></path>
+                    <path d="M3 12h18"></path>
+                    <path d="M5 5l14 14"></path>
+                    <path d="M19 5L5 19"></path>
+                </svg>
+
+                Fotoðraf Oluþtur
+            </button>
+
+            <div
+                id="imageGenerationStatus"
+                class="image-generation-status"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
 <body>
 
+<div id="premiumSplash">
+
+    <div class="premium-splash-content">
+
+        <div class="premium-splash-logo">
+            T
+        </div>
+
+        <div class="premium-splash-title">
+            TürkAI
+        </div>
+
+        <div class="premium-splash-subtitle">
+            YAPAY ZEKA HAZIRLANIYOR
+        </div>
+
+        <div class="premium-splash-loading">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+    </div>
+
+</div>
 
 <div class="app">
 
+<button
+    class="sidebar-button"
+    id="purchaseButton"
+    type="button"
+>
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+        <path d="M3 10h18"></path>
+        <path d="M7 15h3"></path>
+    </svg>
 
+    <span>Plus / Pro Satýn Al</span>
+</button>
 <!-- =====================================================
      SIDEBAR
      ===================================================== -->
@@ -206,7 +420,7 @@
     <div class="brand">
 
         <div class="brand-logo">
-            E
+            T
         </div>
 
         <div>
@@ -251,29 +465,33 @@
     </div>
     <!-- PRO KODU -->
 
-    <div class="pro-code-card">
+   <div class="pro-code-card">
 
-        <strong>TürkAI Pro</strong>
+    <strong>TürkAI Pro</strong>
 
-        <small>
-            Pro kodun varsa buradan etkinleþtirebilirsin.
-        </small>
+    <small>
+        Pro kodun varsa buradan etkinleþtirebilirsin.
+    </small>
 
     <input
-    id="proCodeInput"
-    type="password"
-    placeholder="Pro veya Plus kodunu gir"
-    autocomplete="off"
->
+        id="proCodeInput"
+        type="password"
+        placeholder="Pro veya Plus kodunu gir"
+        autocomplete="off"
+    >
 
-<button
-    id="proActivateButton"
-    type="button"
->
-    Pro / Plus'ý Etkinleþtir
-</button>
+    <button
+        id="proActivateButton"
+        type="button"
+    >
+        Pro / Plus'ý Etkinleþtir
+    </button>
 
-<div id="proCodeMessage"></div>
+    <div id="proCodeMessage"></div>
+
+</div>
+
+
 
     <!-- YENÝ SOHBET -->
 
@@ -307,6 +525,285 @@
     <!-- ALT BUTONLAR -->
 
     <div class="sidebar-bottom">
+        <!-- PREMIUM ÖZELLÝKLER -->
+
+<div class="premium-preview">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const imageButton =
+        document.getElementById("imageCreateButton");
+
+    const imageModal =
+        document.getElementById("imageCreateModal");
+
+    const imagePrompt =
+        document.getElementById("imagePrompt");
+
+    const generateButton =
+        document.getElementById("generateImageButton");
+
+    const status =
+        document.getElementById("imageGenerationStatus");
+<button
+    id="videoCreateButton"
+    class="premium-create-button"
+    type="button"
+>
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+    >
+        <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+        <path d="M15 12l-5-3v6l5-3z"></path>
+    </svg>
+
+    <span>Video Oluþtur</span>
+</button>
+
+    /* =========================================
+       FOTOÐRAF EKRANINI AÇ
+       ========================================= */
+
+    if (imageButton && imageModal) {
+
+        imageButton.addEventListener(
+            "click",
+            function () {
+
+                imageModal.classList.add("active");
+
+                if (imagePrompt) {
+                    setTimeout(function () {
+                        imagePrompt.focus();
+                    }, 100);
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       BOYUT SEÇ
+       ========================================= */
+
+    document
+        .querySelectorAll(".image-option")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    document
+                        .querySelectorAll(".image-option")
+                        .forEach(function (item) {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                        });
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* =========================================
+       OLUÞTUR
+       ========================================= */
+
+    if (generateButton) {
+
+        generateButton.addEventListener(
+            "click",
+            function () {
+
+                const prompt =
+                    imagePrompt
+                        ? imagePrompt.value.trim()
+                        : "";
+
+                if (!prompt) {
+
+                    if (status) {
+
+                        status.classList.remove(
+                            "loading"
+                        );
+
+                        status.textContent =
+                            "Önce ne oluþturmak istediðini yaz.";
+
+                    }
+
+                    if (imagePrompt) {
+                        imagePrompt.focus();
+                    }
+
+                    return;
+                }
+
+
+                /*
+                 * GERÇEK API HENÜZ BAÐLI DEÐÝL.
+                 * SADECE PREMIUM ARAYÜZ TESTÝ.
+                 */
+
+                if (status) {
+
+                    status.classList.add(
+                        "loading"
+                    );
+
+                    status.textContent =
+                        "TürkAI görseli hazýrlýyor...";
+                }
+
+
+                generateButton.disabled = true;
+
+
+                setTimeout(function () {
+
+                    if (status) {
+
+                        status.classList.remove(
+                            "loading"
+                        );
+
+                        status.textContent =
+                            "Görsel üretim API'si henüz baðlanmadý.";
+
+                    }
+
+                    generateButton.disabled = false;
+
+                }, 1800);
+
+            }
+        );
+
+    }
+
+});
+</script>
+    <div class="premium-feature-card">
+
+        <div class="premium-feature-icon">
+            ?
+        </div>
+
+        <div>
+            <strong>Fotoðraf Oluþturma</strong>
+
+            <small>
+                Yapay zeka ile görsel üret.
+            </small>
+        </div>
+
+    </div>
+
+
+    <div class="premium-feature-card">
+
+        <div class="premium-feature-icon">
+            ?
+        </div>
+
+        <div>
+            <strong>Video Oluþturma</strong>
+
+            <small>
+                Metinden video oluþtur.
+            </small>
+        </div>
+
+    </div>
+
+</div>
+<button
+    class="sidebar-button"
+    id="purchaseButton"
+    type="button"
+>
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+        <path d="M3 10h18"></path>
+        <path d="M7 15h3"></path>
+    </svg>
+
+    <span>Plus / Pro Satýn Al</span>
+</button>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const purchaseButton =
+        document.getElementById("purchaseButton");
+
+    const purchaseModal =
+        document.getElementById("purchaseModal");
+
+    if (!purchaseButton) {
+        console.error(
+            "purchaseButton BULUNAMADI!"
+        );
+        return;
+    }
+
+    purchaseButton.addEventListener(
+        "click",
+        function () {
+
+            if (purchaseModal) {
+
+                purchaseModal.classList.add(
+                    "active"
+                );
+
+                console.log(
+                    "SATIN ALMA EKRANI AÇILDI"
+                );
+
+            } else {
+
+                console.error(
+                    "purchaseModal BULUNAMADI!"
+                );
+
+            }
+
+        }
+    );
+
+});
+</script>
+<style>
+.ui-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: inline-block;
+}
+</style>
 
         <button
             class="sidebar-button"
@@ -352,15 +849,13 @@
 
         </button>
 
-
-        <button
-            class="account-card"
-            id="accountButton"
-            type="button"
-        >
-
+<button
+    class="account-card"
+    id="accountButton"
+    type="button"
+>
             <div class="account-avatar">
-                E
+                T
             </div>
 
             <div class="account-info">
@@ -418,6 +913,7 @@ function updatePlanAnimation(plan) {
 
         </button>
 
+   
     </div>
 
 </aside>
@@ -449,7 +945,7 @@ function updatePlanAnimation(plan) {
             <div class="model-selector">
 
                 <div class="model-icon">
-                    E
+                    T
                 </div>
 
                 <div>
@@ -520,7 +1016,7 @@ function updatePlanAnimation(plan) {
                 <div class="welcome-logo">
 
                     <div class="welcome-logo-inner">
-                        E
+                        T
                     </div>
 
                 </div>
@@ -693,11 +1189,20 @@ function updatePlanAnimation(plan) {
                     <input
                         type="file"
                         id="fileInput"
+                    
                         hidden
                         multiple
-                        accept=".txt,.json,.js,.html,.css,.py,.cs,.md,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp"
+                      accept=".txt,.json,.js,.html,.css,.py,.cs,.md,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp,.mp4,.webm,.mov"
                     >
-
+<div
+    id="selectedFiles"
+    style="
+        display:none;
+        margin-top:8px;
+        gap:6px;
+        flex-wrap:wrap;
+    "
+></div>
 
                     <!-- ATAÇ -->
 
@@ -724,15 +1229,7 @@ function updatePlanAnimation(plan) {
 
                     <!-- SES -->
 
-                    <button
-                        class="send-button"
-                        id="voiceButton"
-                        type="button"
-                        aria-label="Son cevabý seslendir"
-                        title="Son cevabý seslendir"
-                    >
-                        ??
-                    </button>
+                  
 
 
                     <!-- GÖNDER -->
@@ -801,7 +1298,27 @@ function updatePlanAnimation(plan) {
 
                     </div>
 
-
+<button
+    id="voiceButton"
+    class="quick-tool-static"
+    type="button"
+    title="TürkAI ile konuþ"
+    aria-label="TürkAI ile konuþ"
+>
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <rect x="9" y="3" width="6" height="11" rx="3"></rect>
+        <path d="M5 11a7 7 0 0 0 14 0"></path>
+        <path d="M12 18v3"></path>
+        <path d="M8 21h8"></path>
+    </svg>
+</button>
                     <div class="composer-info">
 
                         Enter: Gönder · Shift + Enter: Yeni satýr
@@ -1235,7 +1752,7 @@ function updatePlanAnimation(plan) {
     async
     defer
 ></script>
-<script src="/app.js"></script>
+
 
 
 <!-- =========================================================
@@ -1803,175 +2320,152 @@ document.addEventListener(
            SES BUTONU
            ===================================================== */
 
-        const voiceButton =
-            document.getElementById(
-                "voiceButton"
-            );
-
-
-        if (voiceButton) {
-
-            voiceButton.addEventListener(
-                "click",
-                function () {
-
-                    /*
-                     * Tarayýcý seslendirme desteði
-                     */
-
-                    if (
-                        !(
-                            "speechSynthesis"
-                            in window
-                        )
-                    ) {
-
-                        console.warn(
-                            "Bu tarayýcý seslendirmeyi desteklemiyor."
-                        );
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Mevcut konuþmayý bul
-                     */
-
-                    if (
-                        typeof TürkAI ===
-                        "undefined"
-                    ) {
-
-                        console.warn(
-                            "TürkAI nesnesi bulunamadý."
-                        );
-
-                        return;
-
-                    }
-
-
-                    if (
-                        !TürkAI.chats ||
-                        !Array.isArray(
-                            TürkAI.chats
-                        )
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    const chat =
-                        TürkAI.chats.find(
-                            function (item) {
-
-                                return (
-                                    item.id ===
-                                    TürkAI.currentChatId
-                                );
-
-                            }
-                        );
-
-
-                    if (
-                        !chat ||          
-                        !chat.messages
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Son AI mesajýný bul
-                     */
-
-                    const aiMessages =
-                        chat.messages.filter(
-                            function (message) {
-
-                                return (
-                                    message &&
-                                    message.type &&
-                                    message.type.includes(
-                                        "ai"
-                                    ) &&
-                                    message.content
-                                );
-
-                            }
-                        );
-
-
-                    if (
-                        aiMessages.length ===
-                        0
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    const lastMessage =
-                        aiMessages[
-                            aiMessages.length - 1
-                        ];
-
-
-                    /*
-                     * Önceki konuþmayý durdur
-                     */
-
-                    window.speechSynthesis.cancel();
-
-
-                    /*
-                     * Son cevabý seslendir
-                     */
-
-                    const utterance =
-                        new SpeechSynthesisUtterance(
-                            lastMessage.content
-                        );
-
-
-                    utterance.lang =
-                        "tr-TR";
-
-                    utterance.rate =
-                        1;
-
-                    utterance.pitch =
-                        1;
-
-                    utterance.volume =
-                        1;
-
-
-                    window.speechSynthesis.speak(
-                        utterance
-                    );
-
-                }
-            );
-
         }
 
-
-    }
+    
 );
+        
 
 </script>
+
+
 <script>
 
+
 </script>
+<!-- =========================================================
+     TÜRKAI SATIN ALMA EKRANI
+     ========================================================= -->
+
+<div
+    class="modal"
+    id="purchaseModal"
+>
+
+    <div class="modal-box small purchase-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>TürkAI Plus / Pro</h2>
+
+                <p>
+                    TürkAI'nin geliþmiþ özelliklerini kullan.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="purchaseModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="purchase-plans">
+
+            <!-- PLUS -->
+
+            <div class="purchase-plan">
+
+               <div class="purchase-plan-title">
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 18.3 6.4 21.2l1.1-6.2L3 9.6l6.2-.9L12 3z"></path>
+    </svg>
+
+    TürkAI Plus
+</div>
+
+                <div class="purchase-price">
+                    <strong>500 TL</strong>
+                    <span>/ ay</span>
+                </div>
+
+                <div class="purchase-features">
+
+                    <div>? Daha yüksek kullaným limiti</div>
+                    <div>? Geliþmiþ hafýza</div>
+                    <div>? Güncel internet araþtýrmasý</div>
+                    <div>? Sesli konuþma</div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="purchase-button"
+                    data-plan="plus"
+                >
+                    Plus Satýn Al
+                </button>
+
+            </div>
+
+
+            <!-- PRO -->
+
+            <div class="purchase-plan purchase-plan-pro">
+
+                <div class="purchase-plan-title">
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <path d="M3 7l4 4 5-7 5 7 4-4-2 12H5L3 7z"></path>
+        <path d="M5 19h14"></path>
+    </svg>
+
+    TürkAI Pro
+</div>
+
+                <div class="purchase-price">
+                    <strong>250 TL</strong>
+                    <span>/ ay</span>
+                </div>
+
+                <div class="purchase-features">
+
+                    <div>? Plus'taki tüm özellikler</div>
+                    <div>? Daha yüksek kullaným limiti</div>
+                    <div>? Geliþmiþ yapay zeka özellikleri</div>
+                    <div>? Fotoðraf ve geliþmiþ içerik özellikleri</div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="purchase-button purchase-button-pro"
+                    data-plan="pro"
+                >
+                    Pro Satýn Al
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="purchaseMessage"
+            class="payment-status-message"
+        ></div>
+
+    </div>
+
+</div>
 <!-- =========================================================
      TÜRKAI PRO SATIN ALMA MODALI
      ========================================================= -->
@@ -2075,5 +2569,373 @@ document.addEventListener(
     </div>
 
 </div>
-</body>
-</html>
+<script>
+window.addEventListener("load", function () {
+
+    setTimeout(function () {
+
+        const splash =
+            document.getElementById("premiumSplash");
+
+        if (splash) {
+            splash.classList.add("hide");
+        }
+
+    }, 1700);
+
+});
+</script>
+<!-- =========================================================
+     TÜRKAI FOTOÐRAF OLUÞTURMA MODALI
+     ========================================================= -->
+
+<div
+    class="modal"
+    id="imageCreateModal"
+>
+<!-- =====================================================
+     PREMIUM VIDEO OLUÞTURMA MODALI
+     ===================================================== -->
+
+<div
+    class="modal"
+    id="videoCreateModal"
+>
+
+    <div class="modal-box image-create-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Video Oluþtur</h2>
+
+                <p>
+                    TürkAI ile hayalindeki videoyu tasarla.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="videoCreateModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="image-create-content">
+
+            <label for="videoPrompt">
+                Videoda ne görmek istiyorsun?
+            </label>
+
+            <textarea
+                id="videoPrompt"
+                class="image-prompt-input"
+                rows="5"
+                placeholder="Örneðin: Gece Ýstanbul sokaklarýnda ilerleyen futuristik bir araba..."
+            ></textarea>
+
+
+            <div class="image-create-options">
+
+                <button
+                    type="button"
+                    class="video-option active"
+                    data-duration="5"
+                >
+                    5 saniye
+                </button>
+
+                <button
+                    type="button"
+                    class="video-option"
+                    data-duration="10"
+                >
+                    10 saniye
+                </button>
+
+                <button
+                    type="button"
+                    class="video-option"
+                    data-duration="15"
+                >
+                    15 saniye
+                </button>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="generateVideoButton"
+                class="generate-image-button"
+            >
+
+                <svg
+                    class="ui-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M8 5v14l11-7z"></path>
+                </svg>
+
+                Video Oluþtur
+
+            </button>
+
+
+            <div
+                id="videoGenerationStatus"
+                class="image-generation-status"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+    <div class="modal-box small image-create-box">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Fotoðraf Oluþtur</h2>
+
+                <p>
+                    Ne oluþturmak istediðini yaz.
+                </p>
+            </div>
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close="imageCreateModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="image-create-content">
+
+            <textarea
+                id="imagePromptInput"
+                class="image-prompt-input"
+                rows="5"
+                placeholder="Örneðin: Gece þehir manzarasýnda neon ýþýklarla aydýnlatýlmýþ futuristik bir TürkAI logosu..."
+            ></textarea>
+
+
+            <button
+                type="button"
+                id="generateImageButton"
+                class="generate-image-button"
+            >
+                <span>?</span>
+                Fotoðraf Oluþtur
+            </button>
+
+
+            <div
+                id="imageGenerationStatus"
+                class="payment-status-message"
+            ></div>
+
+
+            <div
+                id="generatedImageContainer"
+                class="generated-image-container"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+       <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const videoButton =
+        document.getElementById(
+            "videoCreateButton"
+        );
+
+    const videoModal =
+        document.getElementById(
+            "videoCreateModal"
+        );
+
+    const videoPrompt =
+        document.getElementById(
+            "videoPrompt"
+        );
+
+    const generateVideoButton =
+        document.getElementById(
+            "generateVideoButton"
+        );
+
+    const videoStatus =
+        document.getElementById(
+            "videoGenerationStatus"
+        );
+
+
+    /* =========================================
+       VIDEO EKRANINI AÇ
+       ========================================= */
+
+    if (
+        videoButton &&
+        videoModal
+    ) {
+
+        videoButton.addEventListener(
+            "click",
+            function () {
+
+                videoModal.classList.add(
+                    "active"
+                );
+
+                if (videoPrompt) {
+
+                    setTimeout(
+                        function () {
+
+                            videoPrompt.focus();
+
+                        },
+                        100
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       SÜRE SEÇ
+       ========================================= */
+
+    document
+        .querySelectorAll(".video-option")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    document
+                        .querySelectorAll(
+                            ".video-option"
+                        )
+                        .forEach(
+                            function (item) {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* =========================================
+       VIDEO OLUÞTUR
+       ========================================= */
+
+    if (generateVideoButton) {
+
+        generateVideoButton.addEventListener(
+            "click",
+            function () {
+
+                const prompt =
+                    videoPrompt
+                        ? videoPrompt.value.trim()
+                        : "";
+
+                if (!prompt) {
+
+                    if (videoStatus) {
+
+                        videoStatus.textContent =
+                            "Önce videoda ne görmek istediðini yaz.";
+
+                    }
+
+                    if (videoPrompt) {
+                        videoPrompt.focus();
+                    }
+
+                    return;
+                }
+
+
+                /*
+                 * GERÇEK VIDEO API'SI HENÜZ BAÐLI DEÐÝL.
+                 */
+
+                if (videoStatus) {
+
+                    videoStatus.classList.add(
+                        "loading"
+                    );
+
+                    videoStatus.textContent =
+                        "TürkAI videoyu hazýrlýyor...";
+
+                }
+
+
+                generateVideoButton.disabled =
+                    true;
+
+
+                setTimeout(
+                    function () {
+
+                        if (videoStatus) {
+
+                            videoStatus.classList.remove(
+                                "loading"
+                            );
+
+                            videoStatus.textContent =
+                                "Video üretim API'si henüz baðlanmadý.";
+
+                        }
+
+                        generateVideoButton.disabled =
+                            false;
+
+                    },
+                    1800
+                );
+
+            }
+        );
+
+    }
+
+});
+</script>
