@@ -6436,17 +6436,50 @@ async function requestAI(
     messages
 ) {
 
-    const lastUserMessage =
-        messages
-            .filter(
-                m =>
-                    m &&
-                    m.role === "user"
-            )
-            .pop()
-            ?.content
-            ?.trim()
-            .toLowerCase() || "";
+   
+   const lastUser =
+    messages
+        .filter(
+            m =>
+                m &&
+                m.role === "user"
+        )
+        .pop();
+
+let lastUserMessage = "";
+
+if (lastUser) {
+
+    if (typeof lastUser.content === "string") {
+
+        lastUserMessage =
+            lastUser.content
+                .trim()
+                .toLowerCase();
+
+    } else if (
+        Array.isArray(lastUser.content)
+    ) {
+
+        lastUserMessage =
+            lastUser.content
+                .map(item =>
+                    typeof item === "string"
+                        ? item
+                        : item?.text || ""
+                )
+                .join(" ")
+                .trim()
+                .toLowerCase();
+
+    }
+
+}
+
+console.log(
+    "YEREL TEST MESAJI:",
+    JSON.stringify(lastUserMessage)
+);
            console.log(
     "YEREL TEST MESAJI:",
     JSON.stringify(lastUserMessage)
