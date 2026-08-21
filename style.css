@@ -4689,3 +4689,205 @@ button:active {
     }
 
 }
+/* =========================================================
+   TÜRKAI 10.0 — PREMIUM AÇILIŞ EFEKTİ
+   ========================================================= */
+
+/* Açılış sırasında hafif ışık efekti */
+.welcome {
+    animation: turkaiWelcomeIn 3s ease-out forwards;
+}
+
+/* TürkAI 10.0 yazısı */
+.pro-welcome-badge {
+    animation:
+        turkaiBadgeIn 3s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+/* Başlık */
+.welcome h1 {
+    animation:
+        turkaiTitleIn 3s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+/* Açıklama */
+.welcome p {
+    animation:
+        turkaiTextIn 3s ease-out forwards;
+}
+
+/* Öneri kartları */
+.suggestions {
+    animation:
+        turkaiSuggestionsIn 3s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+
+/* =========================================================
+   ANA AÇILIŞ
+   ========================================================= */
+
+@keyframes turkaiWelcomeIn {
+
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   TÜRKAI 10.0 ROZETİ
+   ========================================================= */
+
+@keyframes turkaiBadgeIn {
+
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(.85);
+        filter: blur(8px);
+    }
+
+    45% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   BAŞLIK
+   ========================================================= */
+
+@keyframes turkaiTitleIn {
+
+    0% {
+        opacity: 0;
+        transform: translateY(25px);
+        filter: blur(8px);
+    }
+
+    55% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   AÇIKLAMA
+   ========================================================= */
+
+@keyframes turkaiTextIn {
+
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    55% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   ÖNERİ KARTLARI
+   ========================================================= */
+
+@keyframes turkaiSuggestionsIn {
+
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(.97);
+    }
+
+    65% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   PREMIUM PARILTI
+   ========================================================= */
+
+.welcome-logo-inner {
+    box-shadow:
+        0 0 20px rgba(85,199,255,.25),
+        0 0 45px rgba(124,92,255,.18),
+        0 0 90px rgba(85,199,255,.08);
+
+    animation:
+        turkaiLogoAppear 3s cubic-bezier(.16,1,.3,1) forwards,
+        turkaiLogoPulse 4s ease-in-out 3s infinite;
+}
+
+
+@keyframes turkaiLogoPulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 20px rgba(85,199,255,.20),
+            0 0 45px rgba(124,92,255,.15);
+    }
+
+    50% {
+        box-shadow:
+            0 0 28px rgba(85,199,255,.35),
+            0 0 65px rgba(124,92,255,.25);
+    }
+
+}
+
+
+/* =========================================================
+   MOBİLDE DE AKICI OLSUN
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .welcome-logo {
+        transform: scale(.9);
+    }
+
+    .welcome h1 {
+        font-size: 28px;
+    }
+
+}
