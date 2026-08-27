@@ -5630,3 +5630,920 @@ button:active {
     box-shadow:
         0 0 18px rgba(80, 150, 255, .08);
 }
+/* =========================================================
+   PREMIUM GÖRÜNTÜLÜ KONUŞMA ANİMASYONLARI
+   ========================================================= */
+
+#liveVideoChatModal {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+/* Modal giriş animasyonu */
+
+#liveVideoChatModal.active .live-video-chat-box {
+    animation: liveVideoModalEnter 0.55s cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes liveVideoModalEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(35px) scale(.94);
+        filter: blur(10px);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateY(-4px) scale(1.01);
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =========================================================
+   PREMIUM VIDEO KUTUSU
+   ========================================================= */
+
+.live-video-chat-box {
+    position: relative;
+    overflow: hidden;
+
+    border: 1px solid rgba(255,255,255,.12);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.45),
+        0 0 80px rgba(120,80,255,.10);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25,25,35,.96),
+            rgba(12,12,18,.98)
+        );
+
+    animation: premiumBoxGlow 5s ease-in-out infinite;
+}
+
+@keyframes premiumBoxGlow {
+    0% {
+        box-shadow:
+            0 30px 80px rgba(0,0,0,.45),
+            0 0 50px rgba(120,80,255,.08);
+    }
+
+    50% {
+        box-shadow:
+            0 30px 90px rgba(0,0,0,.50),
+            0 0 90px rgba(120,80,255,.18);
+    }
+
+    100% {
+        box-shadow:
+            0 30px 80px rgba(0,0,0,.45),
+            0 0 50px rgba(120,80,255,.08);
+    }
+}
+
+
+/* =========================================================
+   VIDEO ALANI
+   ========================================================= */
+
+.live-video-area {
+    position: relative;
+
+    isolation: isolate;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(120,80,255,.16),
+            transparent 45%
+        ),
+        #08080c;
+
+    box-shadow:
+        inset 0 0 80px rgba(0,0,0,.65);
+}
+
+
+/* Hareketli ambient ışık */
+
+.live-video-area::before {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    left: 50%;
+    top: 45%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(130,90,255,.16),
+            transparent 68%
+        );
+
+    filter: blur(20px);
+
+    animation: videoAmbient 7s ease-in-out infinite;
+
+    pointer-events: none;
+
+    z-index: 1;
+}
+
+@keyframes videoAmbient {
+
+    0% {
+        transform:
+            translate(-50%, -50%)
+            scale(.85);
+
+        opacity: .45;
+    }
+
+    50% {
+        transform:
+            translate(-50%, -50%)
+            scale(1.15);
+
+        opacity: .85;
+    }
+
+    100% {
+        transform:
+            translate(-50%, -50%)
+            scale(.85);
+
+        opacity: .45;
+    }
+}
+
+
+/* =========================================================
+   REMOTE VIDEO
+   ========================================================= */
+
+#remoteVideo {
+    position: relative;
+
+    z-index: 2;
+
+    transition:
+        opacity .35s ease,
+        transform .5s cubic-bezier(.16,1,.3,1),
+        filter .35s ease;
+}
+
+
+/* Kamera görüntüsü geldiğinde hafif premium efekt */
+
+#remoteVideo[src] {
+    animation: remoteVideoAppear .6s cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes remoteVideoAppear {
+
+    from {
+        opacity: 0;
+        transform: scale(1.035);
+        filter: blur(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+}
+
+
+/* =========================================================
+   LOCAL VIDEO — KÜÇÜK KAMERA
+   ========================================================= */
+
+#localVideo {
+    z-index: 8;
+
+    border: 1px solid rgba(255,255,255,.22);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.45),
+        0 0 35px rgba(120,80,255,.12);
+
+    transition:
+        transform .35s cubic-bezier(.16,1,.3,1),
+        box-shadow .35s ease;
+
+    animation: localVideoFloat 4s ease-in-out infinite;
+}
+
+@keyframes localVideoFloat {
+
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+#localVideo:hover {
+
+    transform: scale(1.035);
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.55),
+        0 0 45px rgba(120,80,255,.25);
+}
+
+
+/* =========================================================
+   DURUM MESAJI
+   ========================================================= */
+
+.video-chat-status {
+
+    z-index: 10;
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    border: 1px solid rgba(255,255,255,.12);
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.35),
+        0 0 30px rgba(120,80,255,.10);
+
+    animation: statusPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+
+    0% {
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+
+        opacity: .85;
+    }
+
+    50% {
+        transform:
+            translate(-50%, -50%)
+            scale(1.025);
+
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+
+        opacity: .85;
+    }
+}
+
+
+/* =========================================================
+   KONTROL BUTONLARI
+   ========================================================= */
+
+.live-video-controls {
+    position: relative;
+
+    z-index: 20;
+
+    padding: 20px 0 5px;
+}
+
+
+/* Genel buton */
+
+.live-video-controls button {
+
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.09),
+            rgba(255,255,255,.035)
+        );
+
+    color: inherit;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.18);
+
+    transition:
+        transform .25s cubic-bezier(.16,1,.3,1),
+        box-shadow .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+}
+
+
+/* Hover glow */
+
+.live-video-controls button::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -2px;
+
+    background:
+        linear-gradient(
+            110deg,
+            transparent 25%,
+            rgba(255,255,255,.16),
+            transparent 75%
+        );
+
+    transform: translateX(-120%);
+
+    transition:
+        transform .65s ease;
+
+    pointer-events: none;
+}
+
+.live-video-controls button:hover::before {
+    transform: translateX(120%);
+}
+
+
+.live-video-controls button:hover {
+
+    transform:
+        translateY(-3px)
+        scale(1.025);
+
+    border-color:
+        rgba(255,255,255,.22);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.30),
+        0 0 25px rgba(120,80,255,.12);
+}
+
+
+.live-video-controls button:active {
+
+    transform:
+        translateY(0)
+        scale(.97);
+
+    transition-duration: .08s;
+}
+
+
+/* SVG ikonlar */
+
+.live-video-controls .ui-icon {
+
+    width: 19px;
+    height: 19px;
+
+    flex-shrink: 0;
+
+    transition:
+        transform .3s ease;
+}
+
+.live-video-controls button:hover .ui-icon {
+
+    transform:
+        scale(1.1)
+        rotate(-3deg);
+}
+
+
+/* =========================================================
+   GÖRÜŞMEYİ BİTİR — PREMIUM KIRMIZI GLOW
+   ========================================================= */
+
+.live-video-controls .end-call-button {
+
+    border-color:
+        rgba(255,80,80,.20);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(220,50,50,.20),
+            rgba(120,20,20,.14)
+        );
+
+    box-shadow:
+        0 8px 25px rgba(120,0,0,.15);
+}
+
+.live-video-controls .end-call-button:hover {
+
+    border-color:
+        rgba(255,90,90,.45);
+
+    box-shadow:
+        0 12px 35px rgba(120,0,0,.30),
+        0 0 30px rgba(255,60,60,.16);
+}
+
+
+/* =========================================================
+   MODAL KAPATMA BUTONU
+   ========================================================= */
+
+#closeLiveVideoChat {
+
+    transition:
+        transform .3s cubic-bezier(.16,1,.3,1),
+        background .25s ease,
+        box-shadow .25s ease;
+}
+
+#closeLiveVideoChat:hover {
+
+    transform:
+        rotate(90deg)
+        scale(1.08);
+
+    box-shadow:
+        0 0 25px rgba(255,255,255,.10);
+}
+
+
+/* =========================================================
+   GİRİŞTE KONTROLLERİN SIRALI GELMESİ
+   ========================================================= */
+
+#liveVideoChatModal.active
+.live-video-controls button {
+
+    animation:
+        controlButtonEnter
+        .5s cubic-bezier(.16,1,.3,1)
+        both;
+}
+
+#liveVideoChatModal.active
+.live-video-controls button:nth-child(1) {
+
+    animation-delay: .12s;
+}
+
+#liveVideoChatModal.active
+.live-video-controls button:nth-child(2) {
+
+    animation-delay: .19s;
+}
+
+#liveVideoChatModal.active
+.live-video-controls button:nth-child(3) {
+
+    animation-delay: .26s;
+}
+
+@keyframes controlButtonEnter {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(18px)
+            scale(.92);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   PREMIUM SCAN LIGHT
+   ========================================================= */
+
+.live-video-area::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: -20%;
+    right: -20%;
+
+    height: 1px;
+
+    top: 20%;
+
+    z-index: 4;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.10),
+            rgba(140,100,255,.25),
+            rgba(255,255,255,.10),
+            transparent
+        );
+
+    filter: blur(.5px);
+
+    animation:
+        videoScanLine
+        6s ease-in-out
+        infinite;
+
+    pointer-events: none;
+}
+
+@keyframes videoScanLine {
+
+    0% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: .7;
+    }
+
+    100% {
+        transform: translateY(400px);
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   MOBİL
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .live-video-area {
+        min-height: 380px;
+    }
+
+    #remoteVideo {
+        height: 380px;
+    }
+
+    #localVideo {
+
+        width: 145px;
+        height: 105px;
+
+        right: 12px;
+        bottom: 12px;
+
+        border-radius: 12px;
+    }
+
+    .live-video-controls {
+        gap: 8px;
+    }
+
+    .live-video-controls button {
+        padding: 10px 13px;
+        font-size: 13px;
+    }
+}
+
+
+/* =========================================================
+   HAREKET AZALTMA
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #liveVideoChatModal.active .live-video-chat-box,
+    .live-video-chat-box,
+    #localVideo,
+    .video-chat-status,
+    .live-video-area::before,
+    .live-video-area::after,
+    .live-video-controls button {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+/* =====================================================
+   TÜRKAI GELİŞMİŞ ANİMASYON SİSTEMİ
+===================================================== */
+
+/* MESAJ GİRİŞ ANİMASYONU */
+.message {
+    animation: turkaiMessageIn 0.35s ease-out;
+    transform-origin: bottom;
+}
+
+@keyframes turkaiMessageIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* AI MESAJI */
+.message-ai {
+    animation:
+        turkaiMessageIn 0.35s ease-out,
+        turkaiAIGlow 0.8s ease-out;
+}
+
+@keyframes turkaiAIGlow {
+    0% {
+        filter: brightness(1.12);
+    }
+
+    100% {
+        filter: brightness(1);
+    }
+}
+
+
+/* DÜŞÜNÜYOR MESAJI */
+.message-thinking {
+    animation: turkaiThinking 1.2s ease-in-out infinite;
+}
+
+@keyframes turkaiThinking {
+    0% {
+        opacity: 0.55;
+        transform: translateY(2px);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0.55;
+        transform: translateY(2px);
+    }
+}
+
+
+/* MESAJ İÇERİĞİ */
+.message-content {
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+/* SOHBET ALANI */
+#chatArea {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: contain;
+}
+
+
+/* CHAT ALT BOŞLUĞU
+   Son mesajın aşağıda kesilmesini engeller */
+#chatArea {
+    padding-bottom: 120px;
+}
+
+
+/* MESAJ KONTEYNERİ */
+#chatContainer {
+    padding-bottom: 30px;
+}
+
+
+/* GÖNDER BUTONU */
+#sendButton {
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        opacity 0.2s ease;
+}
+
+#sendButton:hover {
+    transform: translateY(-2px) scale(1.03);
+}
+
+#sendButton:active {
+    transform: scale(0.94);
+}
+
+
+/* MİKROFON BUTONU */
+#voiceButton {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+#voiceButton:hover {
+    transform: scale(1.06);
+}
+
+#voiceButton:active {
+    transform: scale(0.94);
+}
+
+
+/* DİNLERKEN */
+#voiceButton.listening {
+    animation: turkaiListening 1.2s ease-in-out infinite;
+}
+
+@keyframes turkaiListening {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.12);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+/* INPUT */
+#messageInput {
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+#messageInput:focus {
+    transform: translateY(-1px);
+}
+
+
+/* BUTONLAR GENEL */
+button {
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        filter 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+
+/* AYAR / MODAL ANİMASYONU */
+.modal,
+.settings-modal,
+.overlay {
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+
+/* MOBİLDE SON MESAJ İÇİN EKSTRA ALAN */
+@media (max-width: 768px) {
+
+    #chatArea {
+        padding-bottom: 150px;
+    }
+
+    #chatContainer {
+        padding-bottom: 40px;
+    }
+
+    .message {
+        animation-duration: 0.3s;
+    }
+}
+
+
+/* HAREKET AZALTMA AYARI */
+@media (prefers-reduced-motion: reduce) {
+
+    .message,
+    .message-ai,
+    .message-thinking,
+    #voiceButton.listening {
+        animation: none;
+    }
+
+    #chatArea {
+        scroll-behavior: auto;
+    }
+}
+/* =====================================================
+   GELİŞMİŞ AYARLAR
+===================================================== */
+
+.setting-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.setting-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    font-size: 21px;
+
+    flex-shrink: 0;
+}
+
+.setting-action {
+    border: 0;
+
+    padding: 9px 16px;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.1);
+
+    color: inherit;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.setting-action:hover {
+    transform: translateY(-1px);
+
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.setting-action.logout {
+    background: rgba(255, 70, 70, 0.12);
+}
