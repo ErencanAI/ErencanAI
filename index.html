@@ -186,7 +186,7 @@
 </style>
 
 </head>
-
+<body>
 <script src="/app.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -259,16 +259,7 @@ document.addEventListener("DOMContentLoaded", function () {
      PREMIUM FOTOĞRAF OLUŞTURMA MODALI
      ===================================================== -->
 
-<div
-    class="modal"
-    id="imageCreateModal"
->
 
-    <div class="modal-box image-create-box">
-
-        <div class="modal-header">
-
-            <div>
                 <h2>Fotoğraf Oluştur</h2>
 
                 <p>
@@ -359,7 +350,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </div>
 <body>
+<div id="turkaiBoot" aria-hidden="true">
+    <div class="turkai-boot-terminal">
+        <div>TÜRKAI BIOS v10.0</div>
+        <div>MEMORY CHECK............... <span>OK</span></div>
+        <div>NEURAL CORE................ <span>OK</span></div>
+        <div>AI ENGINE.................. <span>ONLINE</span></div>
 
+        <div class="turkai-boot-progress">
+            <span></span>
+        </div>
+
+        <div class="turkai-boot-logo">TURKAI</div>
+        <div class="turkai-boot-access">ACCESS GRANTED</div>
+    </div>
+</div>
 <div id="premiumSplash">
 
     <div class="premium-splash-content">
@@ -528,7 +533,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <!-- PREMIUM ÖZELLİKLER -->
 
 <div class="premium-preview">
-<script>
+ <script>
 document.addEventListener("DOMContentLoaded", function () {
 
     const imageButton =
@@ -545,24 +550,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const status =
         document.getElementById("imageGenerationStatus");
-<button
-    id="videoCreateButton"
-    class="premium-create-button"
-    type="button"
->
-    <svg
-        class="ui-icon"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-    >
-        <rect x="3" y="5" width="18" height="14" rx="3"></rect>
-        <path d="M15 12l-5-3v6l5-3z"></path>
-    </svg>
+r</span>
 
-    <span>Video Oluştur</span>
-</button>
 
     /* =========================================
        FOTOĞRAF EKRANINI AÇ
@@ -731,7 +720,23 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
 
     </div>
-
+<button
+    id="videoCreateButton"
+    class="premium-create-button"
+    type="button"
+>
+    <svg
+        class="ui-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+    >
+        <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+        <path d="M15 12l-5-3v6l5-3z"></path>
+    </svg>
+    <span>Video Oluştur</span>
+</button>
 </div>
 <button
     class="sidebar-button"
