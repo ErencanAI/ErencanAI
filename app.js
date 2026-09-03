@@ -192,7 +192,7 @@ function startVoiceInput() {
     }
 
     try {
-
+TürkAI.voiceReply = true;
         recognition.start();
 
     } catch (error) {
@@ -325,7 +325,7 @@ function saveSettings(settings) {
 ===================================================== */
 
 const TürkAI = {
-
+voiceReply: false,
     isThinking: false,
 
     chats: [],
@@ -997,7 +997,6 @@ function setupSettings() {
 /* =====================================================
    AYARLARI AÃ‡
 ===================================================== */
-
 function openSettings() {
 
     const modal =
@@ -1010,10 +1009,12 @@ function openSettings() {
         modal.classList.add(
             "active"
         );
+
+        document.body.classList.add(
+            "settings-open"
+        );
     }
 }
-
-
 /* =====================================================
    SOHBETLERÄ° YÃœKLE
 ===================================================== */
@@ -1496,7 +1497,19 @@ function addMessageToScreen(
     message.className =
         "message";
 
+/* =====================================================
+   MESAJ ANİMASYONU
+===================================================== */
 
+message.style.opacity = "0";
+message.style.transform = "translateY(12px) scale(0.98)";
+message.style.transition =
+    "opacity 0.3s ease, transform 0.3s ease";
+
+requestAnimationFrame(function () {
+    message.style.opacity = "1";
+    message.style.transform = "translateY(0) scale(1)";
+});
     if (type) {
 
         type
@@ -1920,22 +1933,24 @@ console.log("🌐 API:", API_URL);
         }
 
 
-        addMessage(
-            "TürkAI",
-            reply,
-            "ai"
-        );
-        speakText(reply);
+   addMessage(
+    "TürkAI",
+    reply,
+    "ai"
+);
+
+if (TürkAI.voiceReply === true) {
+    speakText(reply);
+}
 
 
-        /* Son cevabÄ± hafÄ±zada tut */
+/* Son cevabı hafızada tut */
 
-        TürkAI.lastAIReply =
-            reply;
-
+TürkAI.lastAIReply =
+    reply;
 
         console.log(
-            "ERENCANAI CEVAP:",
+            "TÜRKAI CEVAP:",
             reply
         );
 
@@ -2016,7 +2031,30 @@ async function showUserMemory() {
             "ğŸ§  HafÄ±zam kontrol ediliyor...",
             "ai thinking"
         );
+/* =====================================================
+   TÜRKAI DÜŞÜNÜYOR ANİMASYONU
+===================================================== */
 
+let thinkingDots = 0;
+
+const thinkingInterval =
+    setInterval(function () {
+
+        if (!thinking || !thinking.textElement) {
+            return;
+        }
+
+        thinkingDots++;
+
+        if (thinkingDots > 3) {
+            thinkingDots = 1;
+        }
+
+        thinking.textElement.textContent =
+            "Düşünüyor" +
+            ".".repeat(thinkingDots);
+
+    }, 450);
 
     try {
 
@@ -2771,24 +2809,35 @@ function autoResizeInput() {
 
 function scrollBottom() {
 
-    if (
-        !elements.chatArea
-    ) {
-
+    if (!elements.chatArea) {
         return;
     }
 
+    function doScroll() {
 
-    requestAnimationFrame(
-        function () {
+        elements.chatArea.scrollTop =
+            elements.chatArea.scrollHeight;
+    }
 
-            elements.chatArea.scrollTop =
-                elements.chatArea.scrollHeight;
-        }
-    );
+    // İlk kaydırma
+    requestAnimationFrame(function () {
+        doScroll();
+
+        // İçerik tamamen oluştuktan sonra tekrar
+        requestAnimationFrame(function () {
+            doScroll();
+        });
+    });
+
+    // Animasyon / yazı oluşturma tamamlanınca tekrar
+    setTimeout(function () {
+        doScroll();
+    }, 100);
+
+    setTimeout(function () {
+        doScroll();
+    }, 350);
 }
-
-
 /* =====================================================
    BÄ°LDÄ°RÄ°M
 ===================================================== */
@@ -3158,161 +3207,6 @@ if (savedGoogleName) {
         );
     }
 }
-document.addEventListener("DOMContentLoaded", function () {
 
-    const savedGoogleName =
-        localStorage.getItem("googleUserName");
 
-    if (!savedGoogleName) {
-        return;
-    }
 
-    const accountAvatar =
-        document.querySelector(".account-avatar");
-
-    if (accountAvatar) {
-        accountAvatar.textContent =
-            savedGoogleName
-                .trim()
-                .charAt(0)
-                .toUpperCase();
-    }
-
-    const accountName =
-        document.querySelector(".account-info strong");
-
-    if (accountName) {
-        accountName.textContent =
-            savedGoogleName;
-    }
-
-    const accountStatus =
-        document.querySelector(".account-info small");
-
-    if (accountStatus) {
-        accountStatus.textContent =
-            "Google hesabı";
-    }
-});
-document.addEventListener("DOMContentLoaded", function () {
-
-    const savedPlan =
-        localStorage.getItem("turkai_plan");
-
-   if (
-    savedPlan !== "pro" &&
-    savedPlan !== "plus"
-) {
-    return;
-}
-
-    const proStatusBadge =
-        document.querySelector(".pro-active-badge");
-
-    if (proStatusBadge) {
-        proStatusBadge.textContent =
-            "AKTİF";
-    }
-
-    const accountStatus =
-        document.querySelector(".account-info small");
-
-    if (accountStatus) {
-        accountStatus.textContent =
-            "Pro hesap";
-    }
-
-    console.log(
-        "TÜRKAI PRO: F5 SONRASI GERİ YÜKLENDİ"
-    );
-});
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-       
-            alert(
-                "TürkAI Pro ödeme sistemi yakında aktif olacak.\n\n" +
-                "Fiyat: 200 TL / ay"
-            );
-
-        }
-    );
-document.addEventListener("DOMContentLoaded", function () {
-
-    const purchaseButton =
-        document.getElementById("purchaseButton");
-
-    const purchaseModal =
-        document.getElementById("purchaseModal");
-
-    if (!purchaseButton) {
-        console.error("SATIN ALMA BUTONU BULUNAMADI");
-        return;
-    }
-
-    if (!purchaseModal) {
-        console.error("SATIN ALMA MODALI BULUNAMADI");
-        return;
-    }
-
-    purchaseButton.onclick = function () {
-
-        console.log("SATIN ALMA BUTONUNA BASILDI");
-
-        purchaseModal.classList.add("active");
-
-    };
-
-});
-document.addEventListener("DOMContentLoaded", function () {
-
-    const purchaseButton =
-        document.getElementById("purchaseButton");
-
-    const purchaseModal =
-        document.getElementById("purchaseModal");
-
-    if (!purchaseButton) {
-        console.error("purchaseButton BULUNAMADI!");
-        return;
-    }
-
-    if (!purchaseModal) {
-        console.error("purchaseModal BULUNAMADI!");
-        return;
-    }
-
-    purchaseButton.addEventListener("click", function () {
-
-        console.log("SATIN ALMA BUTONUNA BASILDI");
-
-        purchaseModal.classList.add("active");
-
-    });
-
-});
-document.addEventListener("DOMContentLoaded", function () {
-
-    const purchaseButton =
-        document.getElementById("purchaseButton");
-
-    const purchaseModal =
-        document.getElementById("purchaseModal");
-
-    console.log("PURCHASE BUTTON:", purchaseButton);
-    console.log("PURCHASE MODAL:", purchaseModal);
-
-    if (purchaseButton && purchaseModal) {
-
-        purchaseButton.onclick = function () {
-
-            console.log("BUTONA BASILDI!");
-
-            purchaseModal.classList.add("active");
-
-        };
-
-    }
-
-});
