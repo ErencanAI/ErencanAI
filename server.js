@@ -3,11 +3,14 @@ require("dotenv").config();
 
 const express = require("express");
 
-  
+const http = require("http");
+const { Server } = require("socket.io");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const app = express();
+const httpServer = http.createServer(app);
+const io = new Server(httpServer);
 const TURKAI_PRO_CODE = process.env.TURKAI_PRO_CODE || "";
 
 const USER_PLANS_FILE = "./user_plans.json";
@@ -138,6 +141,84 @@ const DAILY_LIMITS = {
     plus:200,
     developer:400
 };
+const PLAN_PRICES = {
+    free: 0,
+    pro: 250,
+    plus: 500
+};
+// ==========================================
+// TEST ÖDEME SİSTEMİ
+// GERÇEK PARA ÇEKMEZ
+// ==========================================
+
+app.post(
+    "/api/test-payment",
+    express.json(),
+    (req, res) => {
+
+        const userId =
+            String(
+                req.body?.userId || ""
+            ).trim();
+
+        const plan =
+            String(
+                req.body?.plan || ""
+            ).trim().toLowerCase();
+
+        if (!userId) {
+            return res.status(400).json({
+                ok: false,
+                message: "Kullanıcı bulunamadı."
+            });
+        }
+
+        if (
+            plan !== "pro" &&
+            plan !== "plus"
+        ) {
+            return res.status(400).json({
+                ok: false,
+                message: "Geçersiz plan."
+            });
+        }
+
+        const plans =
+            loadUserPlans();
+
+        plans[userId] = {
+            plan: plan,
+            activatedAt: Date.now(),
+            payment: {
+                mode: "test",
+                amount: PLAN_PRICES[plan],
+                currency: "TRY",
+                status: "success"
+            }
+        };
+
+        saveUserPlans(plans);
+
+        console.log(
+            "TEST ÖDEME BAŞARILI:",
+            userId,
+            plan,
+            PLAN_PRICES[plan] + " TL"
+        );
+
+        return res.json({
+            ok: true,
+            plan: plan,
+            amount: PLAN_PRICES[plan],
+            currency: "TRY",
+            mode: "test",
+            message:
+                plan === "plus"
+                    ? "Plus test olarak aktifleştirildi!"
+                    : "Pro test olarak aktifleştirildi!"
+        });
+    }
+);
 function getUserPlan(userId) {
 
     if (!userId) {
@@ -432,7 +513,23 @@ console.log(
     "YEREL MESAJ KONTROLÃœ:",
     JSON.stringify(lastUserMessage)
 );
+// =========================================================
+// 🧠 API'YE GİTMEDEN BİLGİ HAFIZASI KONTROLÜ
+// =========================================================
 
+const rememberedAnswer =
+    findKnowledgeAnswer(
+        lastUserMessage
+    );
+
+if (rememberedAnswer) {
+
+    console.log(
+        "🧠 HAFIZA → API KULLANILMADI"
+    );
+
+    return rememberedAnswer;
+}
     /* =========================================================
     BASÄ°T MESAJLAR
     API KULLANILMAZ
@@ -791,10 +888,498 @@ console.log(
             lastUserMessage
         ];
     }
+        /* =========================================================
+       GELİŞMİŞ API'SİZ CEVAP MOTORU
+       Buradaki cevaplar API'ye gitmez.
+    ========================================================= */
+
+    // 1. KNOWLEDGE.JSON KONTROLÜ
+    try {
+        const knowledgeMatch = knowledge.find(item => {
+            if (!item || typeof item.question !== "string") {
+                return false;
+            }
+
+            return item.question
+                .toLowerCase()
+                .trim() === lastUserMessage;
+        });
+
+        if (knowledgeMatch && knowledgeMatch.answer) {
+            console.log(
+                "KNOWLEDGE.JSON → API KULLANILMADI"
+            );
+
+            return knowledgeMatch.answer;
+        }
+    } catch (error) {
+        console.error(
+            "KNOWLEDGE KONTROL HATASI:",
+            error.message
+        );
+    }
 
 
+    // 2. BASİT MATEMATİK
+    const mathMatch = lastUserMessage.match(
+        /^(-?\d+(?:[.,]\d+)?)\s*([+\-*/x×])\s*(-?\d+(?:[.,]\d+)?)$/
+    );
+
+    if (mathMatch) {
+
+        const a = Number(
+            mathMatch[1].replace(",", ".")
+        );
+
+        const b = Number(
+            mathMatch[3].replace(",", ".")
+        );
+
+        const operator = mathMatch[2];
+
+        let result;
+
+        if (operator === "+") {
+            result = a + b;
+        }
+
+        else if (operator === "-") {
+            result = a - b;
+        }
+
+        else if (
+            operator === "*" ||
+            operator === "x" ||
+            operator === "×"
+        ) {
+            result = a * b;
+        }
+
+        else if (operator === "/") {
+
+            if (b === 0) {
+                return "Sıfıra bölme yapılamaz. 😎";
+            }
+
+            result = a / b;
+        }
+
+        if (
+            typeof result === "number" &&
+            Number.isFinite(result)
+        ) {
+
+            console.log(
+                "MATEMATİK → API KULLANILMADI"
+            );
+
+            return String(result);
+        }
+    }
+
+
+    // 3. BASİT DURUM SORULARI
+    if (
+        lastUserMessage === "hazır mısın" ||
+        lastUserMessage === "hazir misin"
+    ) {
+
+        console.log(
+            "DURUM → API KULLANILMADI"
+        );
+
+        return "Hazırım knk 😎🤖";
+    }
+
+
+    // 4. TÜRKAI HAKKINDA BASİT SORULAR
+    if (
+        lastUserMessage.includes("en hızlı kim") ||
+        lastUserMessage.includes("en hizli kim")
+    ) {
+
+        console.log(
+            "TÜRKAI ÖZEL CEVAP → API KULLANILMADI"
+        );
+
+        return "TürkAI ⚡🤖";
+    }
+
+
+    // 5. BOŞ MESAJ KONTROLÜ
+    if (!lastUserMessage) {
+
+        console.log(
+            "BOŞ MESAJ → API KULLANILMADI"
+        );
+
+        return "Bir mesaj yaz knk 😎";
+    }
+
+
+    console.log(
+        "API'SİZ MOTORDA CEVAP BULUNAMADI → NORMAL AI"
+    );
+
+/* =========================================================
+   TÜRKAI YEREL ZEKA MOTORU v1
+   API KEY KULLANMADAN ÇALIŞAN SİSTEMLER
+========================================================= */
+
+function normalizeLocalText(text) {
+
+    return String(text || "")
+        .toLocaleLowerCase("tr-TR")
+        .trim()
+        .replace(/[?!.,;:]+$/g, "")
+        .replace(/\s+/g, " ");
+
+}
+
+
+/* =========================================================
+   YEREL NİYET ALGILAMA
+========================================================= */
+
+function detectLocalIntent(text) {
+
+    const clean =
+        normalizeLocalText(text);
+
+    if (!clean) {
+        return "empty";
+    }
+
+    const greetingWords = [
+        "selam",
+        "slm",
+        "merhaba",
+        "mrb",
+        "hey",
+        "sa",
+        "selamlar"
+    ];
+
+    if (
+        greetingWords.some(
+            word =>
+                clean === word ||
+                clean.startsWith(word + " ")
+        )
+    ) {
+        return "greeting";
+    }
+
+
+    const identityWords = [
+        "adın ne",
+        "adin ne",
+        "sen kimsin",
+        "ismin ne",
+        "kimsin"
+    ];
+
+    if (
+        identityWords.some(
+            word =>
+                clean.includes(word)
+        )
+    ) {
+        return "identity";
+    }
+
+
+    const thanksWords = [
+        "teşekkür",
+        "tesekkur",
+        "sağol",
+        "sagol",
+        "eyvallah"
+    ];
+
+    if (
+        thanksWords.some(
+            word =>
+                clean.includes(word)
+        )
+    ) {
+        return "thanks";
+    }
+
+
+    const statusWords = [
+        "nasılsın",
+        "nasilsin",
+        "naber",
+        "ne haber"
+    ];
+
+    if (
+        statusWords.some(
+            word =>
+                clean.includes(word)
+        )
+    ) {
+        return "status";
+    }
+
+
+    const helpWords = [
+        "yardım eder misin",
+        "yardim eder misin",
+        "bana yardım et",
+        "bana yardim et"
+    ];
+
+    if (
+        helpWords.some(
+            word =>
+                clean.includes(word)
+        )
+    ) {
+        return "help";
+    }
+
+
+    return "unknown";
+
+}
+
+
+/* =========================================================
+   YEREL NİYET CEVAPLARI
+========================================================= */
+
+function getLocalIntentAnswer(intent) {
+
+    switch (intent) {
+
+        case "greeting":
+            return "Selam! 😎 Sana nasıl yardımcı olabilirim?";
+
+        case "identity":
+            return "Ben TürkAI'yım. 🤖";
+
+        case "thanks":
+            return "Rica ederim knk 😎";
+
+        case "status":
+            return "İyiyim knk 😎 Sen nasılsın?";
+
+        case "help":
+            return "Tabii knk. Ne yapmak istiyorsun?";
+
+        default:
+            return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   BASİT BİRİM DÖNÜŞÜMLERİ
+========================================================= */
+
+function localUnitConversion(text) {
+
+    const clean =
+        normalizeLocalText(text);
+
+    let match;
+
+
+    // kilometre → metre
+    match =
+        clean.match(
+            /^([\d.,]+)\s*(km|kilometre|kilometreyi)\s*(kaç|kac)?\s*(metre|m)$/i
+        );
+
+    if (match) {
+
+        const value =
+            parseFloat(
+                match[1]
+                    .replace(",", ".")
+            );
+
+        return (
+            `${value} km = ${value * 1000} metre`
+        );
+
+    }
+
+
+    // metre → kilometre
+    match =
+        clean.match(
+            /^([\d.,]+)\s*(metre|m)\s*(kaç|kac)?\s*(km|kilometre)$/i
+        );
+
+    if (match) {
+
+        const value =
+            parseFloat(
+                match[1]
+                    .replace(",", ".")
+            );
+
+        return (
+            `${value} metre = ${value / 1000} km`
+        );
+
+    }
+
+
+    // kilogram → gram
+    match =
+        clean.match(
+            /^([\d.,]+)\s*(kg|kilogram)\s*(kaç|kac)?\s*(gram|g)$/i
+        );
+
+    if (match) {
+
+        const value =
+            parseFloat(
+                match[1]
+                    .replace(",", ".")
+            );
+
+        return (
+            `${value} kg = ${value * 1000} gram`
+        );
+
+    }
+
+
+    // saat → dakika
+    match =
+        clean.match(
+            /^([\d.,]+)\s*(saat)\s*(kaç|kac)?\s*(dakika)$/i
+        );
+
+    if (match) {
+
+        const value =
+            parseFloat(
+                match[1]
+                    .replace(",", ".")
+            );
+
+        return (
+            `${value} saat = ${value * 60} dakika`
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   YEREL YÜZDE HESAPLAMA
+========================================================= */
+
+function localPercentage(text) {
+
+    const clean =
+        normalizeLocalText(text);
+
+    let match =
+        clean.match(
+            /^([\d.,]+)\s*(sayısının|sayisinin)?\s*%?\s*([\d.,]+)\s*%$/
+        );
+
+    if (!match) {
+        return null;
+    }
+
+    const number =
+        parseFloat(
+            match[1]
+                .replace(",", ".")
+        );
+
+    const percent =
+        parseFloat(
+            match[3]
+                .replace(",", ".")
+        );
+
+    if (
+        !Number.isFinite(number) ||
+        !Number.isFinite(percent)
+    ) {
+        return null;
+    }
+
+    const result =
+        number *
+        percent /
+        100;
+
+    return (
+        `${number} sayısının %${percent} değeri = ${result}`
+    );
+
+}
+
+
+/* =========================================================
+   YEREL MOTOR ANA FONKSİYONU
+========================================================= */
+
+function runLocalEngine(text) {
+
+    const intent =
+        detectLocalIntent(text);
+
+    const intentAnswer =
+        getLocalIntentAnswer(
+            intent
+        );
+
+    if (intentAnswer) {
+        return intentAnswer;
+    }
+
+
+    const unitAnswer =
+        localUnitConversion(text);
+
+    if (unitAnswer) {
+        return unitAnswer;
+    }
+
+
+    const percentageAnswer =
+        localPercentage(text);
+
+    if (percentageAnswer) {
+        return percentageAnswer;
+    }
+
+
+    return null;
+
+}
+const localAnswer =
+    runLocalEngine(
+        lastUserMessage
+    );
+
+if (localAnswer) {
+
+    console.log(
+        "⚡ YEREL MOTOR → API KULLANILMADI"
+    );
+
+    return localAnswer;
+}
     /* =========================================================
-    NORMAL AI SÄ°STEMÄ°
+    NORMAL AI SİSTEM
     ========================================================= */
 
     try {
@@ -995,11 +1580,44 @@ let knowledge =
     loadKnowledge();
 const MAX_MEMORY_MESSAGES =
     400;
+// =========================================================
+// 🧠 BİLGİ HAFIZASINDAN CEVAP BUL
+// =========================================================
+
+function findKnowledgeAnswer(question) {
+
+    const cleanQuestion =
+        String(question || "")
+            .trim()
+            .toLowerCase();
+
+    if (!cleanQuestion) {
+        return null;
+    }
+
+    const item =
+        knowledge.find(
+            entry =>
+                entry &&
+                typeof entry.question === "string" &&
+                entry.question.trim().toLowerCase() ===
+                    cleanQuestion
+        );
+
+    if (!item) {
+        return null;
+    }
+
+    console.log(
+        "🧠 BİLGİ HAFIZASINDAN CEVAP VERİLDİ"
+    );
+
+    return item.answer;
+}
 /* =========================================================
    ABONELİK SİSTEMİ
    FREE / PRO / PLUS
 ========================================================= */
-
 const SUBSCRIPTION_PLANS = {
     free: {
         name: "Free",
@@ -1020,9 +1638,15 @@ const SUBSCRIPTION_PLANS = {
         price: 400,
         currency: "TRY",
         period: "monthly"
+    },
+
+    ultra: {
+        name: "Ultra",
+        price: 800,
+        currency: "TRY",
+        period: "monthly"
     }
 };
-
 function normalizeSubscriptionPlan(plan) {
 
     const cleanPlan =
@@ -1032,7 +1656,8 @@ function normalizeSubscriptionPlan(plan) {
 
     if (
         cleanPlan === "pro" ||
-        cleanPlan === "plus"
+        cleanPlan === "plus"||
+ cleanPlan === "ultra"
     ) {
         return cleanPlan;
     }
@@ -1053,10 +1678,11 @@ function isProOrHigher(plan) {
     const cleanPlan =
         normalizeSubscriptionPlan(plan);
 
-    return (
-        cleanPlan === "pro" ||
-        cleanPlan === "plus"
-    );
+  return (
+    cleanPlan === "pro" ||
+    cleanPlan === "plus" ||
+    cleanPlan === "ultra"
+);
 }
 
 function isPlus(plan) {
@@ -1064,6 +1690,13 @@ function isPlus(plan) {
     return (
         normalizeSubscriptionPlan(plan) ===
         "plus"
+    );
+}
+function isUltra(plan) {
+
+    return (
+        normalizeSubscriptionPlan(plan) ===
+        "ultra"
     );
 }
 const CONTEXT_MESSAGES =
@@ -1086,11 +1719,12 @@ const USER_CONTEXT_MESSAGES = 2;
 const FREE_CONTEXT_MESSAGES = 2;
 const PRO_CONTEXT_MESSAGES = 5;
 const PLUS_CONTEXT_MESSAGES = 15;
-
+const ULTRA_CONTEXT_MESSAGES = 30;
 const DAILY_MESSAGE_LIMITS = {
     free: 50,
     pro: 100,
-    plus: 200
+    plus: 200,
+    ultra: 500
 };
 const DAILY_USAGE_FILE =
     path.join(
@@ -5429,7 +6063,6 @@ const trustedDomains = [
     "tuik.gov.tr",
     "mevzuat.gov.tr"
 ];
-
 const scoreResult =
     result => {
 
@@ -5441,6 +6074,7 @@ const scoreResult =
                 ).hostname
                 .toLowerCase();
 
+            // Resmi kurumlar
             if (
                 hostname === "tcmb.gov.tr" ||
                 hostname.endsWith(".tcmb.gov.tr")
@@ -5452,21 +6086,52 @@ const scoreResult =
                 hostname === "tff.org" ||
                 hostname.endsWith(".tff.org")
             ) {
-                return 95;
+                return 98;
             }
 
             if (
                 hostname === "resmigazete.gov.tr" ||
                 hostname.endsWith(".resmigazete.gov.tr")
             ) {
-                return 95;
+                return 98;
             }
 
+            // Türkiye resmi kurumları
             if (
                 hostname.endsWith(".gov.tr")
             ) {
+                return 95;
+            }
+
+            // Eğitim kurumları
+            if (
+                hostname.endsWith(".edu.tr")
+            ) {
                 return 90;
             }
+
+            // Sağlık kurumları
+            if (
+                hostname.endsWith(".saglik.gov.tr")
+            ) {
+                return 95;
+            }
+
+            // Bilinen resmi/kurumsal kaynaklar
+            const trustedDomains = [
+                "tuik.gov.tr",
+                "mevzuat.gov.tr",
+                "tbmm.gov.tr",
+                "yok.gov.tr",
+                "osym.gov.tr",
+                "mhrs.gov.tr",
+                "afad.gov.tr",
+                "mgm.gov.tr",
+                "nasa.gov",
+                "esa.int",
+                "who.int",
+                "un.org"
+            ];
 
             if (
                 trustedDomains.some(
@@ -5477,7 +6142,16 @@ const scoreResult =
                         )
                 )
             ) {
-                return 85;
+                return 90;
+            }
+
+            // HTTPS kullanan kaynaklar
+            if (
+                result.url.startsWith(
+                    "https://"
+                )
+            ) {
+                return 30;
             }
 
             return 10;
@@ -5487,29 +6161,67 @@ const scoreResult =
         ) {
 
             return 0;
+
         }
     };
-   
-const trustedResults =
-    results.filter(
-        result =>
-            result &&
-            result.url &&
-            result.title
-    );
-    trustedResults.sort(
-    (
-        a,
-        b
-    ) =>
+// =========================================================
+// SONUÇLARI TEMİZLE VE TEKRARLARI KALDIR
+// =========================================================
+
+const uniqueResults = [];
+
+const seenUrls = new Set();
+
+for (const result of trustedResults) {
+
+    if (!result || !result.url) {
+        continue;
+    }
+
+    try {
+
+        const parsedUrl =
+            new URL(result.url);
+
+        // URL'nin gereksiz # bölümünü kaldır
+        parsedUrl.hash = "";
+
+        const cleanUrl =
+            parsedUrl.toString();
+
+        if (seenUrls.has(cleanUrl)) {
+            continue;
+        }
+
+        seenUrls.add(cleanUrl);
+
+        uniqueResults.push({
+            ...result,
+            url: cleanUrl
+        });
+
+    } catch (error) {
+
+        console.log(
+            "GEÇERSİZ URL ATLANDI:",
+            result.url
+        );
+
+    }
+}
+
+uniqueResults.sort(
+    (a, b) =>
         scoreResult(b) -
         scoreResult(a)
 );
+
 const selectedResults =
-    trustedResults.slice(
+    uniqueResults.slice(
         0,
-        3
+        5
     );
+
 
 const sourceTexts =
     await Promise.all(
@@ -5610,7 +6322,17 @@ async function geocodeLocation(
         "&count=1" +
         "&language=tr" +
         "&format=json";
-
+const response =
+    await fetchWithTimeout(
+        url,
+        {
+            method: "GET",
+            headers: {
+                "User-Agent": "TurkAI/10.0"
+            }
+        },
+        10000
+    );
    
 
     if (
@@ -8774,12 +9496,270 @@ app.use(
 
     }
 );
+/* =========================================================
+   WEBRTC GÖRÜNTÜLÜ KONUŞMA SIGNALING
+   ========================================================= */
 
+const videoRooms = new Map();
+
+io.on("connection", function (socket) {
+
+    console.log(
+        "[VIDEO] Kullanıcı bağlandı:",
+        socket.id
+    );
+
+
+    /* -----------------------------------------------------
+       ODAYA KATIL
+       ----------------------------------------------------- */
+
+    socket.on(
+        "video:join",
+        function (roomId) {
+
+            const room =
+                String(roomId || "").trim();
+
+            if (!room) {
+                return;
+            }
+
+
+            /*
+             * Oda yoksa oluştur
+             */
+
+            if (!videoRooms.has(room)) {
+
+                videoRooms.set(
+                    room,
+                    new Set()
+                );
+
+            }
+
+
+            const users =
+                videoRooms.get(room);
+
+
+            /*
+             * Aynı odada en fazla 2 kişi
+             */
+
+            if (users.size >= 2) {
+
+                socket.emit(
+                    "video:room-full"
+                );
+
+                return;
+
+            }
+
+
+            users.add(socket.id);
+
+            socket.join(room);
+
+            socket.data.videoRoom =
+                room;
+
+
+            /*
+             * Odada başka biri var mı?
+             */
+
+            const otherUserExists =
+                users.size > 1;
+
+
+            socket.emit(
+                "video:joined",
+                {
+                    roomId: room,
+                    initiator: !otherUserExists
+                }
+            );
+
+
+            /*
+             * Diğer kullanıcıya haber ver
+             */
+
+            socket.to(room).emit(
+                "video:user-joined"
+            );
+
+
+            console.log(
+                "[VIDEO] Odaya katıldı:",
+                socket.id,
+                room
+            );
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       WEBRTC OFFER
+       ----------------------------------------------------- */
+
+    socket.on(
+        "video:offer",
+        function (data) {
+
+            const room =
+                socket.data.videoRoom;
+
+            if (!room) {
+                return;
+            }
+
+
+            socket.to(room).emit(
+                "video:offer",
+                data
+            );
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       WEBRTC ANSWER
+       ----------------------------------------------------- */
+
+    socket.on(
+        "video:answer",
+        function (data) {
+
+            const room =
+                socket.data.videoRoom;
+
+            if (!room) {
+                return;
+            }
+
+
+            socket.to(room).emit(
+                "video:answer",
+                data
+            );
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       ICE CANDIDATE
+       ----------------------------------------------------- */
+
+    socket.on(
+        "video:ice-candidate",
+        function (data) {
+
+            const room =
+                socket.data.videoRoom;
+
+            if (!room) {
+                return;
+            }
+
+
+            socket.to(room).emit(
+                "video:ice-candidate",
+                data
+            );
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       GÖRÜŞMEYİ BİTİR
+       ----------------------------------------------------- */
+
+    socket.on(
+        "video:end",
+        function () {
+
+            const room =
+                socket.data.videoRoom;
+
+            if (!room) {
+                return;
+            }
+
+
+            socket.to(room).emit(
+                "video:ended"
+            );
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       BAĞLANTI KESİLDİ
+       ----------------------------------------------------- */
+
+    socket.on(
+        "disconnect",
+        function () {
+
+            const room =
+                socket.data.videoRoom;
+
+
+            if (!room) {
+                return;
+            }
+
+
+            const users =
+                videoRooms.get(room);
+
+
+            if (users) {
+
+                users.delete(
+                    socket.id
+                );
+
+
+                socket.to(room).emit(
+                    "video:user-left"
+                );
+
+
+                if (users.size === 0) {
+
+                    videoRooms.delete(
+                        room
+                    );
+
+                }
+
+            }
+
+
+            console.log(
+                "[VIDEO] Kullanıcı ayrıldı:",
+                socket.id
+            );
+
+        }
+    );
+
+});
 /* =========================================================
 SUNUCU
 ========================================================= */
 
-app.listen(
+httpServer.listen
     PORT,
     "0.0.0.0",
     function () {
@@ -8906,7 +9886,35 @@ app.listen(
         );
 
     }
-);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
