@@ -359,171 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </div>
 <body>
-<style>
-#turkaiBoot {
-    position: fixed;
-    inset: 0;
-    z-index: 999999;
-    background: #000;
-    color: #00ff66;
-    font-family: monospace;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
 
-#turkaiBoot::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0,255,100,.04) 0px,
-        rgba(0,255,100,.04) 1px,
-        transparent 1px,
-        transparent 4px
-    );
-    pointer-events: none;
-}
-
-.turkai-boot-box {
-    width: min(850px, 90%);
-}
-
-.turkai-terminal {
-    min-height: 230px;
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.turkai-logo {
-    text-align: center;
-    font-size: clamp(42px, 9vw, 90px);
-    font-weight: 900;
-    letter-spacing: 12px;
-    color: #00ff66;
-    text-shadow:
-        0 0 10px #00ff66,
-        0 0 30px #00ff66,
-        0 0 60px #00ff66;
-    margin: 25px 0;
-    animation: turkaiGlitch .08s infinite alternate;
-}
-
-.turkai-progress {
-    width: 100%;
-    height: 8px;
-    border: 1px solid #00ff66;
-    box-shadow: 0 0 15px #00ff66;
-}
-
-.turkai-progress span {
-    display: block;
-    height: 100%;
-    width: 0%;
-    background: #00ff66;
-    box-shadow: 0 0 15px #00ff66;
-    transition: width .15s linear;
-}
-
-.turkai-access {
-    text-align: center;
-    font-size: 22px;
-    margin-top: 20px;
-    font-weight: bold;
-    text-shadow: 0 0 15px #00ff66;
-}
-
-@keyframes turkaiGlitch {
-    from { transform: translateX(-1px); }
-    to { transform: translateX(1px); }
-}
-</style>
-
-<div id="turkaiBoot">
-    <div class="turkai-boot-box">
-
-        <div class="turkai-terminal" id="turkaiTerminal"></div>
-
-        <div class="turkai-logo" id="turkaiLogo" style="display:none;">
-            TURKAI
-        </div>
-
-        <div class="turkai-progress">
-            <span id="turkaiProgress"></span>
-        </div>
-
-        <div class="turkai-access" id="turkaiAccess">
-            INITIALIZING...
-        </div>
-
-    </div>
-</div>
-
-<script>
-(function () {
-    const terminal = document.getElementById("turkaiTerminal");
-    const progress = document.getElementById("turkaiProgress");
-    const logo = document.getElementById("turkaiLogo");
-    const access = document.getElementById("turkaiAccess");
-    const boot = document.getElementById("turkaiBoot");
-
-    const lines = [
-        "[BIOS] TürkAI SYSTEM BIOS v10.0",
-        "[BOOT] Checking system integrity...",
-        "[OK] Memory check complete",
-        "[OK] Neural core detected",
-        "[OK] AI engine detected",
-        "[BOOT] Loading TürkAI core...",
-        "[SECURITY] Encryption layer active",
-        "[SYSTEM] Establishing secure connection...",
-        "[AI] Neural network online",
-        "[SYSTEM] Finalizing startup sequence..."
-    ];
-
-    let i = 0;
-
-    function nextLine() {
-        if (i < lines.length) {
-            terminal.innerHTML += lines[i] + "<br>";
-            i++;
-            setTimeout(nextLine, 220);
-        } else {
-            startProgress();
-        }
-    }
-
-    function startProgress() {
-        let p = 0;
-
-        const timer = setInterval(() => {
-            p += 2;
-            progress.style.width = p + "%";
-
-            if (p >= 100) {
-                clearInterval(timer);
-
-                setTimeout(() => {
-                    logo.style.display = "block";
-                    access.textContent = "ACCESS GRANTED";
-                }, 300);
-
-                setTimeout(() => {
-                    boot.style.opacity = "0";
-                    boot.style.transition = "opacity 1s ease";
-
-                    setTimeout(() => {
-                        boot.remove();
-                    }, 1000);
-                }, 1800);
-            }
-        }, 35);
-    }
-
-    nextLine();
-})();
-</script>
 <div id="premiumSplash">
 
     <div class="premium-splash-content">
@@ -866,7 +702,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <div class="premium-feature-card">
 
         <div class="premium-feature-icon">
-            ▣
+            ?
         </div>
 
         <div>
@@ -883,7 +719,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <div class="premium-feature-card">
 
         <div class="premium-feature-icon">
-            ▶
+            ?
         </div>
 
         <div>
@@ -1556,96 +1392,206 @@ function updatePlanAnimation(plan) {
     <div class="settings-list">
 
 
-        <div class="setting">
+       <div class="setting">
 
-            <div>
+    <div class="setting-left">
 
-                <strong>
-                    Hafıza
-                </strong>
+        <div class="setting-icon">
+            ??
+        </div>
 
-                <small>
-                    Sohbet geçmişini hatırla
-                </small>
+        <div>
+            <strong>
+                Hafıza
+            </strong>
 
-            </div>
+            <small>
+                Sohbet geçmişini hatırla
+            </small>
+        </div>
+
+    </div>
+
+    <label class="switch">
+
+        <input
+            type="checkbox"
+            id="memorySwitch"
+            checked
+        >
+
+        <span></span>
+
+    </label>
+
+</div>
 
 
-            <label class="switch">
+<div class="setting">
 
-                <input
-                    type="checkbox"
-                    id="memorySwitch"
-                    checked
-                >
+    <div class="setting-left">
 
-                <span></span>
+        <div class="setting-icon">
+            ?
+        </div>
 
-            </label>
+        <div>
+
+            <strong>
+                Animasyonlar
+            </strong>
+
+            <small>
+                Arayüz animasyonlarını kullan
+            </small>
 
         </div>
 
+    </div>
 
-        <div class="setting">
+    <label class="switch">
 
-            <div>
+        <input
+            type="checkbox"
+            id="animationSwitch"
+            checked
+        >
 
-                <strong>
-                    Animasyonlar
-                </strong>
+        <span></span>
 
-                <small>
-                    Arayüz animasyonlarını kullan
-                </small>
+    </label>
 
-            </div>
+</div>
 
+       <div class="setting">
 
-            <label class="switch">
+    <div class="setting-left">
 
-                <input
-                    type="checkbox"
-                    id="animationSwitch"
-                    checked
-                >
+        <div class="setting-icon">
+            🔎
+        </div>
 
-                <span></span>
+        <div>
 
-            </label>
+            <strong>
+                Güncel bilgi araştırması
+            </strong>
+
+            <small>
+                Güncel sorularda araştırma sistemini kullan
+            </small>
 
         </div>
 
+    </div>
 
-        <div class="setting">
+    <label class="switch">
 
-            <div>
+        <input
+            type="checkbox"
+            id="researchSwitch"
+            checked
+        >
 
-                <strong>
-                    Güncel bilgi araştırması
-                </strong>
+        <span></span>
 
-                <small>
-                    Güncel sorularda araştırma sistemini kullan
-                </small>
+    </label>
 
-            </div>
+</div>
+<!-- KİŞİSELLEŞTİRME -->
+<div class="setting">
 
+    <div class="setting-left">
 
-            <label class="switch">
-
-                <input
-                    type="checkbox"
-                    id="researchSwitch"
-                    checked
-                >
-
-                <span></span>
-
-            </label>
-
+        <div class="setting-icon">
+            🎨
         </div>
 
+        <div>
+            <strong>
+                Kişiselleştirme
+            </strong>
 
+            <small>
+                TürkAI'nin görünümünü ve davranışını özelleştir
+            </small>
+        </div>
+
+    </div>
+
+    <button
+        type="button"
+        class="setting-action"
+        id="personalizationButton"
+    >
+        Aç
+    </button>
+
+</div>
+
+
+<!-- HESAP -->
+<div class="setting">
+
+    <div class="setting-left">
+
+        <div class="setting-icon">
+            👤
+        </div>
+
+        <div>
+            <strong>
+                Hesap
+            </strong>
+
+            <small>
+                Google hesabı ve hesap bilgilerini yönet
+            </small>
+        </div>
+
+    </div>
+
+    <button
+        type="button"
+        class="setting-action"
+        id="accountSettingsButton"
+    >
+        Aç
+    </button>
+
+</div>
+
+
+<!-- OTURUMU KAPAT -->
+<div class="setting">
+
+    <div class="setting-left">
+
+        <div class="setting-icon">
+            🚪
+        </div>
+
+        <div>
+            <strong>
+                Oturumu kapat
+            </strong>
+
+            <small>
+                TürkAI hesabından çıkış yap
+            </small>
+        </div>
+
+    </div>
+
+    <button
+        type="button"
+        class="setting-action logout"
+        id="logoutButton"
+    >
+        Çıkış
+    </button>
+
+</div>
         <div class="setting">
 
             <div>
@@ -2557,10 +2503,10 @@ document.addEventListener(
 
                 <div class="purchase-features">
 
-                    <div>✓ Daha yüksek kullanım limiti</div>
-                    <div>✓ Gelişmiş hafıza</div>
-                    <div>✓ Güncel internet araştırması</div>
-                    <div>✓ Sesli konuşma</div>
+                    <div>? Daha yüksek kullanım limiti</div>
+                    <div>? Gelişmiş hafıza</div>
+                    <div>? Güncel internet araştırması</div>
+                    <div>? Sesli konuşma</div>
 
                 </div>
 
@@ -2602,10 +2548,10 @@ document.addEventListener(
 
                 <div class="purchase-features">
 
-                    <div>✓ Plus'taki tüm özellikler</div>
-                    <div>✓ Daha yüksek kullanım limiti</div>
-                    <div>✓ Gelişmiş yapay zeka özellikleri</div>
-                    <div>✓ Fotoğraf ve gelişmiş içerik özellikleri</div>
+                    <div>? Plus'taki tüm özellikler</div>
+                    <div>? Daha yüksek kullanım limiti</div>
+                    <div>? Gelişmiş yapay zeka özellikleri</div>
+                    <div>? Fotoğraf ve gelişmiş içerik özellikleri</div>
 
                 </div>
 
@@ -2668,7 +2614,7 @@ document.addEventListener(
 
             <div class="pro-price">
                 <strong>
-                    200 TL
+                    250 TL
                 </strong>
 
                 <span>
@@ -2901,7 +2847,7 @@ window.addEventListener("load", function () {
                 id="generateImageButton"
                 class="generate-image-button"
             >
-                <span>▣</span>
+                <span>?</span>
                 Fotoğraf Oluştur
             </button>
 
