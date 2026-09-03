@@ -6545,5 +6545,65 @@ button:active {
 }
 
 .setting-action.logout {
-    background: rgba(255, 70, 70, 0.12);
+    backgro/* ===== TÜRKAI CINEMATIC BOOT EFFECT ===== */
+
+body::before {
+    content: "TÜRKAI SYSTEM // INITIALIZING...";
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: #000;
+    color: #00ff66;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 24px;
+    letter-spacing: 4px;
+    text-shadow: 0 0 15px #00ff66;
+    animation: turkaiBoot 3.5s forwards;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1000000;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0,255,100,.04) 0px,
+        rgba(0,255,100,.04) 1px,
+        transparent 1px,
+        transparent 4px
+    );
+    animation: turkaiScan 3.5s forwards;
+}
+
+@keyframes turkaiBoot {
+    0% {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes turkaiScan {
+    0%, 85% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}und: rgba(255, 70, 70, 0.12);
 }
