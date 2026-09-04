@@ -7540,9 +7540,7 @@ app.get(
     "/api/payment/test",
     function (req, res) {
 
-        console.log(
-            "🔥 IYZICO TEST ÇALIŞTI"
-        );
+     
 
         return res.json({
             ok: true,
@@ -7553,7 +7551,7 @@ app.get(
 
     }
 );
-console.log("🔥🔥🔥 IYZICO DOSYASI OKUNDU 🔥🔥🔥");
+
 /* =========================================================
 TEST API
 ========================================================= */
