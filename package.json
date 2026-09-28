@@ -1,0 +1,39 @@
+{
+  "name": "turkai",
+  "version": "10.0.0",
+  "description": "TürkAI 10.0 — Yapay Zeka Asistanı",
+  "main": "Server.js",
+  "scripts": {
+    "start": "node Server.js",
+    "dev": "node Server.js",
+    "test": "echo \"Test yok\" && exit 0"
+  },
+  "keywords": [
+    "yapayzeka",
+    "ai",
+    "turkai",
+    "chatbot",
+    "grok",
+    "gemini",
+    "cerebras"
+  ],
+  "author": "TürkAI",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/"
+  },
+  "bugs": {
+    "url": "https://github.com/"
+  },
+  "homepage": "https://github.com/"
+}
